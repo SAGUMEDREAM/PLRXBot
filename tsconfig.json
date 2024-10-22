@@ -13,12 +13,21 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "jsxImportSource": "@satorijs/element",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
     "types": [
       "node",
-      "yml-register/types"
+      "yml-register/types",
+      "@koishijs/core"
     ]
   },
   "include": [
-    "src"
+    "src",
+    "src/types/global.d.ts",
+    "src/**/*.d.ts",
+    "plugins/**/*",
+    "plugins/**/*.d.ts"
   ]
 }
