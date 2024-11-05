@@ -28,8 +28,8 @@ export class CommandTHSearch {
 
       let resultStr = `[${title}] 搜索结果>\n`;
       const api = [
-        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13xQAWuJkd8u4PFfMpMOrpJSb4RAM1isENnkMUCFFpK4/values/Activities!A2:E150?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
-        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1XV_9hMVd2IKisLA5bk7hU8E7nyuXIQdE9hAe_xlCDmU/values/Activities!A2:E150?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
+        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13xQAWuJkd8u4PFfMpMOrpJSb4RAM1isENnkMUCFFpK4/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
+        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1XV_9hMVd2IKisLA5bk7hU8E7nyuXIQdE9hAe_xlCDmU/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
       ];
 
       const allResults = await Promise.all(api.map(url => {
@@ -80,7 +80,8 @@ export class CommandTHSearch {
         resultStr += "没有找到相关活动\n";
       }
 
-      resultStr += `\n数据提供: 东方Project线下活动维基(https://thonly.cc/)`;
+      resultStr += `\n数据提供: 东方Project线下活动维基（https://thonly.cc/）`;
+      resultStr += `搜索不到可以尝试加入-H或者是-A参数`
 
       Messages.sendMessageToReply(session, resultStr);
     });

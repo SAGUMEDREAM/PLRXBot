@@ -2,7 +2,7 @@ import {CommandProvider} from "../../../core/command/CommandProvider";
 import {CommandHelper} from "../../../core/command/CommandHelper";
 import {Messages} from "../../../core/network/Messages";
 
-export class CommandHelp {
+export class CommandUsage {
   public root = new CommandProvider()
     .addArg("命令")
     .onExecute((session, args) => {
@@ -11,6 +11,9 @@ export class CommandHelp {
       if (args.get(0) == null) {
         CommandProvider.leakArgs(session, args);
         return;
+      }
+      if (!cmd.startsWith('/') && !cmd.startsWith('$')) {
+        cmd = '/' + cmd;
       }
       const parsedCommand = CommandHelper.parseCommand(cmd);
 

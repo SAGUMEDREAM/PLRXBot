@@ -28,7 +28,8 @@ export class CommandLeaveMessage {
         });
         text += messages.join('');
       }
-      Messages.sendMessageToGroup(session,863842932,text);
+      Messages.sendMessageToReply(session,"留言发送成功!")
+      Messages.sendMessageToGroup(session,863842932, text);
     })
   ;
   public static get(): CommandProvider {

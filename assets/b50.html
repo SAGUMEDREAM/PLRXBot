@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @font-face {
+            font-family: TT-Shin-Go;
+            src: url(./fonts/sgm.ttf);
+        }
+
+        @font-face {
+            font-family: Impact;
+            src: url(./fonts/impact.ttf);
+        }
+
+        @font-face {
+            font-family: Yuan;
+            src: url(./fonts/TTZhongYuanGB3.ttf);
+        }
+
+        body {
+            background: #eee;
+            padding: 18px;
+        }
+
+        html,
+        body {
+            margin: 0;
+            width: fit-content;
+        }
+
+        p {
+            margin: 0;
+            font-family: 'TT-Shin-Go';
+        }
+
+        #app {
+            height: 1430px;
+            width: 1310px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .card {
+            position: relative;
+            background-position: center;
+            background-size: cover;
+            width: 200px;
+            height: 120px;
+            box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .rank {
+            top: -12px;
+            left: -5px;
+            font-family: Impact;
+            font-size: 24px;
+            -webkit-text-stroke: 1px #fff;
+        }
+
+        .song-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            top: 16px;
+            left: 10px;
+            width: calc(200px - 2 * 10px);
+            font-size: 18px;
+        }
+
+        .cover-mask {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: #ffffff80;
+            z-index: 0;
+        }
+
+        .card p,
+        .card img {
+            z-index: 100;
+        }
+
+        .card * {
+            position: absolute
+        }
+
+        .text-shadow {
+            text-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievements {
+            top: 40px;
+            left: 10px;
+            font-size: 16px;
+        }
+
+        .rate {
+            top: 62px;
+            left: 10px;
+            font-size: 20px;
+            text-transform: uppercase;
+        }
+
+        .level {
+            top: 92px;
+            left: 10px;
+            font-size: 14px;
+        }
+
+        .card img {
+            width: 72px;
+            height: 24px;
+            top: -12px;
+            left: 130px;
+        }
+
+        .container {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            row-gap: calc(135px - 120px);
+            width: 1050px;
+        }
+
+        .info {
+            position: absolute;
+            text-wrap: nowrap;
+            /* max-width: 190px; */
+        }
+
+        .info p {
+            padding-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <p style="margin-top: 10px;">B35</p>
+        <div class="container" v-if="resp?.standard">
+            <div v-for="(v,i) in resp.standard" class="card"
+                :style="{backgroundImage: `url('${assetBase}maimaidx/covers/${v.id}.png')`}">
+                <img
+                    :src="v.type === 'dx' ? './UI_TTR_Infoicon_DeluxeMode.png' : './UI_TTR_Infoicon_StandardMode.png'" />
+                <div class="cover-mask"></div>
+                <p class="rank text-shadow">#{{i+1}} - {{Math.floor(v.dx_rating)}}</p>
+                <p class="song-title">{{v.song_name}}</p>
+                <p class="achievements">{{v.achievements}}%</p>
+                <p class="rate">{{v.rate}} {{v.fc}} {{v.fs}}</p>
+                <p style="text-shadow: 1px 1px black" class="level text-shadow"
+                    :style="{color: DIFF_COLORS[v.level_index]}">{{LEVEL_LABELS[v.level_index]}} {{v.level}}
+                </p>
+            </div>
+        </div>
+        <p style="margin-top: 10px;">B15</p>
+        <div class="container" v-if="resp?.dx">
+            <div v-for="(v,i) in resp.dx" class="card"
+                :style="{backgroundImage: `url('${assetBase}maimaidx/covers/${v.id}.png')`}">
+                <img
+                    :src="v.type === 'dx' ? './UI_TTR_Infoicon_DeluxeMode.png' : './UI_TTR_Infoicon_StandardMode.png'" />
+                <div class="cover-mask"></div>
+                <p class="rank text-shadow">#{{i+1}} - {{Math.floor(v.dx_rating)}}</p>
+                <p class="song-title">{{v.song_name}}</p>
+                <p class="achievements">{{v.achievements}}%</p>
+                <p class="rate">{{v.rate}} {{v.fc}} {{v.fs}}</p>
+                <p style="text-shadow: 1px 1px black" class="level text-shadow"
+                    :style="{color: DIFF_COLORS[v.level_index]}">{{LEVEL_LABELS[v.level_index]}} {{v.level}}
+                </p>
+            </div>
+        </div>
+        <p class="info" style="left: 1090px; top: 40px">RATING DETAIL OF</p>
+        <p class="info" style="font-size: 32px;left: 1090px; top: 65px">{{resp?.name ?? ""}}</p>
+        <p class="info" style="left: 1090px; top: 120px">RATING</p>
+        <p class="info" style="font-size: 32px;left: 1090px; top: 140px">{{resp?.rating}}</p>
+        <div class="info" style="left:1090px; top: 250px">
+            <p style="padding-bottom: 16px">B35 推分</p>
+            <p v-for="item in suggestions.b35" style="font-size: 28px">{{item}}</p>
+            <p style="padding: 16px 0">B15 推分</p>
+            <p v-for="item in suggestions.b15" style="font-size: 28px">{{item}}</p>
+        </div>
+        <!-- <p class="info" style="left: 1090px; top: 1330px">DATA FROM</p>
+        <p class="info" style="font-size: 28px;left: 1090px; top: 1355px">{{dataFrom}}</p> -->
+    </div>
+    <script type="importmap">
+        {
+            "imports": {
+                "vue":"https://fastly.jsdelivr.net/npm/vue@3.3.4/dist/vue.esm-browser.prod.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import { createApp, ref } from 'vue'
+
+        window.app = createApp({
+            data: () => ({
+                assetBase: '',
+                resp: null,
+                dataFrom: '',
+                suggestions: [[], []]
+            }),
+            setup() {
+                return {
+                    DIFF_COLORS: ['rgb(69, 193, 36)', 'rgb(255, 186, 1)', 'rgb(255, 90, 102)', 'rgb(134, 49, 200)', 'rgb(217, 197, 233)'],
+                    LEVEL_LABELS: ["Basic", "Advanced", "Expert", "Master", "Re:MASTER"]
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>
