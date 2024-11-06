@@ -18,3 +18,4 @@ tsconfig.tsbuildinfo
 *.sln
 /data/group/
 /data/profile/
+data/caches/message_forwarding_cache.json

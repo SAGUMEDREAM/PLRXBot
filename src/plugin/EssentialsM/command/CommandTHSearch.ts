@@ -27,35 +27,40 @@ export class CommandTHSearch {
       }
 
       let resultStr = `[${title}] 搜索结果>\n`;
-      const api = [
-        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13xQAWuJkd8u4PFfMpMOrpJSb4RAM1isENnkMUCFFpK4/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
-        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1XV_9hMVd2IKisLA5bk7hU8E7nyuXIQdE9hAe_xlCDmU/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
+      // const api = [
+      //   "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13xQAWuJkd8u4PFfMpMOrpJSb4RAM1isENnkMUCFFpK4/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
+      //   "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1XV_9hMVd2IKisLA5bk7hU8E7nyuXIQdE9hAe_xlCDmU/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
+      // ];
+      const apiBeta = [
+        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13ykPzw9cKqQVXXEwhCuX_mitQegHdFHjZtGdqT6tlmk/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
+        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1mMUsvTdyz07BtnLbs0WEr5gdvsRkjftnrek_n5HSdNU/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
       ];
 
-      const allResults = await Promise.all(api.map(url => {
+      const allResults = await Promise.all(apiBeta.map(url => {
         return fetch(url)
           .then(response => response.json())
           .then(data => {
             const arr = [];
-            const values = data["values"];
+            const valueRanges = data["valueRanges"];
+            valueRanges.forEach((obj: object) => {
+              const values = obj["values"] || [];
+              values.forEach((item: any[]) => {
+                try {
+                  const obj = {
+                    status: item[0],
+                    name: item[1],
+                    area: item[2],
+                    time: item[3],
+                    group_id: item[4],
+                    timestamp: item[3] == "暂无" ? nowTimestamp + 8000 : new Date(item[3]).getTime()
+                  };
 
-            values.forEach((item: any[]) => {
-              try {
-                const obj = {
-                  status: item[0],
-                  name: item[1],
-                  area: item[2],
-                  time: item[3],
-                  group_id: item[4],
-                  timestamp: item[3] == "暂无" ? nowTimestamp + 8000 : new Date(item[3]).getTime()
-                };
-
-                if (obj.name && (obj.name.includes(title) || obj.area.includes(title) || obj.time.includes(title))) {
-                  arr.push(obj);
-                }
-              } catch (e) {}
+                  if (obj.name && (obj.name.includes(title) || obj.area.includes(title) || obj.time.includes(title))) {
+                    arr.push(obj);
+                  }
+                } catch (e) {}
+              });
             });
-
             return arr.filter(result => result["time"] == "暂无" || result["timestamp"] > nowTimestamp || isHis);
           })
           .catch(error => {
@@ -80,7 +85,7 @@ export class CommandTHSearch {
         resultStr += "没有找到相关活动\n";
       }
 
-      resultStr += `\n数据提供: 东方Project线下活动维基（https://thonly.cc/）`;
+      resultStr += `\n数据提供: 东方Project线下活动维基（https://thonly.cc/）\n`;
       resultStr += `搜索不到可以尝试加入-H或者是-A参数`
 
       Messages.sendMessageToReply(session, resultStr);
