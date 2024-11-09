@@ -76,7 +76,7 @@ export class MFFilters {
 
   public static save() {
     const data = {
-      time: Date.now(),  // 记录时间戳
+      time: Date.now(),
       cache: this.MFCache,
     };
     Files.write(this.cache_path, JSON.stringify(data, null, 2));

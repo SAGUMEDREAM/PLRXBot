@@ -12,6 +12,8 @@ import {CommandLeaveMessage} from "./command/CommandLeaveMessage";
 import {CommandCommandHelper} from "./command/CommandHelper";
 import {CommandAbout} from "./command/CommandAbout";
 import {CommandOS} from "./command/CommandOS";
+import {PluginEvent, PluginListener} from "../../core/plugins/Plugins";
+import {Messages} from "../../core/network/Messages";
 
 export class EssentialsM extends PluginInitialization {
   constructor() {
@@ -19,6 +21,12 @@ export class EssentialsM extends PluginInitialization {
   }
   public load(): void {
     const instance = CommandManager.getInstance();
+    PluginListener.on(PluginEvent.MEMBER_JOIN_GROUP, this, (session, args) => {
+      let result: string = '';
+      result += Messages.at(Number(session.event.user.id));
+      result += '欢迎新人入群哦😊👍';
+      Messages.sendMessage(session, result);
+    });
 
     instance.registerCommand("/踢出", CommandKick.get());
     instance.registerCommand("/禁言", CommandMute.get());

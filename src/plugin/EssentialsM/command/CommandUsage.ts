@@ -20,7 +20,7 @@ export class CommandUsage {
       const formattedOutput = this.formatCommandTreeFlat(parsedCommand);
       Messages.sendMessageToReply(session,formattedOutput);
     });
-  formatCommandTreeFlat(commandObj: any, parentCommand: string = '', depth: number = 0): string {
+  private formatCommandTreeFlat(commandObj: any, parentCommand: string = '', depth: number = 0): string {
     let result = '';
 
     const currentCommand = parentCommand ? `${parentCommand} ${commandObj.command.split(' ').pop()}` : commandObj.command;

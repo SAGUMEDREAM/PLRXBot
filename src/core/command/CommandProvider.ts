@@ -79,7 +79,7 @@ export class CommandProvider {
   public getArgsString(): string {
     let result = '';
     this.args.forEach(arg=>{
-      result += ` [${arg}]`
+      result += ` [${arg}]`;
     });
     return result;
   }
