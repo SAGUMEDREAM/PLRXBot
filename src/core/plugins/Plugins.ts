@@ -41,6 +41,13 @@ export class PluginListener {
     this.Events.set(event, listeners);
   }
 
+  public static onEnable(pluginId: string | PluginInitialization, listener: PluginListenerFunction) {
+    this.on(PluginEvent.PLUGIN_ENABLED, pluginId, listener);
+  }
+  public static onDisable(pluginId: string | PluginInitialization, listener: PluginListenerFunction) {
+    this.on(PluginEvent.PLUGIN_DISABLED, pluginId, listener);
+  }
+
   public static emit(event: PluginEvent, session?: Session<User.Field, Channel.Field, Context>, ...args: any[]): void {
     const listeners = this.Events.get(event);
     if (listeners) {

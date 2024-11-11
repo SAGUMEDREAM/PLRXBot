@@ -8,7 +8,7 @@ export class CommandLilySearch {
     .onExecute((session, args) => {
       const title = args.merge();
       if (title == "" || args.get(0) == null) {
-        Messages.sendMessageToReply(session,"请输入搜索字段");
+        Messages.sendMessageToReply(session,"缺少参数");
         return;
       }
       const url = "https://cn.thdog.moe/api/fs/search";

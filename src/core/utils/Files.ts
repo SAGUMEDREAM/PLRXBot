@@ -14,7 +14,16 @@ export class Files {
     }
   }
   public static read(_path: string): string {
-    return fs.readFileSync(_path,'utf8');
+    const dir = path.dirname(_path);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    try {
+      return fs.readFileSync(_path, 'utf8');
+    } catch (error) {
+      return '';
+    }
   }
   public static write(_path: string, _data: string): boolean {
     try {

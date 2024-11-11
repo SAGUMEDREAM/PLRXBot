@@ -19,3 +19,4 @@ tsconfig.tsbuildinfo
 /data/group/
 /data/profile/
 data/caches/message_forwarding_cache.json
+data/caches/funny_words_cache.json

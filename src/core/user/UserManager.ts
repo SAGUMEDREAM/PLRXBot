@@ -27,6 +27,9 @@ export class UserManager {
 
   public load() {
     LOGGER.info("Loading UserManager...");
+    setInterval(() => {
+      this.userdata.clear();
+    }, 3600000 / 2);
   }
 
   public static createUser(user_id: number): UserProfile;

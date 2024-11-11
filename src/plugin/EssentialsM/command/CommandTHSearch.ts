@@ -1,95 +1,127 @@
-import {CommandProvider} from "../../../core/command/CommandProvider";
+import path from "path";
+import { CommandProvider } from "../../../core/command/CommandProvider";
 import fetch from "node-fetch";
-import {Messages} from "../../../core/network/Messages";
-import {h} from "koishi";
-import {Text} from "../../../core/language/Text";
+import { Messages } from "../../../core/network/Messages";
+import { Files } from "../../../core/utils/Files";
+import { Utils } from "../../../core/utils/Utils";
 
 export class CommandTHSearch {
+  public static readonly cache_path = path.resolve(
+    path.join(Utils.getRoot(), "data", "caches"),
+    "thsearch_cache.json"
+  );
+
+  private static CACHE_DURATION = 12 * 60 * 60 * 1000;
+
+  public readonly apiBeta = [
+    "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13ykPzw9cKqQVXXEwhCuX_mitQegHdFHjZtGdqT6tlmk/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
+    "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1mMUsvTdyz07BtnLbs0WEr5gdvsRkjftnrek_n5HSdNU/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
+  ];
+
   public readonly root = new CommandProvider()
-    .addArg("字段").addArg("-A 获取全部结果").addArg("-H 获取历史活动")
+    .addArg("字段")
+    .addArg("-A 获取全部结果")
+    .addArg("-H 获取历史活动")
     .onExecute(async (session, args) => {
-      if (args.merge() == "") {
-        Messages.sendMessageToReply(session, `用法: ${"$搜索活动 [名字] [-A 可选,获取全部结果] [-H 可选 获取历史活动]"}`);
+      const title = args.get(0);
+      if (!title) {
+        Messages.sendMessageToReply(session, `用法: ${"/搜索活动 [名字] [-A 可选,获取全部结果] [-H 可选 获取历史活动]"}`);
         return;
       }
 
-      let isHis = false;
-      let isAll = false;
-      const allArg: string = args.merge();
-      const title = args.get(0);
+      let cacheData = this.getCache();
       const nowTimestamp = Date.now();
 
-      if (allArg.includes("-A")) {
-        isAll = true;
+      if (cacheData && nowTimestamp - cacheData.timestamp < CommandTHSearch.CACHE_DURATION) {
+        this.sendSearchResults(session, cacheData.results, title, args);
+      } else {
+        const results = await this.fetchAndCacheData();
+        this.sendSearchResults(session, results, title, args);
       }
-      if (allArg.includes("-H")) {
-        isHis = true;
-      }
+    });
 
-      let resultStr = `[${title}] 搜索结果>\n`;
-      // const api = [
-      //   "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13xQAWuJkd8u4PFfMpMOrpJSb4RAM1isENnkMUCFFpK4/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
-      //   "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1XV_9hMVd2IKisLA5bk7hU8E7nyuXIQdE9hAe_xlCDmU/values/Activities!A2:E200?key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
-      // ];
-      const apiBeta = [
-        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13ykPzw9cKqQVXXEwhCuX_mitQegHdFHjZtGdqT6tlmk/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
-        "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1mMUsvTdyz07BtnLbs0WEr5gdvsRkjftnrek_n5HSdNU/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
-      ];
+  private getCache(): { timestamp: number; results: any[] } | null {
+    try {
+      const data = Files.read(CommandTHSearch.cache_path);
+      return JSON.parse(data);
+    } catch {
+      return null;
+    }
+  }
 
-      const allResults = await Promise.all(apiBeta.map(url => {
-        return fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            const arr = [];
-            const valueRanges = data["valueRanges"];
-            valueRanges.forEach((obj: object) => {
-              const values = obj["values"] || [];
-              values.forEach((item: any[]) => {
-                try {
-                  const obj = {
-                    status: item[0],
-                    name: item[1],
-                    area: item[2],
-                    time: item[3],
-                    group_id: item[4],
-                    timestamp: item[3] == "暂无" ? nowTimestamp + 8000 : new Date(item[3]).getTime()
-                  };
+  private setCache(data: { timestamp: number; results: any[] }): void {
+    Files.write(CommandTHSearch.cache_path, JSON.stringify(data,null,2));
+  }
 
-                  if (obj.name && (obj.name.includes(title) || obj.area.includes(title) || obj.time.includes(title))) {
-                    arr.push(obj);
-                  }
-                } catch (e) {}
-              });
-            });
-            return arr.filter(result => result["time"] == "暂无" || result["timestamp"] > nowTimestamp || isHis);
-          })
-          .catch(error => {
+  private async fetchAndCacheData(): Promise<any[]> {
+    const nowTimestamp = Date.now();
+    const apiResults = await Promise.all(
+      this.apiBeta.map((url) =>
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => this.processAPIData(data, nowTimestamp))
+          .catch((error) => {
             console.log(error);
             return [];
-          });
-      }));
+          })
+      )
+    );
+    const allResults = apiResults.flat();
+    this.setCache({ timestamp: nowTimestamp, results: allResults });
+    return allResults;
+  }
 
-      const combinedResults = allResults.flat();
+  private processAPIData(data: any, nowTimestamp: number): any[] {
+    const results: any[] = [];
+    const valueRanges = data.valueRanges || [];
 
-      let j = isAll ? combinedResults.length : Math.min(5, combinedResults.length);
-
-      for (let i = 0; i < j; i++) {
-        let result = combinedResults[i];
-        resultStr += `${i + 1}. ${result["name"]}\n`;
-        resultStr += `- 地区: ${result["area"]}\n`;
-        resultStr += `- 日期: ${result["time"]}\n`;
-        resultStr += `- 群号: ${result["group_id"]}\n`;
-      }
-
-      if (combinedResults.length === 0) {
-        resultStr += "没有找到相关活动\n";
-      }
-
-      resultStr += `\n数据提供: 东方Project线下活动维基（https://thonly.cc/）\n`;
-      resultStr += `搜索不到可以尝试加入-H或者是-A参数`
-
-      Messages.sendMessageToReply(session, resultStr);
+    valueRanges.forEach((range: any) => {
+      const values = range.values || [];
+      values.forEach((item: any[]) => {
+        try {
+          const event = {
+            status: item[0] || "",
+            name: item[1] || "",
+            area: item[2] || "",
+            time: item[3] || "",
+            group_id: item[4] || "",
+            timestamp: item[3] === "暂无" ? nowTimestamp + 8000 : new Date(item[3]).getTime()
+          };
+          results.push(event);
+        } catch (error) {
+          console.error("Error processing event data:", error);
+        }
+      });
     });
+
+    return results;
+  }
+
+  private sendSearchResults(session: any, results: any[], title: string, args: any): void {
+    const nowTimestamp = Date.now();
+    const isHis = args.merge().includes("-H");
+
+    // 根据 title 和是否历史活动过滤缓存数据
+    const filteredResults = results.filter((event) => {
+      const isMatch = event.name.includes(title) || event.area.includes(title) || event.time.includes(title);
+      const isValidTime = event.time === "暂无" || event.timestamp > nowTimestamp || isHis;
+      return isMatch && isValidTime;
+    });
+
+    let resultStr = `[${title}] 搜索结果>\n`;
+    filteredResults
+      .slice(0, args.merge().includes("-A") ? filteredResults.length : 5)
+      .forEach((result, i) => {
+        resultStr += `${i + 1}. ${result.name}\n`;
+        resultStr += `- 地区: ${result.area}\n`;
+        resultStr += `- 日期: ${result.time}\n`;
+        resultStr += `- 群号: ${result.group_id}\n`;
+      });
+    if (filteredResults.length === 0) {
+      resultStr += "没有找到相关活动\n";
+    }
+    Messages.sendMessageToReply(session, resultStr);
+  }
 
   public static get(): CommandProvider {
     return new this().root;

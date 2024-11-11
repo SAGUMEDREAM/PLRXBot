@@ -1,7 +1,7 @@
 import {Context, Dict, Element, h, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
-import {MessageData} from "./MessageData";
 import {UserManager} from "../user/UserManager";
+import {MessageData} from "../network/MessageData";
 
 export class Messages {
   public static getNextMessage(
@@ -11,23 +11,27 @@ export class Messages {
     UserManager.get(session).getProfileData()["next_message"]["message"] = null;
     return message;
   }
+
   public static sendMessage(
     session: Session<User.Field, Channel.Field, Context>,
     message: any): void {
     session.sendQueued(message);
   }
+
   public static sendMessageToGroup(
     session: Session<User.Field, Channel.Field, Context>,
     group_id: number,
     message: any) {
     session.bot?.sendMessage(String(group_id), message);
   }
+
   public static sendMessageToReply(
     session: Session<User.Field, Channel.Field, Context>,
     message: any) {
     const message_id = session.messageId;
-    session.sendQueued(h('quote',{id: message_id}) + message);
+    session.sendQueued(h('quote', {id: message_id}) + message);
   }
+
   public static sendPrivateMessage(
     session: Session<User.Field, Channel.Field, Context>,
     user_id: number,
@@ -41,22 +45,25 @@ export class Messages {
     attrs: Dict,
     children: Element[],
   } {
-    return h('img', { src: `${src}` });
+    return h('img', {src: `${src}`});
   }
+
   public static at(user_id: number): {
     type: string | Element.Render<Element.Fragment, any>,
     attrs: Dict,
     children: Element[],
   } {
-    return h('at', { id: `${user_id}` });
+    return h('at', {id: `${user_id}`});
   }
+
   public static quote(message_id: number): {
     type: string | Element.Render<Element.Fragment, any>,
     attrs: Dict,
     children: Element[],
   } {
-    return h('quote', { id: message_id });
+    return h('quote', {id: message_id});
   }
+
   public static parse(session: Session<User.Field, Channel.Field, Context>): MessageData {
     let event = session.event;
     let user = event.user;

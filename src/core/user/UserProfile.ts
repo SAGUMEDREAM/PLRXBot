@@ -13,6 +13,7 @@ export class UserProfile {
     .createDataKey("sign_system",{"timestamp": 0})
     .createDataKey("inventory",[])
     .createDataKey("next_message",{"open": false, "message": null, "state": 0 })
+    .createDataKey("lucky_seed", 0)
     .build();
 
   constructor(path: string);
@@ -101,6 +102,9 @@ export class UserProfile {
   }
   public getProfileData(): any {
     return this.profile.data;
+  }
+  public setDataKey(key: any, value: any): void {
+    this.profile.data[key] = value;
   }
   public getDataKey(key: any): any {
     return this.profile.data[key];

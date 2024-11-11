@@ -9,6 +9,7 @@ export class CommandCommandHelper {
       result += `- 获取命令用法: /用法 [命令]\n`;
       result += `- 搜索东方活动: /搜索活动 [活动名称]\n`;
       result += `- 莉莉云搜索: /莉莉云 [内容]\n`;
+      result += `- 搜索群组: /搜索群组 [关键词]\n`;
       result += `- 电棍活字印刷: /活字印刷 [内容]\n`;
       result += `- Maimai查询: /b50\n`;
       result += `- 说怪话: /说怪话 [关键词]\n`;

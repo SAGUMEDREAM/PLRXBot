@@ -2,7 +2,7 @@ import {CommandProvider} from "../../../core/command/CommandProvider";
 import {Messages} from "../../../core/network/Messages";
 
 export class CommandAbout {
-  version = 20241105;
+  version = 20241110;
   public root = new CommandProvider()
     .onExecute((session, args) => {
       let result = '';
