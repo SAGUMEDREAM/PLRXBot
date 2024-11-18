@@ -4,6 +4,7 @@ import {Inventories} from "./Inventories";
 import {MessageForwarding} from "./MessageForwarding";
 import {FunnyWords} from "./FunnyWords";
 import {EssentialBot} from "./EssentialBot";
+import {DailyEvent} from "./DailyEvent";
 
 export class PluginLoader {
   public static load() {
@@ -11,6 +12,7 @@ export class PluginLoader {
     Plugins.register(new MessageForwarding());
     Plugins.register(new Inventories());
     Plugins.register(new EssentialBot());
+    Plugins.register(new DailyEvent());
     // Plugins.register(new FunnyWords());
     /*const path: string = Constant.PLUGIN_PATH;
     const files = Files.getDir(path);
