@@ -5,7 +5,9 @@ import {botInstance} from "../../../index";
 
 export class CommandKick {
   public root: CommandProvider = new CommandProvider()
-    .addArg("目标").addArg("群号").addArg("-P(永久)")
+    .addArg("目标")
+    .addArg("群号")
+    .addArg("-P (永久)")
     .onExecute((session, args) => {
       (async () => {
         let target = args.get(0);

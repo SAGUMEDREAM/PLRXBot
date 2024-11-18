@@ -1,13 +1,14 @@
 import {BaseGroupData} from "./BaseGroupData";
 import {Constant} from "../Constant";
 import path from "path";
-import {PluginEvent, PluginListener} from "../plugins/Plugins";
 import {Files} from "../utils/Files";
 import {DataFixerBuilder} from "../data/DataFixerBuilder";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import deasync from 'deasync';
 import {botInstance} from "../../index";
+import {PluginEvent} from "../plugins/PluginEvent";
+import {PluginListener} from "../plugins/PluginListener";
 
 export class GroupData {
   public group_id: number;
@@ -49,7 +50,7 @@ export class GroupData {
     }
   }
   public dataFixer(): void {
-    if(!GroupData.dataFixer.isFrozen()) {
+    if(!GroupData.dataFixer.isConfirm()) {
       throw new Error("No data-fixer has been built");
     }
     for (const [key, fixer] of GroupData.dataFixer.all()) {

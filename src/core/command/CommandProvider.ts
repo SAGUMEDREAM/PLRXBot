@@ -18,15 +18,6 @@ export class CommandProvider {
     return this;
   }
 
-  public setRegistryKey(key: string): CommandProvider {
-    this.registryKey = key;
-    return this;
-  }
-
-  public getRegistryKey(): string {
-    return this.registryKey;
-  }
-
   public onExecute(callback: (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => void): CommandProvider {
     this.executeCallback = callback;
     return this;
@@ -40,12 +31,17 @@ export class CommandProvider {
     this.args.push(key);
     return this;
   }
-
   public setPrimaryKey(provider: CommandProvider): CommandProvider {
     this.primaryKey = provider;
     return this;
   }
-
+  public setRegistryKey(key: string): CommandProvider {
+    this.registryKey = key;
+    return this;
+  }
+  public getRegistryKey(): string {
+    return this.registryKey;
+  }
   public executeWith(session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) {
     if (this.permissionCallback && !this.permissionCallback(session)) {
       Messages.sendMessageToReply(session,"你没有使用该命令的权限");

@@ -5,8 +5,7 @@ import { GroupDataObject } from "../impl/GroupDataObject";
 import { GroupDataStorage } from "../impl/GroupDataStorage";
 import path from "path";
 import { Utils } from "../../../core/utils/Utils";
-import fs from "fs";
-import { Files } from "../../../core/utils/Files"; // 导入 fs
+import { Files } from "../../../core/utils/Files";
 
 export class CommandGroupSearch {
   public readonly api = `https://thwiki.cc/api.php?action=parse&page=%E4%B8%9C%E6%96%B9%E7%9B%B8%E5%85%B3QQ%E7%BE%A4%E7%BB%84%E5%88%97%E8%A1%A8&prop=wikitext&format=json`;
@@ -90,7 +89,7 @@ export class CommandGroupSearch {
 
   private sendGroupResults(session, keyword: string, resultData: GroupDataStorage, pageId: number) {
     if (resultData.data.length === 0) {
-      Messages.sendMessageToReply(session, `未找到相关群组`);
+      Messages.sendMessageToReply(session, `没有找到符合条件的群组 😥`);
       return;
     }
 
@@ -100,35 +99,41 @@ export class CommandGroupSearch {
       group.event_name.toLowerCase().includes(keyword.toLowerCase())
     );
 
-    const pageSize = 3;
+    const pageSize = 3; // 每页显示数量
     const totalPages = Math.ceil(filteredGroups.length / pageSize);
     const startIndex = (pageId - 1) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, filteredGroups.length);
 
+    // 页码超出范围
     if (startIndex >= filteredGroups.length) {
-      Messages.sendMessageToReply(session, `页码超出范围，当前总页数为 ${totalPages}`);
+      Messages.sendMessageToReply(session, `抱歉，当前页码超出范围。总共 ${totalPages} 页。`);
       return;
     }
 
-    let resultText = `搜索到以下群组 (第 ${pageId} 页):\n`;
+    let resultText = `🔍 搜索到以下群组 (第 ${pageId} 页):\n\n`;
     let num = 1;
 
+    // 拼接群组信息
     filteredGroups.slice(startIndex, endIndex).forEach(group => {
-      resultText += `${(pageId - 1) * pageSize + num}.`;
-      resultText += ` 群名称: ${group.group_name}\n`
-      resultText += ` 活动/组织/机构: ${group.event_name}\n`;
-      resultText += ` 群号: ${group.group_id}\n`;
+      resultText += `群组 #${(pageId - 1) * pageSize + num}:\n`;
+      resultText += `  群名称: ${group.group_name}\n`;
+      resultText += `  活动/组织/机构: ${group.event_name}\n`;
+      resultText += `  群号: ${group.group_id}\n`;
+      resultText += `----------------------------------------\n`;
       num++;
     });
 
-    if(pageId != totalPages) {
-      resultText += `共 ${filteredGroups.length} 个结果，当前页为 ${pageId} / ${totalPages} 页。`;
-      resultText += `\n使用-page [页码]参数可获取翻页后的结果。`;
+    // 翻页提示
+    if (pageId !== totalPages) {
+      resultText += `共 ${filteredGroups.length} 个结果，当前是第 ${pageId} / ${totalPages} 页。`;
+      resultText += `\n使用 "-page [页码]" 参数查看更多结果。`;
     } else {
-      resultText += `共 ${filteredGroups.length} 个结果。`;
+      resultText += `共 ${filteredGroups.length} 个结果，已显示完毕。`;
     }
-    resultText += `\n数据来源: https://touhou.group/`
 
+    resultText += `\n\n数据来源: https://touhou.group/`;
+
+    // 发送消息
     Messages.sendMessageToReply(session, resultText);
   }
 

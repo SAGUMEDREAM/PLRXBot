@@ -4,6 +4,7 @@ import {UserManager} from "./user/UserManager";
 import path from "path";
 import {Config} from "./data/Config";
 import {GroupManager} from "./group/GroupManager";
+import {LOGGER} from "../index";
 
 export class Constant {
   public static PATH: string;
@@ -19,6 +20,7 @@ export class Constant {
   public static GROUP_MANAGER: GroupManager;
   public static CONFIG: Config;
   public static init(): void {
+    LOGGER.info("Loading Constants...")
     this.PATH = String(Utils.getRoot());
     this.DATA_PATH = path.join(Utils.getRoot(), 'data');
     this.PLUGIN_PATH = path.join(Utils.getRoot(), 'plugins');

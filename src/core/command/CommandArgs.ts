@@ -44,6 +44,14 @@ export class CommandArgs {
   public merge(): any {
     return this.args.join('');
   }
+  public mergeWithSpace(): any {
+    let result = ``;
+    this.args.forEach(arg => {
+      result += `${arg} `;
+    });
+    result = result.trim();
+    return result;
+  }
 
   public get(index: number): any {
     return this.args[index];
@@ -84,6 +92,10 @@ export class CommandArgs {
   }
 
   public size(): number {
+    return this.args.length;
+  }
+
+  public length(): number {
     return this.args.length;
   }
 

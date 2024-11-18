@@ -4,9 +4,9 @@ import { Messages } from "../../../core/network/Messages";
 import path from "path";
 import { Utils } from "../../../core/utils/Utils";
 import { Files } from "../../../core/utils/Files";
-import { PluginListener } from "../../../core/plugins/Plugins";
 import { compareTwoStrings } from "../../../core/utils/StringSimilarity";
 import { CommandManager } from "../../../core/command/CommandManager";
+import {PluginListener} from "../../../core/plugins/PluginListener";
 
 export class MFFilters {
   public static lexical_group: string[] = [

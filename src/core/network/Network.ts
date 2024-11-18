@@ -4,8 +4,9 @@ import {Events} from "../event/Events";
 import {CommandManager} from "../command/CommandManager";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
-import {PluginEvent, PluginListener} from "../plugins/Plugins";
 import {GroupManager} from "../group/GroupManager";
+import {PluginEvent} from "../plugins/PluginEvent";
+import {PluginListener} from "../plugins/PluginListener";
 
 export class Network {
   public static handle(session: Session<User.Field, Channel.Field, Context>): void {

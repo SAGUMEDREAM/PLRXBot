@@ -32,6 +32,16 @@ export class Messages {
     session.sendQueued(h('quote', {id: message_id}) + message);
   }
 
+  public static deleteMessage(
+    session: Session<User.Field, Channel.Field, Context>,
+    message_id: string,
+    channel_id: string
+  ) {
+    let channelId = session.event.message.quote.channel.id;
+    let repId = session.event.message.quote.id;
+    session.bot.deleteMessage(channelId,repId);
+  }
+
   public static sendPrivateMessage(
     session: Session<User.Field, Channel.Field, Context>,
     user_id: number,
@@ -63,7 +73,9 @@ export class Messages {
   } {
     return h('quote', {id: message_id});
   }
-
+  public static isAtBot(session: Session<User.Field, Channel.Field, Context>): boolean {
+    return session.content.includes(`<at id=\"${session.bot.selfId}\"`);
+  }
   public static parse(session: Session<User.Field, Channel.Field, Context>): MessageData {
     let event = session.event;
     let user = event.user;

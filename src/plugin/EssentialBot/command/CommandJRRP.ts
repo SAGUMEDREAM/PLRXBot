@@ -9,7 +9,7 @@ export class CommandJRRP {
       let user = UserManager.get(session);
       let timeMessage = this.getTimeMessage();
       let result = '';
-      result += `${timeMessage}\n`;
+      result += `${timeMessage}，`;
       let luck = this.getDailyLuck(user);
       result += `你今天的运气值是: ${luck.toFixed(2)}\n`;
       result += (() => {
@@ -27,8 +27,8 @@ export class CommandJRRP {
         }
         return t;
       })();
-      result += `\n`;
-      result += Messages.image("https://img.paulzzh.com/touhou/random?site=yandere&size=wap&");
+      // result += `\n`;
+      // result += Messages.image("https://img.paulzzh.com/touhou/random?site=yandere&size=wap&");
       Messages.sendMessageToReply(session, result);
     });
   private getTimeMessage(): string {

@@ -5,7 +5,6 @@ import {CommandHelper} from "../CommandHelper";
 import {Utils} from "../../utils/Utils";
 import {UserProfile} from "../../user/UserProfile";
 import {Files} from "../../utils/Files";
-import fs from "fs";
 import path from "path";
 import {Constant} from "../../Constant";
 
@@ -304,7 +303,7 @@ export class CommandSudo {
         CommandProvider.leakArgs(session, args);
         return;
       }
-      Messages.sendMessageToReply(session,`${JSON.stringify(CommandHelper.parseCommand(c),null,2)}`);
+      Messages.sendMessageToReply(session,`${JSON.stringify(CommandHelper.parseCommandTreeToArray(c),null,2)}`);
     })
   ;
   public readonly root = new CommandProvider()

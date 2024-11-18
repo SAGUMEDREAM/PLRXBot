@@ -2,28 +2,49 @@ import {CommandProvider} from "./CommandProvider";
 import {CommandManager} from "./CommandManager";
 
 export class CommandHelper {
-  public static parseCommand(command: string = '') {
+  public static build(command: string, provider: CommandProvider) {
+    let commandManager: CommandManager = CommandManager.getInstance();
+    let provider_tree = commandManager.getCommandTree();
+    if (provider.getSubCommands().size === 0) {
+      provider_tree[command] = {
+        usage: `${command}${provider.getArgsString()}`
+      };
+    } else {
+      provider_tree[command] = {
+        usage: `${command}${provider.getArgsString()}`
+      };
+
+      this.buildSubCommands(provider.getSubCommands(), `${command}`);
+    }
+  }
+  public static buildSubCommands(subCommands: Map<string, CommandProvider>, parent: string) {
+    let commandManager: CommandManager = CommandManager.getInstance();
+    let provider_tree = commandManager.getCommandTree();
+    subCommands.forEach((subProvider: CommandProvider, subCommand: string) => {
+      const fullCommand = `${parent} ${subCommand}`;
+
+      if (subProvider.getSubCommands().size > 0) {
+        provider_tree[fullCommand] = {
+          usage: `${fullCommand}${subProvider.getArgsString()}`
+        };
+        this.buildSubCommands(subProvider.getSubCommands(), fullCommand);
+      } else {
+        provider_tree[fullCommand] = {
+          usage: `${fullCommand}${subProvider.getArgsString()}`
+        };
+      }
+    });
+  }
+  public static parseCommandTreeToArray(command: string = '') {
     const instance = CommandManager.getInstance();
-    const provider = instance.getProvider().get(command);
-    return CommandHelper.parse(provider, command);
+    let matching = [];
+    let tree = instance.getCommandTree();
+    Object.keys(tree).forEach((key: string) => {
+      let value = tree[key];
+      if(key.toLowerCase().includes(command.toLowerCase())) {
+        matching.push(value.usage);
+      }
+    });
+    return matching;
   }
-  public static parse(provider: CommandProvider, command: string = ''): any {
-    const result: any = {
-      command,
-      registry_key: command,
-      sub_commands: {},
-    };
-
-    try {
-      provider.getSubCommands().forEach((subProvider, subCommand) => {
-        const subCommandKey = `${command} ${subCommand}`.trim();
-        result.sub_commands[subCommand] = this.parse(subProvider, subCommandKey);
-      });
-
-      result.registry_key = result.registry_key.replaceAll(' ', '.');
-      result.command = command + provider.getArgsString();
-    } catch (err) {}
-    return result;
-  }
-
 }

@@ -39,7 +39,7 @@ export class DataFixerBuilder {
     return this;
   }
 
-  public isFrozen(): boolean {
+  public isConfirm(): boolean {
     return this.confirm;
   }
 

@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import { Messages } from "../../../core/network/Messages";
 import { Files } from "../../../core/utils/Files";
 import { Utils } from "../../../core/utils/Utils";
+import {SheetYears} from "../sheets/SheetYears";
 
 export class CommandTHSearch {
   public static readonly cache_path = path.resolve(
@@ -56,7 +57,7 @@ export class CommandTHSearch {
   private async fetchAndCacheData(): Promise<any[]> {
     const nowTimestamp = Date.now();
     const apiResults = await Promise.all(
-      this.apiBeta.map((url) =>
+      SheetYears.thonly_sheets_api.map((url) =>
         fetch(url)
           .then((response) => response.json())
           .then((data) => this.processAPIData(data, nowTimestamp))

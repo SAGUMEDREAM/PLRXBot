@@ -1,6 +1,7 @@
 import {ItemEntry} from "./ItemEntry";
 import {UserProfile} from "../../../core/user/UserProfile";
 import {Items} from "./Items";
+import {CustomDataInstance} from "../../../core/data/CustomDataInstance";
 
 export class ItemStack {
   protected registry_key: string;
@@ -29,10 +30,11 @@ export class ItemStack {
     return this.count;
   }
 }
-export class Inventory {
+export class Inventory extends CustomDataInstance {
   private userProfile: UserProfile;
   public itemStacks: ItemStack[] = new Array<ItemStack>();
   public constructor(userProfile: UserProfile) {
+    super(userProfile);
     this.userProfile = userProfile;
     this.init();
   }

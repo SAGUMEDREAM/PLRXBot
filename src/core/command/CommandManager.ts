@@ -19,10 +19,12 @@ export class CommandManager {
   private constructor() {}
   private static readonly INSTANCE = new CommandManager();
   private providers: Map<string, CommandProvider> = new Map();
+  private readonly provider_tree: { [key: string]: any } = {};
   public static create(): CommandManager {
     const instance = CommandManager.getInstance();
     instance.registerCommand("$sudo", CommandSudo.get());
-    LOGGER.info("Loading CommandParse System...")
+    LOGGER.info("Loading CommandManager...")
+    LOGGER.info("Loading CommandTree System...")
     return this.INSTANCE;
   }
   /*public static create(): CommandManager {
@@ -141,6 +143,7 @@ export class CommandManager {
     this.providers.set(command, provider);
     provider.setPrimaryKey(provider);
     provider.setRegistryKey(command);
+    CommandHelper.build(command, provider);
   }
   public static registerSimpleCommand(
     command: string,
@@ -151,9 +154,46 @@ export class CommandManager {
       provider.requires(permissionCallback);
     }
     instance.registerCommand(command, provider);
+    CommandHelper.build(command, provider);
   }
   public getProvider() {
     return this.providers;
+  }
+  // 暂时弃用
+  public buildCommandTree() {
+    this.providers.forEach((provider: CommandProvider, command_root: string) => {
+      if (provider.getSubCommands().size === 0) {
+        this.provider_tree[command_root] = {
+          usage: `${command_root}${provider.getArgsString()}`
+        };
+      } else {
+        this.provider_tree[command_root] = {
+          usage: `${command_root}${provider.getArgsString()}`
+        };
+
+        this.buildSubCommands(provider.getSubCommands(), `${command_root}`);
+      }
+    });
+  }
+
+  protected buildSubCommands(subCommands: Map<string, CommandProvider>, parent: string) {
+    subCommands.forEach((subProvider: CommandProvider, subCommand: string) => {
+      const fullCommand = `${parent} ${subCommand}`;
+
+      if (subProvider.getSubCommands().size > 0) {
+        this.provider_tree[fullCommand] = {
+          usage: `${fullCommand}${subProvider.getArgsString()}`
+        };
+        this.buildSubCommands(subProvider.getSubCommands(), fullCommand);
+      } else {
+        this.provider_tree[fullCommand] = {
+          usage: `${fullCommand}${subProvider.getArgsString()}`
+        };
+      }
+    });
+  }
+  public getCommandTree() {
+    return this.provider_tree;
   }
   public parseCommand(session: Session<User.Field,Channel.Field,Context>): void {
     const input = session.content;

@@ -4,8 +4,9 @@ import {Start} from "./core/Start";
 import {UserManager} from "./core/user/UserManager";
 import {Filters} from "./core/utils/Filters";
 import {Network} from "./core/network/Network";
-import {PluginEvent, PluginListener} from "./core/plugins/Plugins";
 import {GroupManager} from "./core/group/GroupManager";
+import {PluginEvent} from "./core/plugins/PluginEvent";
+import {PluginListener} from "./core/plugins/PluginListener";
 
 export const LOGGER: Logger = new Logger("@kisin-reimu/bot");
 export let ctxInstance: Context = null;

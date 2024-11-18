@@ -4,16 +4,14 @@ import {Channel, User} from "@koishijs/core";
 import {BaseUserProfile} from "./BaseUserProfile";
 import {UserManager} from "./UserManager";
 import {DataFixerBuilder} from "../data/DataFixerBuilder";
-import {PluginEvent, PluginListener} from "../plugins/Plugins";
+import {PluginEvent} from "../plugins/PluginEvent";
+import {PluginListener} from "../plugins/PluginListener";
 
 export class UserProfile {
   public profile: BaseUserProfile;
   public path: string;
   public static dataFixer = DataFixerBuilder.createBuilder("user_profile")
-    .createDataKey("sign_system",{"timestamp": 0})
-    .createDataKey("inventory",[])
     .createDataKey("next_message",{"open": false, "message": null, "state": 0 })
-    .createDataKey("lucky_seed", 0)
     .build();
 
   constructor(path: string);
@@ -79,9 +77,10 @@ export class UserProfile {
   }
   public loadModule(): void {
     PluginListener.emit(PluginEvent.LOADING_PROFILE, null, this);
+    this.dataFixer();
   }
   public dataFixer(): void {
-    if(!UserProfile.dataFixer.isFrozen()) {
+    if(!UserProfile.dataFixer.isConfirm()) {
       throw new Error("No data-fixer has been built");
     }
     for (const [key, fixer] of UserProfile.dataFixer.all()) {

@@ -5,7 +5,7 @@ import {Utils} from "../../../core/utils/Utils";
 export class CommandLeaveMessage {
   public root = new CommandProvider()
     .onExecute((session, args) => {
-      let text = '';
+      let text = `💬💬💬\n${Messages.at(807131829)}\n`;
       text += `账号:${session.event.user.name}(${session.event.user.id})\n`;
       text += `留言:\n`
       {

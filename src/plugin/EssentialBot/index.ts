@@ -12,14 +12,22 @@ import {CommandLeaveMessage} from "./command/CommandLeaveMessage";
 import {CommandCommandHelper} from "./command/CommandHelper";
 import {CommandAbout} from "./command/CommandAbout";
 import {CommandOS} from "./command/CommandOS";
-import {PluginEvent, PluginListener} from "../../core/plugins/Plugins";
 import {Messages} from "../../core/network/Messages";
 import {CommandJRRP} from "./command/CommandJRRP";
 import {CommandGroupSearch} from "./command/CommandGroupSearch";
+import {CommandGoogleSheetEditor} from "./command/CommandGoogleSheetEditor";
+import {LilyShortLink} from "./lilywhite/LilyShortLink";
+import {UserProfile} from "../../core/user/UserProfile";
+import {EcoSystem} from "./eco/Eco";
+import {Inventory} from "../Inventories/item/Inventory";
+import {PluginEvent} from "../../core/plugins/PluginEvent";
+import {PluginListener} from "../../core/plugins/PluginListener";
+import {CustomDataFactory} from "../../core/data/CustomDataFactory";
+import {CommandTHPicture} from "./command/CommandTHPicture";
 
-export class EssentialsM extends PluginInitialization {
+export class EssentialBot extends PluginInitialization {
   constructor() {
-    super("essentials_m");
+    super("essential_bot");
   }
   public load(): void {
     const instance = CommandManager.getInstance();
@@ -70,12 +78,31 @@ export class EssentialsM extends PluginInitialization {
     instance.registerCommand("/活动搜索", CommandTHSearch.get());
     instance.registerCommand("/搜索群组", CommandGroupSearch.get());
     instance.registerCommand("/群组搜索", CommandGroupSearch.get());
+    // instance.registerCommand("/活动表格",CommandGoogleSheetEditor.get());
     instance.registerCommand("/lily", CommandLilySearch.get());
     instance.registerCommand("/莉莉云", CommandLilySearch.get());
     instance.registerCommand("/about", CommandAbout.get());
     instance.registerCommand("/jrrp", CommandJRRP.get());
     instance.registerCommand("/今日人品", CommandJRRP.get());
+    instance.registerCommand("/随机东方图", CommandTHPicture.get());
+    instance.registerCommand("/random_touhou", CommandTHPicture.get());
     instance.registerCommand("/关于", CommandAbout.get());
     instance.registerCommand("/os", CommandOS.get());
+
+    CustomDataFactory.createKey("sign_system",{"timestamp": 0})
+    CustomDataFactory.createKey("lucky_seed", 0);
+    CustomDataFactory.createKey("eco_system", {"balance": 0});
+
+    // 经济系统
+    PluginListener.on(PluginEvent.LOADING_PROFILE, this.plugin_id, (session, args) => {
+      const user: UserProfile = args;
+      user["INSTANCE_ECO"] = new EcoSystem(user);
+    });
+    PluginListener.on(PluginEvent.SAVING_PROFILE, this.plugin_id, (session, args) => {
+      const user: UserProfile = args;
+      const instance: EcoSystem = user.getCustom("INSTANCE_ECO");
+      if(instance && instance.save) instance.save();
+    });
+    //LilyShortLink.start();
   }
 }

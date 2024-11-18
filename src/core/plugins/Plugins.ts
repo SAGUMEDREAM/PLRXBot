@@ -1,68 +1,9 @@
-import { PluginInitialization } from "./PluginInitialization";
-import { PluginFiles } from "./PluginFiles";
-import { Context, Session } from "koishi";
-import { Channel, User } from "@koishijs/core";
+import {PluginInitialization} from "./PluginInitialization";
+import {PluginEvent} from "./PluginEvent";
+import {PluginListener} from "./PluginListener";
+import {PluginLoader} from "../../plugin/PluginLoader";
+import {LOGGER} from "../../index";
 
-type PluginListenerFunction = (session: Session<User.Field, Channel.Field, Context>, ...args: any[]) => void;
-
-export enum PluginEvent {
-  HANDLE_MESSAGE,             // 接收消息
-  HANDLE_MESSAGE_BEFORE,      // 接收消息之前
-  HANDLE_MESSAGE_AFTER,       // 接收消息之后
-  LOADING_PROFILE,            // 加载用户数据
-  LOADING_GROUP_DATA,         // 加载群组数据
-  SAVING_PROFILE,             // 保存用户数据
-  SAVING_GROUP_DATA,          // 保存群组数据
-  REQUEST_FRIEND,             // 收到申请好友
-  INVITED_TO_GROUP,           // 收到邀请加群
-  BOT_JOIN_GROUP,             // 机器人账号加入群组
-  MEMBER_JOIN_GROUP,         // 新成员加入群组
-  MEMBER_REQUEST_JOIN_GROUP, // 收到加群请求
-  PLUGIN_ENABLED,            // 插件加载
-  PLUGIN_DISABLED,           // 插件卸载
-}
-
-type PluginEventListener = { pluginId?: string; listener: PluginListenerFunction };
-
-export class PluginListener {
-  public static Events: Map<PluginEvent, PluginEventListener[]> = new Map<PluginEvent, PluginEventListener[]>();
-
-  public static on(event: PluginEvent, pluginId: string | PluginInitialization, listener: PluginListenerFunction): void {
-    let arg: string;
-
-    if (pluginId instanceof PluginInitialization) {
-      arg = pluginId.plugin_id;
-    } else {
-      arg = pluginId;
-    }
-
-    const listeners = this.Events.get(event) || [];
-    listeners.push({ pluginId: arg, listener });
-    this.Events.set(event, listeners);
-  }
-
-  public static onEnable(pluginId: string | PluginInitialization, listener: PluginListenerFunction) {
-    this.on(PluginEvent.PLUGIN_ENABLED, pluginId, listener);
-  }
-  public static onDisable(pluginId: string | PluginInitialization, listener: PluginListenerFunction) {
-    this.on(PluginEvent.PLUGIN_DISABLED, pluginId, listener);
-  }
-
-  public static emit(event: PluginEvent, session?: Session<User.Field, Channel.Field, Context>, ...args: any[]): void {
-    const listeners = this.Events.get(event);
-    if (listeners) {
-      listeners.forEach(({ pluginId, listener }) => {
-        if (!Plugins.isDisabled(pluginId)) {
-          listener(session, ...args);
-        }
-      });
-    }
-  }
-
-  public static cancel() {
-    throw null;
-  }
-}
 
 export class Plugins {
   private static PluginMap: Map<string, PluginInitialization> = new Map<string, PluginInitialization>();
@@ -71,14 +12,16 @@ export class Plugins {
   public static init(): void {}
 
   public static register(Initialization: PluginInitialization) {
-    try {this.PluginMap.set(Initialization.plugin_id, Initialization);} catch (e) {}
+    try {this.PluginMap.set(Initialization.plugin_id, Initialization);} catch (e) {LOGGER.error(e)}
   }
 
   public static load() {
-    PluginFiles.load();
-    this.PluginMap.forEach((Initialization) => {
-      Initialization.load();
+    PluginLoader.load();
+    this.PluginMap.forEach((initialization) => {
+      initialization.load();
+      initialization.pluginLogger.info("Loading Complete")
     });
+    LOGGER.info("Loading Plugin Complete");
   }
 
   public static enable(pluginId: string) {
@@ -95,7 +38,9 @@ export class Plugins {
       PluginListener.emit(PluginEvent.PLUGIN_DISABLED, null, pluginId);
     }
   }
-
+  public static isEnabled(pluginId: string): boolean {
+    return this.PluginMap.has(pluginId);
+  }
   public static isDisabled(pluginId: string): boolean {
     return this.DisabledPluginId.includes(pluginId);
   }
