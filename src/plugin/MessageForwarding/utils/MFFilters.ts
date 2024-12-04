@@ -16,7 +16,11 @@ export class MFFilters {
     "活动群",
     "摊主群",
     "举办时间",
-    "举办地点"
+    "举办地点",
+    "一宣",
+    "二宣",
+    "三宣",
+    "终宣"
   ];
 
   public static MFCache: string[] = [];

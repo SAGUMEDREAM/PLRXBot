@@ -1,6 +1,7 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {CommandHelper} from "../../../core/command/CommandHelper";
 import {Messages} from "../../../core/network/Messages";
+import {MessageMerging} from "../../../core/network/MessageMerging";
 
 export class CommandUsage {
   public root = new CommandProvider()
@@ -15,6 +16,7 @@ export class CommandUsage {
       if (!command.startsWith('/') && !command.startsWith('$')) {
         command = '/' + command;
       }
+      let merging = MessageMerging.create(session);
       let outputText = ``;
       let parsedCommand = CommandHelper.parseCommandTreeToArray(command);
 
@@ -26,8 +28,9 @@ export class CommandUsage {
           outputText += `➤${usage}\n`;
         });
       }
+      merging.put(outputText);
 
-      Messages.sendMessageToReply(session, outputText);
+      Messages.sendMessage(session, merging.get());
     });
   public static get(): CommandProvider {
     return new this().root;

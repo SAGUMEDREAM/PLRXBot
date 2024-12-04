@@ -1,5 +1,5 @@
 {
-  "timestamp": 1731245339548,
+  "timestamp": 1733249323508,
   "data": {
     "data": [
       {
@@ -14,13 +14,6 @@
         "group_name": "唐山东方project（721办唐山THP）",
         "event_name": "唐山THP",
         "group_id": "122315914",
-        "type": "扩展"
-      },
-      {
-        "city": "廊坊市",
-        "group_name": "第一回工联河城祭",
-        "event_name": "工联河城祭",
-        "group_id": "859097812",
         "type": "扩展"
       },
       {
@@ -502,7 +495,7 @@
       {
         "city": "广州市",
         "group_name": "东方木棉宴",
-        "event_name": "[[东方木棉宴]]",
+        "event_name": "",
         "group_id": "963252318",
         "type": "扩展"
       },
@@ -523,77 +516,77 @@
       {
         "city": "东莞市",
         "group_name": "东莞THO02-永夜玉壶天",
-        "event_name": "[[东莞THO]]",
+        "event_name": "",
         "group_id": "383095645",
         "type": "扩展"
       },
       {
         "city": "东莞市",
         "group_name": "东莞THP01-华莞风月映",
-        "event_name": "[[东莞THP]]",
+        "event_name": "",
         "group_id": "755436974",
         "type": "扩展"
       },
       {
         "city": "汕头市，揭阳市",
         "group_name": "潮汕THO-秘封粤东之旅",
-        "event_name": "[[潮汕THO]]",
+        "event_name": "",
         "group_id": "700076261",
         "type": "扩展"
       },
       {
         "city": "中山市",
         "group_name": "中山THP-逸仙香岐游",
-        "event_name": "[[中山THP]]",
+        "event_name": "",
         "group_id": "861629864",
         "type": "扩展"
       },
       {
         "city": "茂名市",
         "group_name": "7.14 粤西THP02～高凉逐海季 筹划中！",
-        "event_name": "[[粤西THP]]",
+        "event_name": "",
         "group_id": "300251596",
         "type": "扩展"
       },
       {
         "city": "湛江市",
         "group_name": "幻夢結社·湛江THP/东方同好群",
-        "event_name": "[[湛江THP]]",
+        "event_name": "",
         "group_id": "483024893",
         "type": "扩展"
       },
       {
         "city": "惠州市",
         "group_name": "惠州·客家Touhou一条围",
-        "event_name": "[[惠州THP]]",
+        "event_name": "",
         "group_id": "950810811",
         "type": "扩展"
       },
       {
         "city": "江门市",
         "group_name": "江门THP——南游归星桥",
-        "event_name": "[[江门THP]]",
+        "event_name": "",
         "group_id": "175110765",
         "type": "扩展"
       },
       {
         "city": "肇庆市",
         "group_name": "肇庆THP-东方端星宴",
-        "event_name": "[[肇庆THP]]",
+        "event_name": "",
         "group_id": "940790736",
         "type": "扩展"
       },
       {
         "city": "韶关市",
         "group_name": "韶关THP～恋上丹霞",
-        "event_name": "[[韶关THP]]",
+        "event_name": "",
         "group_id": "667169623",
         "type": "扩展"
       },
       {
         "city": "珠海市",
         "group_name": "珠海THP——香海寻浪",
-        "event_name": "[[珠海THP]]",
+        "event_name": "",
         "group_id": "571188233",
         "type": "扩展"
       },
@@ -658,13 +651,6 @@
         "group_name": "成都THO官方交流群",
         "event_name": "成都THO",
         "group_id": "666047217",
-        "type": "扩展"
-      },
-      {
-        "city": "成都市",
-        "group_name": "成都高联THP《东方锦游录》游客交流群",
-        "event_name": "成都THP",
-        "group_id": "923113251",
         "type": "扩展"
       },
       {
@@ -819,6 +805,13 @@
         "group_name": "河大车车人根据地|",
         "event_name": "河北大学",
         "group_id": "790169068",
+        "type": "扩展"
+      },
+      {
+        "city": "保定市",
+        "group_name": "华电车万草丛",
+        "event_name": "华北电力大学(保定)",
+        "group_id": "434062880",
         "type": "扩展"
       },
       {
@@ -2621,6 +2614,13 @@
         "type": "扩展"
       },
       {
+        "city": "黄石市",
+        "group_name": "黄二车万群：东方永夜抄作业",
+        "event_name": "黄石市第二中学",
+        "group_id": "571881185",
+        "type": "扩展"
+      },
+      {
         "city": "襄阳市",
         "group_name": "湖北文理学院东方project交流群",
         "event_name": "湖北文理学院",
@@ -2783,7 +2783,7 @@
       },
       {
         "city": "湘潭市",
-        "group_name": "湖南科技大学车万俱乐部！\u003C新群名征集中\u003E",
+        "group_name": "湖南科技大学车万俱乐部！<新群名征集中>",
         "event_name": "湖南科技大学",
         "group_id": "562300847",
         "type": "扩展"
@@ -2860,8 +2860,8 @@
       },
       {
         "city": "常德市",
-        "group_name": "东方·芷兰苑",
-        "event_name": "常德市芷兰实验学校",
+        "group_name": "東方•芷兰苑•常德中学联合",
+        "event_name": "常德市芷兰实验学校以及其他高中",
         "group_id": "805812218",
         "type": "扩展"
       },
@@ -3721,7 +3721,7 @@
       },
       {
         "city": "成都市",
-        "group_name": "红社东方养老院",
+        "group_name": "红社车万养老院",
         "event_name": "四川大学",
         "group_id": "329099180",
         "type": "扩展"
@@ -4162,7 +4162,7 @@
       },
       {
         "city": "兰州市",
-        "group_name": "兰州交大东方同好会|",
+        "group_name": "兰州交大东方同好会",
         "event_name": "兰州交通大学",
         "group_id": "740983483",
         "type": "扩展"
@@ -4183,7 +4183,7 @@
       },
       {
         "city": "兰州市",
-        "group_name": "西北民大爱丽丝幻乐团|",
+        "group_name": "妖怪之山第一铸牢红魔馆|",
         "event_name": "西北民族大学",
         "group_id": "433911658",
         "type": "扩展"
@@ -4296,672 +4296,672 @@
       {
         "city": "音乐",
         "group_name": "(Yonder Voice橘子群)",
-        "event_name": "[[Yonder Voice]]",
+        "event_name": "",
         "group_id": "84361678",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "bunny rhyTHm这个群好吃",
-        "event_name": "[[bunny rhyTHm]]",
+        "event_name": "",
         "group_id": "237278756",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "Echollapsar茶水间",
-        "event_name": "[[Echollapsar]]",
+        "event_name": "",
         "group_id": "553806901",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "❖TsuBaKi❖",
-        "event_name": "[[TsuBaKi]]",
+        "event_name": "",
         "group_id": "367262121",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "Static World",
-        "event_name": "[[Static World]]",
+        "event_name": "",
         "group_id": "632495487",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "MhT疯帽子头像是鸡被打",
-        "event_name": "[[疯帽子茶会]]",
+        "event_name": "",
         "group_id": "274112377",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "akanebane 赤音羽 @上海CP 东京C97",
-        "event_name": "[[赤音羽]]",
+        "event_name": "",
         "group_id": "290761129",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "梦现彼岸结界社交流群·新紀神仮説",
-        "event_name": "[[梦现彼岸结界社]]",
+        "event_name": "",
         "group_id": "782279452",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "紫羅蘭牛夜 碎251",
-        "event_name": "[[Matthiola Records]]",
+        "event_name": "",
         "group_id": "284307352",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "二重嗜睡症zzz",
-        "event_name": "[[DualInsomiNa]]",
+        "event_name": "",
         "group_id": "629855346",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "Kigen shiki.綺言式",
-        "event_name": "[[绮言式|Kigen shiki.绮言式]]",
+        "event_name": "",
         "group_id": "737925232",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "A-One Fan Group",
-        "event_name": "[[A-One]]",
+        "event_name": "",
         "group_id": "577541797",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "GET IN THE RING交流应援群",
-        "event_name": "[[GET IN THE RING]]",
+        "event_name": "",
         "group_id": "669194985",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "CREST后援(划掉美食群",
-        "event_name": "[[Crest]]",
+        "event_name": "",
         "group_id": "579885198",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "心界巡回合结束",
-        "event_name": "[[心界巡回]]",
+        "event_name": "",
         "group_id": "650161294",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "優曇華 同音交流群",
-        "event_name": "[[優曇華]]",
+        "event_name": "",
         "group_id": "712874988",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "纽约花残月&昼",
-        "event_name": "[[纽约花残月]]，[[昼Plan]]",
+        "event_name": "，",
         "group_id": "260836338",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "❤️地狱高级会所！支离破碎才能挣脱枷锁！❤️",
-        "event_name": "[[地狱超甜]]",
+        "event_name": "",
         "group_id": "370789652",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "彩虹鸢尾爱丽丝のIris",
-        "event_name": "[[Iris（同人社团）|Iris]]",
+        "event_name": "",
         "group_id": "895593910",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "Lunaire 月相 「西安アオイ幻楽団」",
-        "event_name": "[[月相]]",
+        "event_name": "",
         "group_id": "719033528",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "琉光溢彩 昨天青t",
-        "event_name": "[[Coloured Glaze（琉光溢彩）|Coloured Glaze]]",
+        "event_name": "",
         "group_id": "733911391",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "CLIP SOUNDS",
-        "event_name": "[[Clip Sounds]]",
+        "event_name": "",
         "group_id": "129746771",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "A-TOHO Records/某社交流群",
-        "event_name": "[[A-Toho Records]]",
+        "event_name": "",
         "group_id": "587131033",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "秋雨社☆",
-        "event_name": "[[Akisame]]",
+        "event_name": "",
         "group_id": "970821209",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "有顶天下想桃子【cp新本工事中】",
-        "event_name": "[[有顶天（同人社团）|有顶天]]",
+        "event_name": "",
         "group_id": "377049731",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "声卡爱le音le厅",
-        "event_name": "[[Soundcard Symphony Orchestra]]",
+        "event_name": "",
         "group_id": "626709393",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "NFT conFuoco Orchestra",
-        "event_name": "[[NFT conFuoco Orchestra]]",
+        "event_name": "",
         "group_id": "633682953",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "Scharlachrot Kammermusik",
-        "event_name": "[[Scharlachrot Kammermusik]]",
+        "event_name": "",
         "group_id": "672116846",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "楓霊管弦室内le",
-        "event_name": "[[楓霊室乐团]]",
+        "event_name": "",
         "group_id": "892762790",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "境界36号社团交流会",
-        "event_name": "[[境界36号]]",
+        "event_name": "",
         "group_id": "908632922",
         "type": "扩展"
       },
       {
         "city": "音乐",
         "group_name": "猫与催眠术的小窝",
-        "event_name": "[[猫与催眠术]]",
+        "event_name": "",
         "group_id": "647866210",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "华胥三绝书友会",
-        "event_name": "[[THB梦缘编辑部]]",
+        "event_name": "",
         "group_id": "216847455",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "《东方寓梦粹》交流群",
-        "event_name": "[[东方寓梦粹]]",
+        "event_name": "",
         "group_id": "672209145",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "《醉梦笔笺》交流群",
-        "event_name": "[[醉梦笔笺]]",
+        "event_name": "",
         "group_id": "832231050",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "幻想跃迁实验室",
-        "event_name": "[[幻想跃迁实验室]]",
+        "event_name": "",
         "group_id": "654912067",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "蔷薇星海",
-        "event_name": "[[蔷薇星海]]",
+        "event_name": "",
         "group_id": "811841038",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "氷精の氷屋",
-        "event_name": "[[冰精的冰屋]]",
+        "event_name": "",
         "group_id": "493950744",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "東方文化學刊書友群",
-        "event_name": "[[恆萃工坊]]",
+        "event_name": "",
         "group_id": "562527520",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "1569 chuchu🥳",
-        "event_name": "[[1569]]",
+        "event_name": "",
         "group_id": "596766498",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "TLOS交流群",
-        "event_name": "[[星之实验室~the laboratory of stars~]]",
+        "event_name": "",
         "group_id": "956010659",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "東方淑茗齋-同人文图交流频道",
-        "event_name": "[[东方淑茗斋]]",
+        "event_name": "",
         "group_id": "747274078",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "阿求的魔法书",
-        "event_name": "[[阿求的魔法书]]",
+        "event_name": "",
         "group_id": "668567350",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "因幡帝汉化组粉丝交流群",
-        "event_name": "[[因幡帝汉化组]]",
+        "event_name": "",
         "group_id": "765718008",
         "type": "扩展"
       },
       {
         "city": "同人志",
         "group_name": "浊浪文工团甲板",
-        "event_name": "[[浊浪文工团]]",
+        "event_name": "",
         "group_id": "222630498",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "不可思议的幻想乡TODR",
-        "event_name": "[[不思議の幻想郷TOD_-RELOADED-|不可思议的幻想乡TODR]]",
+        "event_name": "",
         "group_id": "495801254",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "东方雪莲华围观交流群",
-        "event_name": "[[雨夜枫雪制作组]]",
+        "event_name": "",
         "group_id": "451304793",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "樱游社交流群",
-        "event_name": "[[樱游社]]",
+        "event_name": "",
         "group_id": "50781618",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "【恋与催稿人】甲级恋厨集中营",
-        "event_name": "[[第零研究院]]",
+        "event_name": "",
         "group_id": "458232866",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "东方梦无垠在做了",
-        "event_name": "[[实界]]",
+        "event_name": "",
         "group_id": "739019465",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "东方远空界交流围观群",
-        "event_name": "[[东方远空界制作组]]",
+        "event_name": "",
         "group_id": "1142180207",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "茶ステーキ屋",
-        "event_name": "[[茶ステーキ屋]]",
+        "event_name": "",
         "group_id": "678617513",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "此幻社～The Gensou",
-        "event_name": "[[此幻社]]",
+        "event_name": "",
         "group_id": "650627587",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "夕夜茶寮~Before darkness",
-        "event_name": "[[夕夜歌]]",
+        "event_name": "",
         "group_id": "632899323",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "东方project★韵命輪",
-        "event_name": "[[灰色童话-gloomy fairy tale]]",
+        "event_name": "",
         "group_id": "376209483",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "Mount Mysterious Team 官方围观群",
-        "event_name": "[[Mount Mysterious Team]]",
+        "event_name": "",
         "group_id": "1076439742",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "狐窝",
-        "event_name": "[[琪露诺的末世之旅]]",
+        "event_name": "",
         "group_id": "936546450",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "妖怪报社～玄武之沢新闻交流室",
-        "event_name": "[[玄武之沢新闻社]]",
+        "event_name": "",
         "group_id": "726242434",
         "type": "扩展"
       },
       {
         "city": "游戏",
         "group_name": "Fantasy发电站",
-        "event_name": "[[东方离散集整活群]]",
+        "event_name": "",
         "group_id": "858747168",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "韭氏早点～東方冇用",
-        "event_name": "[[韭文社]]",
+        "event_name": "",
         "group_id": "600639013",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "Alice手工坊",
-        "event_name": "[[Alice手工坊]]",
+        "event_name": "",
         "group_id": "497932110",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "红茶馆凉了怎么办",
-        "event_name": "[[油库里红茶馆]]",
+        "event_name": "",
         "group_id": "632314056",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "THP东方栗子研讨会",
-        "event_name": "[[Two Hearts Project]]",
+        "event_name": "",
         "group_id": "586496791",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "AUTOSAKURA同好会",
-        "event_name": "[[AUTOSAKURA]]",
+        "event_name": "",
         "group_id": "905057577",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "小风的拼豆小铺",
-        "event_name": "[[小风的拼豆幻想]]",
+        "event_name": "",
         "group_id": "1061258956",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "八云工坊五金店",
-        "event_name": "[[八云工坊]]",
+        "event_name": "",
         "group_id": "976750151",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "八云啤酒屋🍺",
-        "event_name": "[[八云馆Yakumobar]]",
+        "event_name": "",
         "group_id": "157677101",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "鬼与仙人の集萃坊",
-        "event_name": "[[鬼与仙人的集萃坊]]",
+        "event_name": "",
         "group_id": "946825508",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "东方明觉苑",
-        "event_name": "[[東方元素印象]]",
+        "event_name": "",
         "group_id": "534920527",
         "type": "扩展"
       },
       {
         "city": "周边",
         "group_name": "有顶天变电站",
-        "event_name": "[[有顶天变电站]]",
+        "event_name": "",
         "group_id": "795355401",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "夢幻泡影吹水基地",
-        "event_name": "[[梦幻泡影]]",
+        "event_name": "",
         "group_id": "1134712173",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "东方吃喝睡--无锡东方聚会",
-        "event_name": "[[东方吃喝睡]]",
+        "event_name": "",
         "group_id": "1065698357",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "花昙书社",
-        "event_name": "[[花昙书社]]",
+        "event_name": "",
         "group_id": "249982898",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "惟茉的鸽屋",
-        "event_name": "[[鸽屋谷]]",
+        "event_name": "",
         "group_id": "807649661",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "唯心主义idealism的小可爱们",
-        "event_name": "[[唯心主义idealism]]",
+        "event_name": "",
         "group_id": "940286923",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "绯想天万能事务所",
-        "event_name": "[[绯想事务所]]",
+        "event_name": "",
         "group_id": "1157140014",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "绯春研究会◇IUtaLive2D",
-        "event_name": "[[绯春研究会]]",
+        "event_name": "",
         "group_id": "278335721",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "镜中箱庭",
-        "event_name": "[[镜中箱庭]]",
+        "event_name": "",
         "group_id": "798498873",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "上海大学东方文化研讨",
-        "event_name": "[[上东研]]",
+        "event_name": "",
         "group_id": "157995733",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "VERONICA 信息共享群",
-        "event_name": "[[Veronica]]",
+        "event_name": "",
         "group_id": "463873911",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "白玉家常小炒",
-        "event_name": "[[白玉家常小炒]]",
+        "event_name": "",
         "group_id": "879615694",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "小饿馍烹饪学校☆灿华幻梦分校",
-        "event_name": "[[灿华幻梦]]",
+        "event_name": "",
         "group_id": "805380192",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "『永文日报』编辑部",
-        "event_name": "[[永文日报]]",
+        "event_name": "",
         "group_id": "755640981",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "魂误尺素书 ~ Lost Letters in Paradise",
-        "event_name": "[[魂误尺素书]]",
+        "event_name": "",
         "group_id": "629777387",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "【流星计划】交流群",
-        "event_name": "[[流星计划]]",
+        "event_name": "",
         "group_id": "1073782618",
         "type": "扩展"
       },
       {
         "city": "综合",
         "group_name": "不会日文机翻组",
-        "event_name": "[[不会日文机翻组]]",
+        "event_name": "",
         "group_id": "517404806",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "槐南一条街",
-        "event_name": "[[槐南茶馆]]",
+        "event_name": "",
         "group_id": "719153880",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "Oriental DansoKyo交流裙！",
-        "event_name": "[[Oriental DansoKyo]]",
+        "event_name": "",
         "group_id": "790854878",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "人间之里湁潗苑温泉",
-        "event_name": "[[人间之里湁潗苑]]",
+        "event_name": "",
         "group_id": "209842516",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "喵玉殿技术部 ~ [节气]",
-        "event_name": "[[喵玉殿技术部]]",
+        "event_name": "",
         "group_id": "194561106",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "CureLancy！",
-        "event_name": "[[Curelancy！]]",
+        "event_name": "",
         "group_id": "877397911",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "东方译闻麓翻译学院",
-        "event_name": "[[东方译闻麓]]",
+        "event_name": "",
         "group_id": "1033278190",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "幻想乡数学能力认证测试交流群",
-        "event_name": "[[八云的魔法书]]",
+        "event_name": "",
         "group_id": "1080353942",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "周期性白日梦 新年大家发大财群",
-        "event_name": "[[周期性白日梦]]",
+        "event_name": "",
         "group_id": "772933514",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "Unknown Lily & 玲车漂移汉化",
-        "event_name": "[[Unknown Lily]]",
+        "event_name": "",
         "group_id": "722588384",
         "type": "扩展"
       },
       {
         "city": "其他",
         "group_name": "「东方同人二次创作研究所」社团群",
-        "event_name": "[[东方同人二次创作研究所]]",
+        "event_name": "",
         "group_id": "215754084",
         "type": "扩展"
       },
       {
         "city": "MC服务器",
         "group_name": "MC幻想乡-红魔馆",
-        "event_name": "[[MineCraft幻想乡]]",
+        "event_name": "",
         "group_id": "580191391",
         "type": "扩展"
       },
@@ -4989,42 +4989,42 @@
       {
         "city": "同人游戏",
         "group_name": "东方异文石P1（HD版）",
-        "event_name": "[[东方异文石:RE]]",
+        "event_name": "",
         "group_id": "615565567",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "逐梦东方圈玩家群",
-        "event_name": "[[逐梦东方圈]]",
+        "event_name": "",
         "group_id": "327621825",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "幻想郷萃夜祭官方粉丝群",
-        "event_name": "[[幻想郷萃夜祭]]",
+        "event_name": "",
         "group_id": "757439913",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "东方大战争欢乐1群",
-        "event_name": "[[东方大战争 ~ Touhou Big Big Battle]]",
+        "event_name": "",
         "group_id": "691028686",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "东方lostword中文官方游戏群",
-        "event_name": "[[东方LostWord]]",
+        "event_name": "",
         "group_id": "618650091",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "大家の幻想鄉  游戏群1",
-        "event_name": "[[大家的幻想乡]]",
+        "event_name": "",
         "group_id": "193985066",
         "type": "扩展"
       },
@@ -5059,14 +5059,14 @@
       {
         "city": "同人游戏",
         "group_name": "《东方梦想曲》游戏交流群",
-        "event_name": "[[东方梦想曲]]",
+        "event_name": "",
         "group_id": "872266253",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "东方百问答题交流群",
-        "event_name": "[[东方百问]]",
+        "event_name": "",
         "group_id": "538159720",
         "type": "扩展"
       },
@@ -5080,7 +5080,7 @@
       {
         "city": "同人游戏",
         "group_name": "【幻想乡随想曲～The Beautiful Dream Of Oblivion】闲聊群",
-        "event_name": "[[幻想乡随想曲]]",
+        "event_name": "",
         "group_id": "223453636",
         "type": "扩展"
       },
@@ -5094,42 +5094,42 @@
       {
         "city": "同人游戏",
         "group_name": "\"射命丸文的酉间坊纪行\"东方3D剧情向同人游戏官方玩家群",
-        "event_name": "[[射命丸文的酉间坊纪行|酉间坊官方玩家群]]",
+        "event_name": "",
         "group_id": "439182576",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "THD2 Lunatic新手交流群",
-        "event_name": "[[东方DOTS·续·桃花岛]]",
+        "event_name": "",
         "group_id": "474907856",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "THD2 Wiki编辑群|",
-        "event_name": "[[东方DOTS·续·桃花岛]]",
+        "event_name": "",
         "group_id": "769190909",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "千年幻想乡~ HistoryOfDove",
-        "event_name": "[[东方决斗乡]]",
+        "event_name": "",
         "group_id": "285600354",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "东方游戏鉴赏组（东游鉴）",
-        "event_name": "[[东游鉴]]",
+        "event_name": "",
         "group_id": "636094703",
         "type": "扩展"
       },
       {
         "city": "同人游戏",
         "group_name": "S若鹭姬很美味的演舞乡",
-        "event_name": "[[幻想人形演舞]]",
+        "event_name": "",
         "group_id": "296757181",
         "type": "扩展"
       },
@@ -5143,7 +5143,7 @@
       {
         "city": "技术交流",
         "group_name": "巴瓦鲁魔法服务器",
-        "event_name": "[[PatchyVideo]]",
+        "event_name": "",
         "group_id": "757676234",
         "type": "扩展"
       },
@@ -5157,7 +5157,7 @@
       {
         "city": "技术交流",
         "group_name": "【乡里奇谈】交流群",
-        "event_name": "[[乡里奇谈]]",
+        "event_name": "",
         "group_id": "798734919",
         "type": "扩展"
       },

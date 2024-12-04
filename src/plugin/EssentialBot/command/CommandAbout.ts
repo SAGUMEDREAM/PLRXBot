@@ -14,8 +14,9 @@ export class CommandAbout {
       result += `💬 开发群：863842932\n`;
       result += `👨‍💻 开发/代码：稀神灵梦\n`;
 
-      Messages.sendMessageToReply(session,result);
+      Messages.sendMessageToReply(session, result);
     });
+
   public static get(): CommandProvider {
     return new this().root;
   }

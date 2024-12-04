@@ -139,12 +139,50 @@ export class CommandManager {
     return this.INSTANCE;
   }
 
-  public registerCommand(command: string, provider: CommandProvider): void {
-    this.providers.set(command, provider);
-    provider.setPrimaryKey(provider);
-    provider.setRegistryKey(command);
-    CommandHelper.build(command, provider);
+  public registerCommand(commands: string | string[], provider: CommandProvider): void {
+    if (Array.isArray(commands)) {
+      commands.forEach((command) => {
+        this._registerCommand(command, provider);
+      });
+    } else {
+      this._registerCommand(commands, provider);
+    }
   }
+
+  private _registerCommand(command: string, provider: CommandProvider): void {
+    if (command.startsWith('$')) {
+      this.providers.set(command, provider);
+      provider.setPrimaryKey(provider);
+      provider.setRegistryKey(command);
+      CommandHelper.build(command, provider);
+      return;
+    }
+
+    const commandsToRegister = new Set<string>();
+
+    if (command.startsWith('/')) {
+      commandsToRegister.add(command.slice(1));
+      commandsToRegister.add(command);
+      commandsToRegister.add(`.${command.slice(1)}`);
+    } else if (command.startsWith('.')) {
+      commandsToRegister.add(command.slice(1));
+      commandsToRegister.add(`/${command.slice(1)}`);
+      commandsToRegister.add(command);
+    } else {
+      commandsToRegister.add(command);
+      commandsToRegister.add(`/${command}`);
+      commandsToRegister.add(`.${command}`);
+    }
+
+    commandsToRegister.forEach((cmd) => {
+      this.providers.set(cmd, provider);
+      provider.setPrimaryKey(provider);
+      provider.setRegistryKey(cmd);
+      CommandHelper.build(cmd, provider);
+    });
+  }
+
+
   public static registerSimpleCommand(
     command: string,
     callback: (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => void, permissionCallback?: ((session: Session<User.Field, Channel.Field, Context>) => boolean)): void {

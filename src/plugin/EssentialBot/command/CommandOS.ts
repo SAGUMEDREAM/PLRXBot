@@ -17,8 +17,10 @@ export class CommandOS {
       const cpuUsage = await this.getCPUUsage();
       const diskUsage = await this.getDiskUsage();
 
-      result += `🖥️ 操作系统: ${osType} ${osRelease} (${osPlatform}) ${osArch}\n`;
+      result += `🧠️ CPU型号: ${this.getCpuName()}\n`;
       result += `💻 CPU 使用率: ${cpuUsage.toFixed(2)}%\n`;
+      result += `⚙️ 操作系统: ${osType} ${osRelease} (${osPlatform}) ${osArch}\n`;
+      result += `⏰ 开机时间: ${this.getBootTime()}\n`;
       result += `💾 内存: 已用 ${usedMem.toFixed(1)}/${totalMem.toFixed(1)} GB\n`;
       result += `💽 磁盘使用情况: \n${diskUsage}\n`;
 
@@ -27,6 +29,24 @@ export class CommandOS {
 
   public static get(): CommandProvider {
     return new this().root;
+  }
+
+  private getBootTime() {
+    const uptimeInSeconds = os.uptime();
+
+    const hours = Math.floor(uptimeInSeconds / 3600);
+    const minutes = Math.floor((uptimeInSeconds % 3600) / 60);
+    const seconds = Math.floor(uptimeInSeconds % 60);
+
+    return `${hours}小时 ${minutes}分钟 ${seconds}秒`;
+  }
+
+  private getCpuName() {
+    const cpus = os.cpus();
+    if (cpus.length > 0) {
+      return cpus[0].model;
+    }
+    return "Unknown";
   }
 
   private getCpuTimes() {

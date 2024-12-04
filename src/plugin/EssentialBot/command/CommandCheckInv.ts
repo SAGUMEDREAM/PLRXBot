@@ -8,12 +8,12 @@ export class CommandCheckInv {
   public root = new CommandProvider()
     .onExecute((session, args) => {
       const user = UserManager.get(session);
-      if(user) {
+      if (user) {
         let result = '您的背包库存:\n';
         const inventory: Inventory = user.getCustom("INSTANCE_INVENTORY")
-        if(inventory) {
-          inventory.itemStacks.forEach((iStack,index) => {
-            if(iStack.getCount() > 0) {
+        if (inventory) {
+          inventory.itemStacks.forEach((iStack, index) => {
+            if (iStack.getCount() > 0) {
               result += `${index}.\n`;
               result += `名称: ${Text.of(iStack.getRegistryKey())}`;
               result += `数量: ${iStack.getCount()}`;
@@ -23,6 +23,7 @@ export class CommandCheckInv {
         }
       }
     });
+
   public static get(): CommandProvider {
     return new this().root;
   }

@@ -9,7 +9,7 @@ export class CommandLeaveMessage {
       text += `\n`;
       text += `${Messages.at(807131829)}`;
       text += `\n\n`;
-      text += `账号:${session.event.user.name}(${session.event.user.id})\n`;
+      text += `账号:${session.event.user.name} (${session.event.user.id})\n`;
       text += `留言:\n`
       {
         const messageSource = Utils.sliceArrayFrom(args.all(),0);

@@ -24,6 +24,7 @@ import {PluginEvent} from "../../core/plugins/PluginEvent";
 import {PluginListener} from "../../core/plugins/PluginListener";
 import {CustomDataFactory} from "../../core/data/CustomDataFactory";
 import {CommandTHPicture} from "./command/CommandTHPicture";
+import {CommandPing} from "./command/CommandPing";
 
 export class EssentialBot extends PluginInitialization {
   constructor() {
@@ -60,34 +61,23 @@ export class EssentialBot extends PluginInitialization {
       Messages.sendMessageToGroup(session, 863842932, strResult);
     });
 
-    instance.registerCommand("/踢出", CommandKick.get());
-    instance.registerCommand("/禁言", CommandMute.get());
-    instance.registerCommand("/解除禁言", CommandDeMute.get());
+    instance.registerCommand(["踢出"], CommandKick.get());
+    instance.registerCommand(["禁言"], CommandMute.get());
+    instance.registerCommand(["解除禁言"], CommandDeMute.get());
 
-    instance.registerCommand("/菜单", CommandCommandHelper.get());
-    instance.registerCommand("/help", CommandCommandHelper.get());
-    instance.registerCommand("/帮助", CommandCommandHelper.get());
-    instance.registerCommand("/usage", CommandUsage.get());
-    instance.registerCommand("/用法", CommandUsage.get());
-    instance.registerCommand("/留言", CommandLeaveMessage.get());
-    instance.registerCommand("/sign", CommandSign.get());
-    instance.registerCommand("/签到", CommandSign.get());
-    instance.registerCommand("/view", CommandCheckInv.get());
-    instance.registerCommand("/查询库存", CommandCheckInv.get());
-    instance.registerCommand("/搜索活动", CommandTHSearch.get());
-    instance.registerCommand("/活动搜索", CommandTHSearch.get());
-    instance.registerCommand("/搜索群组", CommandGroupSearch.get());
-    instance.registerCommand("/群组搜索", CommandGroupSearch.get());
-    // instance.registerCommand("/活动表格",CommandGoogleSheetEditor.get());
-    instance.registerCommand("/lily", CommandLilySearch.get());
-    instance.registerCommand("/莉莉云", CommandLilySearch.get());
-    instance.registerCommand("/about", CommandAbout.get());
-    instance.registerCommand("/jrrp", CommandJRRP.get());
-    instance.registerCommand("/今日人品", CommandJRRP.get());
-    instance.registerCommand("/随机东方图", CommandTHPicture.get());
-    instance.registerCommand("/random_touhou", CommandTHPicture.get());
-    instance.registerCommand("/关于", CommandAbout.get());
-    instance.registerCommand("/os", CommandOS.get());
+    instance.registerCommand(["菜单", "help", "帮助"], CommandCommandHelper.get());
+    instance.registerCommand(["usage", "用法"], CommandUsage.get());
+    instance.registerCommand(["留言"], CommandLeaveMessage.get());
+    instance.registerCommand(["sign", "签到"], CommandSign.get());
+    instance.registerCommand(["view", "查询库存"], CommandCheckInv.get());
+    instance.registerCommand(["搜索活动", "活动搜索"], CommandTHSearch.get());
+    instance.registerCommand(["搜索群组", "群组搜索"], CommandGroupSearch.get());
+    instance.registerCommand(["lily", "莉莉云"], CommandLilySearch.get());
+    instance.registerCommand(["about"], CommandAbout.get());
+    instance.registerCommand(["jrrp", "今日人品"], CommandJRRP.get());
+    instance.registerCommand(["随机东方图", "random_touhou"], CommandTHPicture.get());
+    instance.registerCommand(["os"], CommandOS.get());
+    instance.registerCommand(["ping"], CommandPing.get());
 
     CustomDataFactory.createKey("sign_system",{"timestamp": 0})
     CustomDataFactory.createKey("lucky_seed", 0);

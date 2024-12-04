@@ -2,7 +2,6 @@ import {PluginInitialization} from "../../core/plugins/PluginInitialization";
 import {MFFilters} from "./utils/MFFilters";
 import {Files} from "../../core/utils/Files";
 import {CommandManager} from "../../core/command/CommandManager";
-import nodejieba from "nodejieba"
 import {PluginEvent} from "../../core/plugins/PluginEvent";
 import {PluginListener} from "../../core/plugins/PluginListener";
 

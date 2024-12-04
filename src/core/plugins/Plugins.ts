@@ -3,6 +3,7 @@ import {PluginEvent} from "./PluginEvent";
 import {PluginListener} from "./PluginListener";
 import {PluginLoader} from "../../plugin/PluginLoader";
 import {LOGGER} from "../../index";
+import {CustomHandleEvents} from "./CustomHandleEvents";
 
 
 export class Plugins {
@@ -16,6 +17,7 @@ export class Plugins {
   }
 
   public static load() {
+    CustomHandleEvents.registerCustomHandles();
     PluginLoader.load();
     this.PluginMap.forEach((initialization) => {
       initialization.load();

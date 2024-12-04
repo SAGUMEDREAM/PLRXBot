@@ -1,91 +1,68 @@
-import { CommandProvider } from "../../../core/command/CommandProvider";
-import { Messages } from "../../../core/network/Messages";
-import { UserManager } from "../../../core/user/UserManager";
-import { UserProfile } from "../../../core/user/UserProfile";
+import {CommandProvider} from "../../../core/command/CommandProvider";
+import {Messages} from "../../../core/network/Messages";
+import {UserManager} from "../../../core/user/UserManager";
+import {UserProfile} from "../../../core/user/UserProfile";
 
 export class CommandJRRP {
   public root = new CommandProvider()
     .onExecute((session, args) => {
       let user = UserManager.get(session);
       let timeMessage = this.getTimeMessage();
-      let result = '';
-      result += `${timeMessage}，`;
+      let result = `${Messages.at(Number(session.userId))}${timeMessage}`;
       let luck = this.getDailyLuck(user);
       result += `你今天的运气值是: ${luck.toFixed(2)}\n`;
-      result += (() => {
-        let t = '';
-        if (luck <= 30) {
-          t = '今天的运气有点低哦，记得保持乐观，运气会变好的';
-        } else if (luck <= 60) {
-          t = '今天运气中等，稍微努力一些，幸运会向你微笑';
-        } else if (luck <= 100) {
-          t = '今天运气不错，心想事成的感觉！继续加油';
-        } else if (luck <= 120) {
-          t = '今天的运气非常好，幸运之神在向你招手！抓住机会';
-        } else {
-          t = '今天的运气超好，简直是好运爆棚，享受这一天吧';
-        }
-        return t;
-      })();
-      // result += `\n`;
-      // result += Messages.image("https://img.paulzzh.com/touhou/random?site=yandere&size=wap&");
+      result += this.getLuckMessage(luck);
       Messages.sendMessageToReply(session, result);
     });
+
   private getTimeMessage(): string {
     const currentHour = new Date().getHours();
-    let greeting = '';
-    if (currentHour >= 6 && currentHour < 12) {
-      greeting = '早上好！';
-    } else if (currentHour >= 12 && currentHour < 14) {
-      greeting = '中午好！';
-    } else if (currentHour >= 14 && currentHour < 18) {
-      greeting = '下午好！';
-    } else {
-      greeting = '晚上好！';
-    }
-    return greeting;
+    if (currentHour >= 6 && currentHour < 12) return "早上好！";
+    if (currentHour >= 12 && currentHour < 14) return "中午好！";
+    if (currentHour >= 14 && currentHour < 18) return "下午好！";
+    return "晚上好！";
   }
+
+  private hashString(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return hash;
+  }
+
   private seededRandom(seed: number): number {
-    const a = 16807;
-    const m = 2147483647;
-    seed = (a * seed) % m;
-    return seed / m;
+    return (seed * 9301 + 49297) % 233280 / 233280;
   }
 
   private getDailyLuck(userProfile: UserProfile): number {
     const now = new Date();
-    const user_id = userProfile.profile.user_id as string;
-    const dateKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-
+    const dateKey = now.toISOString().split("T")[0];
+    const userId = userProfile.profile.user_id as string;
     let seed = userProfile.getDataKey("lucky_seed");
 
     if (seed === null || seed === undefined) {
-      if (isNaN(Number(user_id))) {
-        seed = 0;
-        for (let i = 0; i < user_id.length; i++) {
-          seed += user_id.charCodeAt(i);
-        }
-      } else {
-        seed = Number(user_id);
-      }
+      seed = this.hashString(userId);
       userProfile.setDataKey("lucky_seed", seed);
     }
 
-    const combinedSeed = seed + (now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate());
-
-    const random1 = this.seededRandom(combinedSeed);
-    const random2 = this.seededRandom(combinedSeed + 1);
-
-    const z0 = Math.sqrt(-2 * Math.log(random1)) * Math.cos(2 * Math.PI * random2);
+    const combinedSeed = this.hashString(`${seed}${dateKey}`);
+    const randomValue = this.seededRandom(combinedSeed);
 
     const mean = 75;
     const stddev = 25;
-
+    const z0 = Math.sqrt(-2 * Math.log(randomValue)) * Math.cos(2 * Math.PI * randomValue);
     let luck = mean + z0 * stddev;
 
-    luck = Math.max(0, Math.min(150, luck));
+    return Math.max(0, Math.min(150, luck));
+  }
 
-    return luck;
+  private getLuckMessage(luck: number): string {
+    if (luck <= 30) return "今天有点倒霉，不过别灰心，说不定转角就遇到好运呢！";
+    if (luck <= 60) return "运气平平，但别忘了，努力也是幸运的一部分，加油！";
+    if (luck <= 100) return "今天不错哦，顺风顺水，或许能遇到些好事呢！";
+    if (luck <= 120) return "哇，今天真棒！好运连连，做什么都感觉顺手极了！";
+    return "你简直被幸运女神亲吻了！无敌的好运气，尽情享受吧！";
   }
 
   public static get(): CommandProvider {

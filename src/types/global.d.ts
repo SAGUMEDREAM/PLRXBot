@@ -3,7 +3,15 @@ import {Channel, User} from "@koishijs/core";
 import {Context, Field} from "koishi";
 import { Session } from "koishi";
 
+declare module 'cordis' {
+  interface Events<C> {
+    'notice'(session: GetSession<C>): void;
+  }
+}
 declare module "@koishijs/core" {
+  interface Session {
+    targetId: string;
+  }
   interface Session<U extends User.Field = never, G extends Channel.Field = never, C extends Context = Context> {
     hasPermission: (permission: any) => boolean;
     hasPermissionLevel: (permissionLevel: any) => boolean;

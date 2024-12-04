@@ -8,7 +8,7 @@ import {GroupManager} from "../group/GroupManager";
 import {PluginEvent} from "../plugins/PluginEvent";
 import {PluginListener} from "../plugins/PluginListener";
 
-export class Network {
+export class MessageCHandler {
   public static handle(session: Session<User.Field, Channel.Field, Context>): void {
     const user = UserManager.get(session);
     const group = GroupManager.get(session);
@@ -34,15 +34,6 @@ export class Network {
       } else {
         CommandManager.getInstance().parseCommand(session);
       }
-    }
-  }
-  public static getJson(_url: string): any {
-    try {
-      const res = request('GET', _url, { headers: { 'Content-Type': 'application/json' } });
-      return JSON.parse(res.getBody('utf8'));
-    } catch (error) {
-      console.error('Error during request:', error);
-      return null;
     }
   }
 }
