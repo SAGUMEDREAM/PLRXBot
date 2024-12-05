@@ -1,8 +1,8 @@
-import {PluginInitialization} from "../../core/plugins/PluginInitialization";
+import { PluginInitialization } from "../../core/plugins/PluginInitialization";
+import { botInstance, ctxInstance } from "../../index";
+import { MessageMerging } from "../../core/network/MessageMerging";
 
-export class DailyEvent extends PluginInitialization{
-  private intervalId: NodeJS.Timeout | null = null;
-  private timeoutId: NodeJS.Timeout | null = null;
+export class DailyEvent extends PluginInitialization {
   private readonly apiBeta = [
     "https://thonly.cc/proxy_google_doc/v4/spreadsheets/13ykPzw9cKqQVXXEwhCuX_mitQegHdFHjZtGdqT6tlmk/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw",
     "https://thonly.cc/proxy_google_doc/v4/spreadsheets/1mMUsvTdyz07BtnLbs0WEr5gdvsRkjftnrek_n5HSdNU/values:batchGet?ranges=THO!A2:E200&ranges=THP%26tea-party!A2:E200&ranges=School!A2:E200&ranges=LIVE!A2:E200&key=AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw"
@@ -13,55 +13,68 @@ export class DailyEvent extends PluginInitialization{
   }
 
   public load(): void {
-    if (this.intervalId) clearInterval(this.intervalId);
-    if (this.timeoutId) clearTimeout(this.timeoutId);
-
-    const now = new Date();
-    const nextMidnight = new Date();
-    nextMidnight.setHours(24, 0, 0, 0);
-    const timeUntilMidnight = nextMidnight.getTime() - now.getTime();
-
-    this.timeoutId = setTimeout(() => {
-      this.runDailyTask();
-      this.intervalId = setInterval(this.runDailyTask.bind(this), 24 * 60 * 60 * 1000);
-    }, timeUntilMidnight);
+    ctxInstance.cron('0 12 * * *', async () => {
+      await this.runDailyTask();
+    });
   }
 
   public async runDailyTask(): Promise<void> {
-    let events = [];
-    let result = ``;
-    const nowDate = Date.now();
-    for (const url of this.apiBeta) {
-      const response = await fetch(url);
-      const data = await response.json();
-      const valueRanges = data["valueRanges"];
-
-      for (const sheet of valueRanges) {
-        const event = sheet["values"];
-
-        try {
-          if(event[3] != "暂无") {
-            const eventDate = new Date(event[3]).getTime();
-            const dayDifference = Math.abs((eventDate - nowDate) / (1000 * 60 * 60 * 24));
-
-            if (dayDifference > 29 && dayDifference < 30) {
-              events.push(event);
-            }
-          }
-        } catch (e) {}
-      }
-    }
-    if(events.length == 0) return;
-    result += `每日活动倒计时🔈🔈🔈\n`;
-    result += `距离以下活动开始还有30天!:\n`;
-    let index = 0;
-    for (let event of events) {
-      let name = event[1];
-      let group = event[4];
-      result += `${index+1}. ${name}\n`;
-      result += ` 群号: ${group}\n`;
-      index++;
+    const taskContent = await this.getTaskContent();
+    if (taskContent) {
+      ctxInstance.broadcast(taskContent);
     }
   }
 
+  public async getTaskContent() {
+    let events7 = [];
+    let events30 = [];
+    const nowDate = Date.now();
+
+    for (const url of this.apiBeta) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const valueRanges = data["valueRanges"];
+
+        for (const sheet of valueRanges) {
+          const event = sheet["values"];
+          if (event[3] && event[3] !== "暂无") {
+            const eventDate = new Date(event[3]).getTime();
+            const dayDifference = (eventDate - nowDate) / (1000 * 60 * 60 * 24);
+            if (dayDifference >= 6 && dayDifference < 7) {
+              events7.push(event);
+            }
+            if (dayDifference > 29 && dayDifference < 30) {
+              events30.push(event);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+      }
+    }
+
+    if (events30.length === 0 && events7.length === 0) return null;
+
+    let merging = MessageMerging.create(null);
+
+    merging.put(`每日活动倒计时🔈🔈🔈\n距离以下活动开始还有7天!`);
+    for (let event of events7) {
+      let name = event[1];
+      let group = event[4];
+      let text = `名称: ${name}\n群号: ${group}\n`;
+      merging.put(text);
+    }
+
+    merging.put(`距离以下活动开始还有30天!`);
+    for (let event of events30) {
+      let name = event[1];
+      let group = event[4];
+      let text = `名称: ${name}\n群号: ${group}\n`;
+      merging.put(text);
+    }
+
+    return merging.get();
+  }
 }

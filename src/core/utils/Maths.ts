@@ -1,4 +1,10 @@
 export class Maths {
+  public static random(a: number, b: number): number {
+    if (a > b) {
+      [a, b] = [b, a];
+    }
+    return Math.floor(Math.random() * (b - a + 1)) + a;
+  }
   public static getRandomElement<T>(array: T[]): T | undefined {
     if (array.length === 0) {
       return null;

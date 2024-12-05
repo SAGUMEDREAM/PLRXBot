@@ -1,21 +1,30 @@
 import {Dict, h, Session} from "koishi";
 import {Messages} from "./Messages";
+import {botInstance} from "../../index";
 
 export class MessageMerging {
   private lines = [];
   private session: Session<any, any, any>;
   private attrs: Dict<any, string> = {}
-  private constructor(session: Session<any, any, any>) {
-    this.session = session;
-    this.attrs = {
-      userId: this?.session?.selfId,
-      nickname: this?.session?.author?.nickname || this?.session?.username,
+  private constructor(session: Session<any, any, any> | null) {
+    if(session != null) {
+      this.session = session;
+      this.attrs = {
+        userId: this?.session?.selfId,
+        nickname: this?.session?.author?.nickname || this?.session?.username,
+      }
+    } else {
+      this.session = null;
+      this.attrs = {
+        userId: botInstance?.selfId,
+        nickname: botInstance?.user?.nickname || botInstance?.user?.username,
+      }
     }
   }
-  public static create(session: Session<any, any, any>): MessageMerging {
+  public static create(session: Session<any, any, any> | null): MessageMerging {
     return new MessageMerging(session);
   }
-  public static merging(session: Session<any, any, any>, arr: any[], lBreak: boolean = false) {
+  public static merging(session: Session<any, any, any> | null, arr: any[], lBreak: boolean = false) {
     let merging = this.create(session);
     for (const arrElement of arr) {
       merging.put(arrElement, lBreak);

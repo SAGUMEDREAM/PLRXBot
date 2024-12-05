@@ -23,8 +23,9 @@ export class CommandManager {
   public static create(): CommandManager {
     const instance = CommandManager.getInstance();
     instance.registerCommand("$sudo", CommandSudo.get());
-    LOGGER.info("Loading CommandManager...")
-    LOGGER.info("Loading CommandTree System...")
+    LOGGER.info("Loading Command Manager...")
+    LOGGER.info("Loading Command System...")
+    LOGGER.info("Loading Command Helper...")
     return this.INSTANCE;
   }
   /*public static create(): CommandManager {
@@ -175,13 +176,15 @@ export class CommandManager {
     }
 
     commandsToRegister.forEach((cmd) => {
+      if(this.providers.has(cmd)) {
+        LOGGER.warn(`Command ${cmd} has already been registered, this will overwrite the registration!`);
+      }
       this.providers.set(cmd, provider);
       provider.setPrimaryKey(provider);
       provider.setRegistryKey(cmd);
       CommandHelper.build(cmd, provider);
     });
   }
-
 
   public static registerSimpleCommand(
     command: string,

@@ -8,18 +8,18 @@ import {GroupManager} from "./core/group/GroupManager";
 import {PluginEvent} from "./core/plugins/PluginEvent";
 import {PluginListener} from "./core/plugins/PluginListener";
 import {Messages} from "./core/network/Messages";
+import { } from 'koishi-plugin-cron'
 
 export const LOGGER: Logger = new Logger("@kisin-reimu/bot");
+export const inject = {
+  required: ['cron']
+}
 export let ctxInstance: Context = null;
 export let botInstance: Bot = null;
-export let poke_lock = false;
-const exitListener = () => {
-  UserManager.getInstance().getUserDataMap().forEach(user => user.save());
-  LOGGER.info("The plug-in has been uninstalled");
-};
-Start.main();
 
 export function apply(ctx: Context) {
+  if (ctxInstance == null) ctxInstance = ctx;
+  Start.main();
   ctx.on('internal/session', (session) => {
     if (ctxInstance == null) ctxInstance = ctx;
     if (botInstance == null) botInstance = session.bot;
@@ -92,26 +92,6 @@ export function apply(ctx: Context) {
       }
     }
 
-  });
-  ctx.platform("onebot").on("notice", async (session: Session<User.Field, Channel.Field, Context>) => {
-    if (session.subtype != "poke") {
-      return;
-    }
-    if (session.targetId == session.selfId) {
-      if (poke_lock) {
-        return;
-      }
-      poke_lock = true;
-      try {
-        PluginListener.emit(PluginEvent.BY_POKED, session);
-      } catch (ignored) {
-        return;
-      }
-      Messages.sendMessage(session, "喂!(#`O′) 戳我干什么!!");
-      setTimeout(() => {
-        poke_lock = false;
-      }, 5000);
-    }
   });
 }
 

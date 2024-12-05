@@ -1,7 +1,6 @@
 import * as satori from "@satorijs/core";
 import {Channel, User} from "@koishijs/core";
-import {Context, Field} from "koishi";
-import { Session } from "koishi";
+import {Context, Session, Schema, Field} from "koishi";
 
 declare module 'cordis' {
   interface Events<C> {
@@ -46,4 +45,3 @@ declare module 'sync-request' {
   function request(method: string, url: string, options?: RequestOptions): { body: string };
   export default request;
 }
-

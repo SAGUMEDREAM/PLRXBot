@@ -5,6 +5,9 @@ import {MessageForwarding} from "./MessageForwarding";
 import {FunnyWords} from "./FunnyWords";
 import {EssentialBot} from "./EssentialBot";
 import {DailyEvent} from "./DailyEvent";
+import {MaiMaiDX} from "./MaiMaiDX";
+import {Shrine} from "./shrine";
+import {OtomadHelper} from "./OtomadHelper";
 
 export class PluginLoader {
   public static load() {
@@ -13,7 +16,10 @@ export class PluginLoader {
     Plugins.register(new Inventories());
     Plugins.register(new EssentialBot());
     Plugins.register(new DailyEvent());
-    // Plugins.register(new FunnyWords());
+    Plugins.register(new MaiMaiDX());
+    Plugins.register(new FunnyWords());
+    Plugins.register(new Shrine());
+    Plugins.register(new OtomadHelper());
     /*const path: string = Constant.PLUGIN_PATH;
     const files = Files.getDir(path);
     files.forEach((fileDir: string) => {

@@ -15,21 +15,26 @@ import {CommandOS} from "./command/CommandOS";
 import {Messages} from "../../core/network/Messages";
 import {CommandJRRP} from "./command/CommandJRRP";
 import {CommandGroupSearch} from "./command/CommandGroupSearch";
-import {CommandGoogleSheetEditor} from "./command/CommandGoogleSheetEditor";
-import {LilyShortLink} from "./lilywhite/LilyShortLink";
 import {UserProfile} from "../../core/user/UserProfile";
 import {EcoSystem} from "./eco/Eco";
-import {Inventory} from "../Inventories/item/Inventory";
 import {PluginEvent} from "../../core/plugins/PluginEvent";
 import {PluginListener} from "../../core/plugins/PluginListener";
 import {CustomDataFactory} from "../../core/data/CustomDataFactory";
 import {CommandTHPicture} from "./command/CommandTHPicture";
 import {CommandPing} from "./command/CommandPing";
+import {GroupManager} from "../../core/group/GroupManager";
+import {UserManager} from "../../core/user/UserManager";
+import {Context, Session} from "koishi";
+import {Channel, User} from "@koishijs/core";
+import {ctxInstance} from "../../index";
+
+export let poke_lock = false;
 
 export class EssentialBot extends PluginInitialization {
   constructor() {
     super("essential_bot");
   }
+
   public load(): void {
     const instance = CommandManager.getInstance();
     PluginListener.on(PluginEvent.MEMBER_JOIN_GROUP, this, (session, args) => {
@@ -73,15 +78,65 @@ export class EssentialBot extends PluginInitialization {
     instance.registerCommand(["搜索活动", "活动搜索"], CommandTHSearch.get());
     instance.registerCommand(["搜索群组", "群组搜索"], CommandGroupSearch.get());
     instance.registerCommand(["lily", "莉莉云"], CommandLilySearch.get());
-    instance.registerCommand(["about"], CommandAbout.get());
+    instance.registerCommand(["关于","about"], CommandAbout.get());
     instance.registerCommand(["jrrp", "今日人品"], CommandJRRP.get());
     instance.registerCommand(["随机东方图", "random_touhou"], CommandTHPicture.get());
     instance.registerCommand(["os"], CommandOS.get());
     instance.registerCommand(["ping"], CommandPing.get());
 
-    CustomDataFactory.createKey("sign_system",{"timestamp": 0})
+    CustomDataFactory.createKey("sign_system", {"timestamp": 0});
     CustomDataFactory.createKey("lucky_seed", 0);
     CustomDataFactory.createKey("eco_system", {"balance": 0});
+
+    PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
+      let content = session.content;
+      if(Messages.isAtBot(session) && content.includes("在吗")) {
+        session.send("Bot在");
+      }
+    });
+
+    ctxInstance.platform("onebot").on("notice", async (session: Session<User.Field, Channel.Field, Context>) => {
+      if (session.subtype != "poke") {
+        return;
+      }
+      if (session.targetId == session.selfId) {
+        if (poke_lock) {
+          return;
+        }
+        poke_lock = true;
+        try {
+          PluginListener.emit(PluginEvent.BY_POKED, session);
+        } catch (ignored) {
+          return;
+        }
+        Messages.sendMessage(session, "喂!(#`O′) 戳我干什么!!");
+        setTimeout(() => {
+          poke_lock = false;
+        }, 5000);
+      }
+    });
+
+
+    PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
+      let content = session.content;
+      if (
+        Messages.isAtBot(session) && (
+          content.includes("闭嘴") || content.toLowerCase().includes("!d"))
+      ) {
+        let user = UserManager.get(session);
+        let userId = String(user.getProfile().user_id);
+        let hasPerm = user.hasPermissionLevel(3) || GroupManager?.get(session)?.isGroupAdmin(userId);
+        if (!hasPerm) {
+          Messages.sendMessageToReply(session, "哼,你管得着咱吗!?");
+          return;
+        }
+        if (session.event.message?.quote) {
+          const {channel, id} = session.event.message.quote;
+          session.bot.deleteMessage(channel.id, id);
+        }
+        Messages.sendMessage(session, "咱再也不乱说话了");
+      }
+    });
 
     // 经济系统
     PluginListener.on(PluginEvent.LOADING_PROFILE, this.plugin_id, (session, args) => {
@@ -91,7 +146,7 @@ export class EssentialBot extends PluginInitialization {
     PluginListener.on(PluginEvent.SAVING_PROFILE, this.plugin_id, (session, args) => {
       const user: UserProfile = args;
       const instance: EcoSystem = user.getCustom("INSTANCE_ECO");
-      if(instance && instance.save) instance.save();
+      if (instance && instance.save) instance.save();
     });
     //LilyShortLink.start();
   }

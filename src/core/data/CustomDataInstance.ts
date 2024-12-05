@@ -6,10 +6,4 @@ export abstract class CustomDataInstance {
   }
   public abstract init(): void;
   public abstract save(): void;
-  public static getSystem(userProfile: UserProfile): CustomDataInstance {
-    if(this.instance_data_id == null) {
-      return null;
-    }
-    return userProfile[this.instance_data_id];
-  }
 }
