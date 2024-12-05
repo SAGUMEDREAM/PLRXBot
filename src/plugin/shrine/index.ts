@@ -26,6 +26,6 @@ export class Shrine extends PluginInitialization {
     const instance = CommandManager.getInstance();
     instance.registerCommand(["参拜神社", "参拜", "worship", "visit"], CommandWorship.get());
     instance.registerCommand(["查询信仰"], CommandCheckFaith.get());
-    CustomDataFactory.createKey("shrine_data", ShrineObject);
+    CustomDataFactory.createKey("shrine_data", {"level": 0, "faith": 0, "count": 0});
   }
 }

@@ -47,7 +47,7 @@ export class EssentialBot extends PluginInitialization {
       let introMessage = ``;
       introMessage += `大家好！我是蓬莱人形Bot，很高兴为大家提供帮助！\n`;
       introMessage += `你可以使用以下命令了解我的功能：\n`;
-      introMessage += `/help - 查看所有可用命令和使用方法\n`;
+      introMessage += `/帮助 - 查看所有可用命令和使用方法\n`;
       introMessage += `/搜索群组 - 搜索地区或活动的东方相关群组信息\n`;
       introMessage += `/搜索活动 - 搜索东方Project线下活动信息\n`;
       introMessage += `/莉莉云 - 搜索莉莉云网盘文件\n`;
@@ -62,7 +62,7 @@ export class EssentialBot extends PluginInitialization {
       let user_id = event.user.id;
       let group_id = event?.channel?.id || event?.guild?.id;
       let strResult = ``;
-      strResult += `用户${Messages.at(Number(user_id))} 试图邀请Bot加入至QQ群 ${group_id}`;
+      strResult += `用户${Messages.at(Number(user_id))} (${user_id}) 试图邀请Bot加入至QQ群 ${group_id}`;
       Messages.sendMessageToGroup(session, 863842932, strResult);
     });
 
