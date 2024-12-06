@@ -27,6 +27,8 @@ import {UserManager} from "../../core/user/UserManager";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {ctxInstance} from "../../index";
+import {CommandAgreeInvite} from "./command/CommandAgreeInvite";
+import {CommandRejectInvite} from "./command/CommandRejectInvite";
 
 export let poke_lock = false;
 
@@ -63,12 +65,15 @@ export class EssentialBot extends PluginInitialization {
       let group_id = event?.channel?.id || event?.guild?.id;
       let strResult = ``;
       strResult += `用户${Messages.at(Number(user_id))} (${user_id}) 试图邀请Bot加入至QQ群 ${group_id}`;
+      strResult += `会话ID: ${session.messageId}`;
       Messages.sendMessageToGroup(session, 863842932, strResult);
     });
 
     instance.registerCommand(["踢出"], CommandKick.get());
     instance.registerCommand(["禁言"], CommandMute.get());
     instance.registerCommand(["解除禁言"], CommandDeMute.get());
+    instance.registerCommand(["同意加群"], CommandAgreeInvite.get());
+    instance.registerCommand(["拒绝加群"], CommandRejectInvite.get());
 
     instance.registerCommand(["菜单", "help", "帮助"], CommandCommandHelper.get());
     instance.registerCommand(["usage", "用法"], CommandUsage.get());
@@ -94,6 +99,10 @@ export class EssentialBot extends PluginInitialization {
         session.send("Bot在");
       }
     });
+
+    PluginListener.on(PluginEvent.REQUEST_FRIEND, this, session => {
+      session.bot.handleFriendRequest(session.messageId, true);
+    })
 
     ctxInstance.platform("onebot").on("notice", async (session: Session<User.Field, Channel.Field, Context>) => {
       if (session.subtype != "poke") {
