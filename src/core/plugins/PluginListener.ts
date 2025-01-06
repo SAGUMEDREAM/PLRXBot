@@ -34,7 +34,7 @@ export class PluginListener {
   }
 
   public static emit(event: PluginEvent, session?: Session<User.Field, Channel.Field, Context>, ...args: any[]): void {
-    if (session && BlackListGroup.list.includes(session?.event?.guild?.id)) {
+    if (session && BlackListGroup.list.includes(session?.event?.channel?.id)) {
       return;
     }
     const listeners = this.Events.get(event);

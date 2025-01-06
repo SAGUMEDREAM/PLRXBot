@@ -5,7 +5,6 @@ import fetch from "node-fetch";
 import { SheetEvent } from "../sheets/SheetEvent";
 import { SheetRegion } from "../sheets/SheetRegion";
 import {google} from "googleapis";
-import {Constant} from "../../../core/Constant";
 import path from "path";
 import {Utils} from "../../../core/utils/Utils";
 import { HttpProxyAgent } from 'http-proxy-agent';

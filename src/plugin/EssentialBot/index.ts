@@ -5,7 +5,6 @@ import {CommandTHSearch} from "./command/CommandTHSearch";
 import {CommandKick} from "./command/CommandKick";
 import {CommandMute} from "./command/CommandMute";
 import {CommandDeMute} from "./command/CommandDeMute";
-import {CommandCheckInv} from "./command/CommandCheckInv";
 import {CommandUsage} from "./command/CommandUsage";
 import {CommandLilySearch} from "./command/CommandLilySearch";
 import {CommandLeaveMessage} from "./command/CommandLeaveMessage";
@@ -29,6 +28,15 @@ import {Channel, User} from "@koishijs/core";
 import {ctxInstance} from "../../index";
 import {CommandAgreeInvite} from "./command/CommandAgreeInvite";
 import {CommandRejectInvite} from "./command/CommandRejectInvite";
+import {CommandBroadcast} from "./command/CommandBroadcast";
+import {CommandMarkdown} from "./command/CommandMarkdown";
+import {CommandHuoZi} from "./command/CommandHuoZi";
+import {BlackListGroup} from "../../core/utils/BlackListGroup";
+import {CommandLike} from "./command/CommandLike";
+import {CommandMCS} from "./command/CommandMCS";
+import {Command5K} from "./command/Command5K";
+import {CommandBA} from "./command/CommandBA";
+import {CommandChoice} from "./command/CommandChoice";
 
 export let poke_lock = false;
 
@@ -64,7 +72,7 @@ export class EssentialBot extends PluginInitialization {
       let user_id = event.user.id;
       let group_id = event?.channel?.id || event?.guild?.id;
       let strResult = ``;
-      strResult += `用户${Messages.at(Number(user_id))} (${user_id}) 试图邀请Bot加入至QQ群 ${group_id}`;
+      strResult += `用户${Messages.at(Number(user_id))} (${user_id}) 试图邀请Bot加入至QQ群 ${group_id}\n`;
       strResult += `会话ID: ${session.messageId}`;
       Messages.sendMessageToGroup(session, 863842932, strResult);
     });
@@ -74,20 +82,27 @@ export class EssentialBot extends PluginInitialization {
     instance.registerCommand(["解除禁言"], CommandDeMute.get());
     instance.registerCommand(["同意加群"], CommandAgreeInvite.get());
     instance.registerCommand(["拒绝加群"], CommandRejectInvite.get());
+    instance.registerCommand(["消息广播"], CommandBroadcast.get());
 
     instance.registerCommand(["菜单", "help", "帮助"], CommandCommandHelper.get());
     instance.registerCommand(["usage", "用法"], CommandUsage.get());
     instance.registerCommand(["留言"], CommandLeaveMessage.get());
     instance.registerCommand(["sign", "签到"], CommandSign.get());
-    instance.registerCommand(["view", "查询库存"], CommandCheckInv.get());
+    instance.registerCommand(["like", "赞我"], CommandLike.get());
     instance.registerCommand(["搜索活动", "活动搜索"], CommandTHSearch.get());
     instance.registerCommand(["搜索群组", "群组搜索"], CommandGroupSearch.get());
     instance.registerCommand(["lily", "莉莉云"], CommandLilySearch.get());
     instance.registerCommand(["关于","about"], CommandAbout.get());
     instance.registerCommand(["jrrp", "今日人品"], CommandJRRP.get());
     instance.registerCommand(["随机东方图", "random_touhou"], CommandTHPicture.get());
+    instance.registerCommand(["活字印刷", "huozi"], CommandHuoZi.get());
+    instance.registerCommand(["choice","选择"], CommandChoice.get());
+    instance.registerCommand(["5k","5K"], Command5K.get());
+    instance.registerCommand(["ba","BA","balogo"], CommandBA.get());
+    instance.registerCommand(["markdown"], CommandMarkdown.get());
     instance.registerCommand(["os"], CommandOS.get());
     instance.registerCommand(["ping"], CommandPing.get());
+    instance.registerCommand(["mcs"], CommandMCS.get());
 
     CustomDataFactory.createKey("sign_system", {"timestamp": 0});
     CustomDataFactory.createKey("lucky_seed", 0);
@@ -100,11 +115,14 @@ export class EssentialBot extends PluginInitialization {
       }
     });
 
-    PluginListener.on(PluginEvent.REQUEST_FRIEND, this, session => {
-      session.bot.handleFriendRequest(session.messageId, true);
-    })
+    // PluginListener.on(PluginEvent.REQUEST_FRIEND, this, session => {
+    //   session.bot.handleFriendRequest(session.messageId, true);
+    // })
 
     ctxInstance.platform("onebot").on("notice", async (session: Session<User.Field, Channel.Field, Context>) => {
+      if (session && BlackListGroup.list.includes(session?.event?.channel?.id)) {
+        return;
+      }
       if (session.subtype != "poke") {
         return;
       }
@@ -118,19 +136,18 @@ export class EssentialBot extends PluginInitialization {
         } catch (ignored) {
           return;
         }
-        Messages.sendMessage(session, "喂!(#`O′) 戳我干什么!!");
+        await session.sendQueued("喂!(#`O′) 戳我干什么!!");
         setTimeout(() => {
           poke_lock = false;
-        }, 5000);
+        }, 30000);
       }
     });
 
 
     PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
       let content = session.content;
-      if (
-        Messages.isAtBot(session) && (
-          content.includes("闭嘴") || content.toLowerCase().includes("!d"))
+      if ((
+          content.includes("/闭嘴") || content == ("!d"))
       ) {
         let user = UserManager.get(session);
         let userId = String(user.getProfile().user_id);

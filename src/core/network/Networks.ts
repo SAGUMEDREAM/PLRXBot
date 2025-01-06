@@ -1,5 +1,4 @@
 import request from "sync-request";
-
 const ping = require("ping");
 
 export class Networks {
@@ -11,9 +10,27 @@ export class Networks {
       return -1;
     }
   }
+
+  public static get(_url: string): any {
+    try {
+      const res = request('GET', _url, {headers: {'Content-Type': 'application/json'}});
+      return JSON.parse(res.getBody('utf8'));
+    } catch (err) {
+      return null;
+    }
+  }
+  public static post(_url: string, payload: object = {}) {
+    try {
+      const res = request('POST', _url, payload);
+      return JSON.parse(res.getBody('utf8'));
+    } catch (err) {
+      return null;
+    }
+  }
+
   public static getJson(_url: string): any {
     try {
-      const res = request('GET', _url, { headers: { 'Content-Type': 'application/json' } });
+      const res = request('GET', _url, {headers: {'Content-Type': 'application/json'}});
       return JSON.parse(res.getBody('utf8'));
     } catch (error) {
       console.error('Error during request:', error);

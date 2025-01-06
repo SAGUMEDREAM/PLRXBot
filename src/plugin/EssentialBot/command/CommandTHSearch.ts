@@ -16,14 +16,16 @@ export class CommandTHSearch {
   private static CACHE_DURATION = 12 * 60 * 60 * 1000;
 
   public readonly root = new CommandProvider()
-    .addArg("字段")
-    .addArg("-H 获取历史活动")
+    .addArg("关键词")
+    .addArg("-H")
     .onExecute(async (session, args) => {
       const title = args.get(0);
       if (!title) {
         Messages.sendMessageToReply(session, `用法: ${"/搜索活动 [名字] [-H]"}`);
         return;
       }
+
+      Messages.sendMessageToReply(session, `正在搜索中...`);
 
       let cacheData = this.getCache();
       const nowTimestamp = Date.now();
@@ -97,20 +99,20 @@ export class CommandTHSearch {
     const nowTimestamp = Date.now();
     const isHis = args.merge().includes("-H");
 
-    const filteredResults = results.filter((event) => {
-      const isMatch = event.name.includes(title) || event.area.includes(title) || event.time.includes(title);
+    const fResults = results.filter((event) => {
+      const isMatch = event.name.includes(title) || event.group_id.includes(title) || event.area.includes(title) || event.time.includes(title);
       const isValidTime = event.time === "暂无" || event.timestamp > nowTimestamp || isHis;
       return isMatch && isValidTime;
     });
 
-    if (filteredResults.length === 0) {
+    if (fResults.length === 0) {
       Messages.sendMessageToReply(session, `❗没有找到与 ${title} 相关的活动。`);
       return;
     }
 
     let merging = MessageMerging.create(session);
-    merging.put(`>>>${title} 的搜索结果如下:\n✨共找到 ${filteredResults.length} 个结果。`, true);
-    filteredResults.forEach((result, i) => {
+    merging.put(`>>>${title} 的搜索结果如下:\n✨共找到 ${fResults.length} 个结果。`, true);
+    fResults.forEach((result, i) => {
       let resultText = ``;
       resultText += `名称: ${result.name}\n`;
       resultText += `地区: ${result.area}\n`;

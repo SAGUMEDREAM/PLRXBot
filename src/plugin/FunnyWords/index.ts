@@ -17,10 +17,12 @@ export type FWMessage = {
 export class FunnyWords extends PluginInitialization {
   constructor() {
     super("funny_words");
+    FunnyWords.onlyInstance = this;
   }
 
   public static readonly message_db_path = path.resolve(path.join(Utils.getRoot(), 'data', 'caches'), "message_db.json");
   public static MESSAGE_DB: FWMessage[] = [];
+  public static onlyInstance: FunnyWords;
   public i: number = 0;
 
   private loadData() {

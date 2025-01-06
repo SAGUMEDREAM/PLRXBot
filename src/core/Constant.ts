@@ -8,6 +8,7 @@ import {LOGGER} from "../index";
 
 export class Constant {
   public static PATH: string;
+  public static ASSETS_PATH: string;
   public static DATA_PATH: string;
   public static PLUGIN_PATH: string;
   public static USER_DATA_PATH: string;
@@ -24,6 +25,7 @@ export class Constant {
   public static init(): void {
     LOGGER.info("Loading Constants...")
     this.PATH = String(Utils.getRoot());
+    this.ASSETS_PATH = path.join(Utils.getRoot(), 'assets');
     this.DATA_PATH = path.join(Utils.getRoot(), 'data');
     this.PLUGIN_PATH = path.join(Utils.getRoot(), 'plugins');
     this.USER_DATA_PATH = path.join(Utils.getRoot(), 'data', 'profile');

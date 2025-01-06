@@ -20,8 +20,13 @@ export class Plugins {
     CustomHandleEvents.registerCustomHandles();
     PluginLoader.load();
     this.PluginMap.forEach((initialization) => {
-      initialization.load();
-      initialization.pluginLogger.info("Loading Complete")
+      try {
+        initialization.load();
+        initialization.pluginLogger.info("Loading Complete");
+      } catch (err) {
+        initialization.pluginLogger.error("Can't loading plugin cause: ");
+        initialization.pluginLogger.error(err);
+      }
     });
     LOGGER.info("Loading Plugin Complete");
   }

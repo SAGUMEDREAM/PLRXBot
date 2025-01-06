@@ -25,10 +25,12 @@ export class CommandGroupSearch {
     .addArg("页码")
     .onExecute((session, args) => {
       const keyword = args.get(0);
-      if (!keyword) {
+      if (keyword == null || keyword == "") {
         Messages.sendMessageToReply(session, `用法: ${"/搜索群组 [名字]"}`);
         return;
       }
+
+      Messages.sendMessageToReply(session, `正在搜索中...`);
 
       const cachedData = Files.read(CommandGroupSearch.cache_path);
       const cacheTimestamp = cachedData ? JSON.parse(cachedData).timestamp : 0;
@@ -95,7 +97,8 @@ export class CommandGroupSearch {
     let filteredGroups = resultData.data.filter(group =>
       group.group_name.toLowerCase().includes(keyword.toLowerCase()) ||
       group.group_id.toLowerCase().includes(keyword.toLowerCase()) ||
-      group.event_name.toLowerCase().includes(keyword.toLowerCase())
+      group.event_name.toLowerCase().includes(keyword.toLowerCase()) ||
+      group.city.toLowerCase().includes(keyword.toLowerCase())
     );
 
     if (filteredGroups.length === 0) {

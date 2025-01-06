@@ -17,10 +17,12 @@
   ],
   "peerDependencies": {
     "koishi": "^4.18.0",
-    "sync-request": "^6.1.0",
     "node-fetch": "^3.3.2",
     "node-html-parser": "^6.1.13",
-    "string-similarity": "^4.0.4"
+    "string-similarity": "^4.0.4",
+    "sync-request": "^6.1.0",
+    "text-to-svg": "^3.1.5",
+    "xmlhttprequest-ts": "^1.0.1"
   },
   "service": {
     "required": [
@@ -28,7 +30,11 @@
     ]
   },
   "dependencies": {
+    "gtts": "^0.2.1",
+    "koishi-plugin-cron": "^3.0.0",
     "node-fetch": "^3.3.2",
-    "koishi-plugin-cron": "^3.0.0"
+    "text-to-svg": "^3.1.5",
+    "xmlhttprequest-ts": "^1.0.1",
+    "minecraft-server-util": "5.4.4"
   }
 }

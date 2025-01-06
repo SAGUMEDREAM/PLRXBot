@@ -177,7 +177,8 @@ export class CommandManager {
 
     commandsToRegister.forEach((cmd) => {
       if(this.providers.has(cmd)) {
-        LOGGER.warn(`Command ${cmd} has already been registered, this will overwrite the registration!`);
+        // LOGGER.warn(`Command ${cmd} has already been registered, this will overwrite the registration!`);
+        return;
       }
       this.providers.set(cmd, provider);
       provider.setPrimaryKey(provider);
@@ -244,11 +245,11 @@ export class CommandManager {
   private executeCommand(session: Session<User.Field,Channel.Field,Context>) {
     const input = session.content;
     const parser = new CommandParser(input);
-    const { command, args } = parser.parse();
+    const { command, args, raw } = parser.parse();
 
     const provider = this.providers.get(command);
     if (provider) {
-      const commandArgs = new CommandArgs(args);
+      const commandArgs = new CommandArgs(raw, args);
       provider.executeWith(session, commandArgs);
     }
   }

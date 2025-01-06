@@ -9,13 +9,20 @@ import {PluginEvent} from "./core/plugins/PluginEvent";
 import {PluginListener} from "./core/plugins/PluginListener";
 import {Messages} from "./core/network/Messages";
 import { } from 'koishi-plugin-cron'
+import {} from 'koishi-plugin-markdown-to-image-service';
+import { } from 'koishi-plugin-puppeteer'
+import {BlackListGroup} from "./core/utils/BlackListGroup";
 
 export const LOGGER: Logger = new Logger("@kisin-reimu/bot");
 export const inject = {
-  required: ['cron']
+  required: ['cron','markdownToImage','puppeteer']
 }
+
 export let ctxInstance: Context = null;
 export let botInstance: Bot = null;
+export let botList = [
+  "2854196310"
+]
 
 export function apply(ctx: Context) {
   if (ctxInstance == null) ctxInstance = ctx;
@@ -39,11 +46,20 @@ export function apply(ctx: Context) {
   ctx.on('guild-member-added', (session: Session<User.Field, Channel.Field, Context>) => {
     PluginListener.emit(PluginEvent.MEMBER_JOIN_GROUP, session);
   });
-  ctx.on('message', (session: Session<User.Field, Channel.Field, Context>) => {
+  ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => {
     // Debug用
+    let content = session.content;
+    if (content.includes("/测试Markdown")) {
+      const imageBuffer = await ctx.markdownToImage.convertToImage(content);
+      session.sendQueued(h.image(imageBuffer, 'image/png'));
+    }
   });
-  ctx.on('message', (session: Session<User.Field, Channel.Field, Context>) => {
+  ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => {
     if (ctxInstance == null || botInstance == null) return;
+
+    if (BlackListGroup.list.includes(session?.event?.channel?.id)) {
+      return;
+    }
 
     if (!UserManager.exists(session.event.user.id)) {
       UserManager.createUser(session);
@@ -66,7 +82,10 @@ export function apply(ctx: Context) {
       } catch (ignored) {
         return;
       }
-      Messages.sendMessageToReply(session, "Bot不需要艾特使用哦");
+      if(session.userId == null || session.userId == "" || botList.includes(String(session.userId))) {
+        return;
+      }
+      // Messages.sendMessageToReply(session, "Bot不需要艾特使用哦");
       return;
     }
 

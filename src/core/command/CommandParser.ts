@@ -5,10 +5,11 @@ export class CommandParser {
     this.input = input;
   }
 
-  public parse(): { command: string, args: string[] } {
+  public parse(): { command: string, args: string[], raw } {
     const parts = this.input.trim().match(/(?:[^\s"]+|"[^"]*")+/g);
     const command = parts ? parts.shift()?.replace(/"/g, '') || "" : "";
     const args = parts ? parts.map(arg => arg.replace(/"/g, '')) : [];
-    return { command, args };
+    const raw = parts?.join(' ') || '';
+    return { command, args, raw};
   }
 }

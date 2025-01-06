@@ -3,7 +3,7 @@ import {Channel, User} from "@koishijs/core";
 import {UserManager} from "../user/UserManager";
 import {MessageData} from "./MessageData";
 import fetch from "node-fetch";
-import request from "sync-request";
+import request, {FormData, Options} from "sync-request";
 import fs from "node:fs";
 
 export class Messages {
@@ -52,6 +52,21 @@ export class Messages {
     session.bot?.sendMessage(String(user_id), message);
   }
 
+  public static generateMarkdown(data: any[]): Buffer {
+    let api = "http://localhost:8099/markdown";
+    let fm: FormData = new FormData();
+    for (const item of data) {
+      fm.append("texts", item);
+    }
+    let options: Options = {
+      form: fm,
+    }
+    let res = request("POST", api, options);
+    let body: any = res.getBody();
+    let buffer: Buffer = body;
+    return buffer;
+  }
+
   public static async sendAudio(
     session: Session<User.Field, Channel.Field, Context>,
     url: string
@@ -70,6 +85,7 @@ export class Messages {
     fs.promises.readFile(url).then(buffer => {
       Messages.sendMessage(session, h.file(buffer, 'application/octet-stream'));
     }).catch(err => {
+      console.error(err)
     });
   }
 
@@ -94,6 +110,15 @@ export class Messages {
     children: Element[],
   } {
     return h('img', {src: `${src}`});
+  }
+
+  public static imageBuffer(
+    buffer: Buffer): {
+    type: string | Element.Render<Element.Fragment, any>,
+    attrs: Dict,
+    children: Element[],
+  } {
+    return h.image(buffer, 'image/png');
   }
 
   public static at(user_id: number): {

@@ -1,9 +1,11 @@
 import { Utils } from "../utils/Utils";
 
 export class CommandArgs {
+  public raw: string;
   public args: any[];
 
-  constructor(args: any[]) {
+  constructor(raw: string, args: any[]) {
+    this.raw = raw;
     this.args = this.mergeHtmlTags(args);
     //console.log(this.args)
     this.args.forEach((arg, index) => this[index] = arg);
@@ -53,13 +55,28 @@ export class CommandArgs {
     return result;
   }
 
+  public mergeWithBreak(): any {
+    let result = ``;
+    this.args.forEach(arg => {
+      result += `${arg}\n`;
+    });
+    result = result.trim();
+    return result;
+  }
+
   public get(index: number): any {
     return this.args[index];
   }
+
   public getUserId(index: number): any {
     const match = this.args[index].match(/id=(\d+)/);
     return (match ? match[1] : null) || this.get(index);
   }
+
+  public getRaw(): string {
+    return this.raw;
+  }
+
   public getNumber(index: number): number {
     try {
       return Number(this.args[index]);

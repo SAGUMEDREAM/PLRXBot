@@ -6,6 +6,7 @@ import {UserManager} from "./UserManager";
 import {DataFixerBuilder} from "../data/DataFixerBuilder";
 import {PluginEvent} from "../plugins/PluginEvent";
 import {PluginListener} from "../plugins/PluginListener";
+import {botInstance} from "../../index";
 
 export class UserProfile {
   public profile: BaseUserProfile;
@@ -89,10 +90,12 @@ export class UserProfile {
   }
 
   public hasPermission(permissions: string): boolean {
+    if(this.profile.user_id == botInstance.selfId) return true;
     return this.profile.permissions.includes(permissions);
   }
 
   public hasPermissionLevel(permission_level: number): boolean {
+    if(this.profile.user_id == botInstance.selfId) return true;
     return this.profile.permission_level >= permission_level;
   }
 

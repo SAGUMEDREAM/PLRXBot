@@ -8,7 +8,7 @@ import { Channel, User } from "@koishijs/core";
 import * as cluster from "cluster";
 import { BaseUserProfile } from "./BaseUserProfile";
 import { GCUtils } from "../utils/GCUtils";
-import { LOGGER } from "../../index";
+import {botInstance, LOGGER} from "../../index";
 
 export class UserManager {
   private static readonly INSTANCE = new UserManager();
@@ -115,8 +115,10 @@ export class UserManager {
   public static hasPermissionLevel(session: Session<User.Field, Channel.Field, Context> | number | string, permissionLevel: number): boolean;
   public static hasPermissionLevel(args: number | string | Session<User.Field, Channel.Field, Context>, permissionLevel: number): boolean {
     if (typeof args === "number" || typeof args === "string") {
+      if(args == botInstance.selfId) return true;
       return this.get(args)?.profile?.permission_level >= permissionLevel;
     } else {
+      if(args.userId == botInstance.selfId) return true;
       return this.get(args.event.user.id.toString())?.profile?.permission_level >= permissionLevel;
     }
   }
@@ -124,8 +126,10 @@ export class UserManager {
   public static hasPermission(session: Session<User.Field, Channel.Field, Context> | number | string, permission: string): boolean;
   public static hasPermission(args: number | string | Session<User.Field, Channel.Field, Context>, permission: string): boolean {
     if (typeof args === "number" || typeof args === "string") {
+      if(args == botInstance.selfId) return true;
       return this.get(args)?.profile?.permissions.includes(permission);
     } else {
+      if(args.userId == botInstance.selfId) return true;
       return this.get(args.event.user.id.toString())?.profile?.permissions.includes(permission);
     }
   }

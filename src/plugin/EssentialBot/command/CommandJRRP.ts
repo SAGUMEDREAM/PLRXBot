@@ -2,17 +2,58 @@ import {CommandProvider} from "../../../core/command/CommandProvider";
 import {Messages} from "../../../core/network/Messages";
 import {UserManager} from "../../../core/user/UserManager";
 import {UserProfile} from "../../../core/user/UserProfile";
+import {Files} from "../../../core/utils/Files";
+import path from "path";
+import {Utils} from "../../../core/utils/Utils";
+import {Maths} from "../../../core/utils/Maths";
+import {h} from "koishi";
 
 export class CommandJRRP {
+  public fortuneList: { [key: string]: string[] } = {};
+
+  constructor() {
+    this.load();
+  }
+
+  public add(type: string, texts: string[]) {
+    if (this.fortuneList[type] == null) {
+      this.fortuneList[type] = [];
+    }
+    let text = "";
+    for (const msg of texts) {
+      text += (msg + "\n");
+    }
+    this.fortuneList[type].push(text);
+  }
+
+  public load() {
+    let data: object = JSON.parse(Files.read(path.resolve(path.join(Utils.getRoot(), 'assets'), "Touhou_Fortune_Slips.json")));
+    let slips: [] = data["slips"];
+    for (const slip of slips) {
+      let content = slip["content"];
+      let ct0: string = content[0];
+      if (ct0.includes("大凶")) this.add("大凶", content);
+      if (ct0.includes("凶")) this.add("凶", content);
+      if (ct0.includes("吉")) this.add("吉", content);
+      if (ct0.includes("大吉")) this.add("大吉", content);
+      if (ct0.includes("末吉")) this.add("末吉", content);
+      if (ct0.includes("小吉")) this.add("小吉", content);
+      if (ct0.includes("纯粹")) this.add("纯粹", content);
+      if (ct0.includes("中吉")) this.add("中吉", content);
+      if (ct0.includes("小凶")) this.add("小凶", content);
+      if (ct0.includes("空")) this.add("空", content);
+    }
+  }
+
   public root = new CommandProvider()
     .onExecute((session, args) => {
       let user = UserManager.get(session);
       let timeMessage = this.getTimeMessage();
-      let result = `${Messages.at(Number(session.userId))}${timeMessage} `;
-      let luck = this.getDailyLuck(user);
-      result += `你今天的运气值是: ${luck}\n`;
-      result += this.getLuckMessage(luck);
+      let result = `${timeMessage}${session.event.user.name}\n`;
+      result += `你今天的运气值是: ${this.getDailyLuck(user)}\n抽到的御神签是：\n`;
+      result += `${user.profile.data["jrrp"]["fortune"]}\n`;
       Messages.sendMessageToReply(session, result);
+
     });
 
   private getTimeMessage(): string {
@@ -23,14 +64,6 @@ export class CommandJRRP {
     return "晚上好！";
   }
 
-  private hashString(str: string): number {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
-    }
-    return hash;
-  }
-
   private getDailyLuck(userProfile: UserProfile): number {
     const date = new Date();
     const dateString = date.toISOString().split("T")[0];
@@ -39,7 +72,8 @@ export class CommandJRRP {
       const newValue = this.getRandom();
       userProfile.profile.data["jrrp"] = {
         "date": dateString,
-        "value": newValue,
+        "fortune": this.getLuckMessage(newValue),
+        "value": newValue
       };
       userProfile.save();
       return newValue;
@@ -48,54 +82,34 @@ export class CommandJRRP {
     return userProfile.profile.data["jrrp"]["value"];
   }
 
+
   private getRandom(): number {
-    return Math.floor(Math.random() * 101);
+    return Math.floor(Math.random() * 140 + 1);
   }
 
 
   private getLuckMessage(luck: number): string {
-    if (luck <= 30) {
-      const badLuckMessages = [
-        "唉，今天运气不太好呢，像是遇到了魔法的反噬。也许换个角度，会碰到意想不到的惊喜哦！",
-        "运气不好，可能被妖怪缠上了，今天就得小心一点，别让他们捉弄了！",
-        "今天的运气有点糟糕呢，仿佛被误入了诅咒的迷宫，似乎很难找到出路。"
-      ];
-      return badLuckMessages[Math.floor(Math.random() * badLuckMessages.length)];
+    if (luck >= 0 && luck <= 14) {
+      return Maths.getRandomElement(this.fortuneList["大凶"]);
+    } else if (luck >= 15 && luck <= 28) {
+      return Maths.getRandomElement(this.fortuneList["凶"]);
+    } else if (luck >= 29 && luck <= 42) {
+      return Maths.getRandomElement(this.fortuneList["小凶"]);
+    } else if (luck >= 43 && luck <= 56) {
+      return Maths.getRandomElement(this.fortuneList["空"]);
+    } else if (luck >= 57 && luck <= 70) {
+      return Maths.getRandomElement(this.fortuneList["末吉"]);
+    } else if (luck >= 71 && luck <= 84) {
+      return Maths.getRandomElement(this.fortuneList["吉"]);
+    } else if (luck >= 85 && luck <= 98) {
+      return Maths.getRandomElement(this.fortuneList["小吉"]);
+    } else if (luck >= 99 && luck <= 112) {
+      return Maths.getRandomElement(this.fortuneList["中吉"]);
+    } else if (luck >= 113 && luck <= 126) {
+      return Maths.getRandomElement(this.fortuneList["大吉"]);
+    } else {
+      return Maths.getRandomElement(this.fortuneList["纯粹"]);
     }
-
-    if (luck <= 60) {
-      const neutralLuckMessages = [
-        "运气平平啊，不过就像幽幽子说的，‘偶尔的平凡，也是一种乐趣’。加油吧，没准好运就在前方等着你！",
-        "今天不是最好的日子，但也不算太差。记得幽幽子曾经说过，‘平凡中的喜悦，也是幸福的一部分’。",
-        "运气还行，像是你走在了春风中，虽然没有大风大浪，但也让你感受到轻柔的温暖。"
-      ];
-      return neutralLuckMessages[Math.floor(Math.random() * neutralLuckMessages.length)];
-    }
-
-    if (luck <= 100) {
-      const goodLuckMessages = [
-        "今天不错哦，感觉像是白玉楼的风景，温和又美好。就算有点波折，也总能迎来晴天。",
-        "运气相当好呢，感觉今天的一切都变得更加顺利了，就像和八云紫的巧妙配合一样。",
-        "今天的运气如同一场温暖的春雨，带来了些许的愉悦和安慰，未来充满了希望。"
-      ];
-      return goodLuckMessages[Math.floor(Math.random() * goodLuckMessages.length)];
-    }
-
-    if (luck <= 120) {
-      const veryGoodLuckMessages = [
-        "哇，今天真是好运满满，和萃香一样，处处都是惊喜和好事。做什么都顺利，一定是有神明在庇佑！",
-        "今天运气好到爆，感觉一切都会变得轻松，像是被幸运的风吹拂着，走向幸福的道路。",
-        "简直就是一天的幸运流星，带着好运向你飞来，任何困难都将轻松解决！"
-      ];
-      return veryGoodLuckMessages[Math.floor(Math.random() * veryGoodLuckMessages.length)];
-    }
-
-    const perfectLuckMessages = [
-      "简直是连风都带着幸运的气息啊！像八云紫一样巧妙地掌握了好运，你的每一步都像是走在幸福的路上！",
-      "今天的好运让你如同命运的宠儿，仿佛每一处都弥漫着幸运的气息。你的未来无限光明！",
-      "运气好得无法形容，简直让人怀疑是不是被幻想的世界宠坏了，继续前进，幸运将永远跟随！"
-    ];
-    return perfectLuckMessages[Math.floor(Math.random() * perfectLuckMessages.length)];
   }
 
 

@@ -6,7 +6,8 @@ import { exec } from 'child_process';
 export class CommandOS {
   public root = new CommandProvider()
     .onExecute(async (session, args) => {
-      let result = '系统信息:\n';
+      // let result = '系统信息:\n';
+      let mdList = [];
       let osType = os.type();
       let osRelease = os.release();
       let osPlatform = os.platform();
@@ -17,14 +18,35 @@ export class CommandOS {
       const cpuUsage = await this.getCPUUsage();
       const diskUsage = await this.getDiskUsage();
 
-      result += `🧠️ CPU型号: ${this.getCpuName()}\n`;
-      result += `💻 CPU 使用率: ${cpuUsage.toFixed(2)}%\n`;
-      result += `⚙️ 操作系统: ${osType} ${osRelease} (${osPlatform}) ${osArch}\n`;
-      result += `⏰ 开机时间: ${this.getBootTime()}\n`;
-      result += `💾 内存: 已用 ${usedMem.toFixed(1)}/${totalMem.toFixed(1)} GB\n`;
-      result += `💽 磁盘使用情况: \n${diskUsage}\n`;
+      mdList.push('## 系统信息\n');
+      mdList.push(`CPU型号：${this.getCpuName()}\n\n`);
+      mdList.push(`CPU 使用率：${cpuUsage.toFixed(2)}%\n\n`);
+      mdList.push(`操作系统：${osType} ${osRelease} (${osPlatform}) ${osArch}\n\n`);
+      mdList.push(`开机时间：${this.getBootTime()}\n\n`);
+      mdList.push(`内存: 已用 ${usedMem.toFixed(1)}/${totalMem.toFixed(1)} GB\n\n`);
+      mdList.push(`### 磁盘使用情况\n`);
+      for (const disk of diskUsage) {
+        const total = disk.total;
+        const usedPercentage = Number(((disk.used / total) * 100).toFixed(2)); // 已用百分比，保留两位小数
+        const freePercentage = Number((100 - usedPercentage).toFixed(2));      // 空闲百分比
+        mdList.push(`* 磁盘${disk.drive} ${disk.used}/${disk.total} GB\n`);
+        mdList.push(`![${disk.drive}](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${freePercentage},${(usedPercentage)}]}]}} "${disk.drive}")\n`,);
+      }
 
-      Messages.sendMessageToReply(session, result);
+
+      // mdList.push(`### CPU占用率\n`);
+      // mdList.push(`![CPU占用率](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${cpuUsage.toFixed(2)},${(100 - cpuUsage).toFixed(2)}]}]}} "CPU占用率")\n`,);
+      // mdList.push(`### 内存占用率\n`);
+      // mdList.push(`![内存占用率](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${freeMem.toFixed(2)},${(usedMem).toFixed(2)}]}]}} "CPU占用率")\n`,);
+
+      // result += `🧠️ CPU型号: ${this.getCpuName()}\n`;
+      // result += `💻 CPU 使用率: ${cpuUsage.toFixed(2)}%\n`;
+      // result += `⚙️ 操作系统: ${osType} ${osRelease} (${osPlatform}) ${osArch}\n`;
+      // result += `⏰ 开机时间: ${this.getBootTime()}\n`;
+      // result += `💾 内存: 已用 ${usedMem.toFixed(1)}/${totalMem.toFixed(1)} GB\n`;
+      // result += `💽 磁盘使用情况: \n${diskUsage}\n`;
+
+      Messages.sendMessageToReply(session, Messages.imageBuffer(Messages.generateMarkdown(mdList)));
     });
 
   public static get(): CommandProvider {
@@ -76,19 +98,19 @@ export class CommandOS {
     return usage;
   }
 
-  private getDiskUsageWindows(): Promise<string> {
+  private getDiskUsageWindows(): Promise<any> {
     return new Promise((resolve, reject) => {
       exec('wmic logicaldisk get size,freespace,caption', (error, stdout, stderr) => {
         if (error || stderr) {
           reject('获取磁盘信息失败');
         } else {
           const lines = stdout.trim().split('\n').slice(1);
-          let diskInfo = '';
+          let diskInfo = [];
           lines.forEach(line => {
             const [drive, freeSpace, size] = line.trim().split(/\s+/);
             const usedSpace = (parseInt(size) - parseInt(freeSpace)) / (1024 * 1024 * 1024);
             const totalSize = parseInt(size) / (1024 * 1024 * 1024);
-            diskInfo += `- [${drive}]: ${usedSpace.toFixed(1)}/${totalSize.toFixed(1)} GB\n`;
+            diskInfo.push({drive: drive, used: usedSpace.toFixed(1), total: totalSize.toFixed(1)})
           });
           resolve(diskInfo);
         }
@@ -96,17 +118,17 @@ export class CommandOS {
     });
   }
 
-  private getDiskUsageLinux(): Promise<string> {
+  private getDiskUsageLinux(): Promise<any> {
     return new Promise((resolve, reject) => {
       exec('df -h --output=source,used,size', (error, stdout, stderr) => {
         if (error || stderr) {
           reject('获取磁盘信息失败');
         } else {
           const lines = stdout.trim().split('\n').slice(1);
-          let diskInfo = '';
+          let diskInfo = [];
           lines.forEach(line => {
             const [drive, usedSpace, totalSize] = line.trim().split(/\s+/);
-            diskInfo += `${drive}: ${usedSpace} / ${totalSize}\n`;
+            diskInfo.push({drive: drive, used: usedSpace, total: totalSize})
           });
           resolve(diskInfo);
         }
@@ -114,7 +136,7 @@ export class CommandOS {
     });
   }
 
-  private getDiskUsage(): Promise<string> {
+  private getDiskUsage(): Promise<any> {
     if (os.platform() === 'win32') {
       return this.getDiskUsageWindows();
     } else {

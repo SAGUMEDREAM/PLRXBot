@@ -5,6 +5,8 @@ import {CommandProvider} from "../../core/command/CommandProvider";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {Messages} from "../../core/network/Messages";
+import {CommandNewtone} from "./command/CommandNewtone";
+import {CommandBilibiliDownload} from "./command/CommandBilibiliDownload";
 
 export class OtomadHelper extends PluginInitialization {
   constructor() {
@@ -34,6 +36,8 @@ export class OtomadHelper extends PluginInitialization {
     helper.addFast(["LookAE", "look_ae", "lookae"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.lookae.com/")));
     helper.addFast(["免费日语字体"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.freejapanesefont.com/")));
     instance.registerCommand(["音MAD助手", "otomad_helper", "otomadhelper"], helper.root);
+    instance.registerCommand(["修音","newtone"], CommandNewtone.get());
+    instance.registerCommand(["B站解析","b站解析"], CommandBilibiliDownload.get());
   }
 
 }
