@@ -45,14 +45,14 @@ export class CommandMCS {
           success = true;
           break;
         } catch (err) {
-          console.log(`第 ${i + 1} 次尝试失败:`, err.message);
+          // console.log(`第 ${i + 1} 次尝试失败:`, err.message);
           if (i === retryCount - 1) {
             mdList.push("解析失败\n");
           }
         }
       }
 
-      Messages.sendMessageToReply(session, h.image(Messages.generateMarkdown(mdList), 'image/png'));
+      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
 
     });
 

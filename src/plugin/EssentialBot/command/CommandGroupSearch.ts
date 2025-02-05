@@ -23,7 +23,7 @@ export class CommandGroupSearch {
   public root = new CommandProvider()
     .addArg("字段")
     .addArg("页码")
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const keyword = args.get(0);
       if (keyword == null || keyword == "") {
         Messages.sendMessageToReply(session, `用法: ${"/搜索群组 [名字]"}`);
@@ -39,7 +39,7 @@ export class CommandGroupSearch {
         const resultData = JSON.parse(cachedData).data as GroupDataStorage;
         this.sendGroupResults(session, keyword, resultData);
       } else {
-        fetch(this.api)
+        await fetch(this.api)
           .then(response => {
             if (!response.ok) {
               throw new Error(`Network response was not ok, status: ${response.status}`);

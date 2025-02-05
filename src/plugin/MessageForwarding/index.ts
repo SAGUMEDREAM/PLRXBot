@@ -12,8 +12,8 @@ export class MessageForwarding extends PluginInitialization {
 
   public load(): void {
     const cache = Files.read(MFFilters.cache_path);
-    MFFilters.MFCache = JSON.parse(cache)["cache"] || [];
-    PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
+    MFFilters.filter_caches = JSON.parse(cache)["cache"] || [];
+    PluginListener.on(PluginEvent.HANDLE_MESSAGE, this,  async (session, args) => {
       if(CommandManager.getInstance().getProvider().has(session.content.split(' ')[0])) return;
       MFFilters.handle(session, args);
     });

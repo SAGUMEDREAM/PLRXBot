@@ -27,7 +27,7 @@ export class MusicList {
   public getByName(name: string): MusicData | null {
     let sel_name_arr: string = name;
     let result: MusicData;
-    for (let arr of MaiMaiDX.onlyInstance.alias) {
+    for (let arr of MaiMaiDX.INSTANCE.alias) {
       if (arr.includes(name)) {
         sel_name_arr = arr;
         break;
@@ -55,11 +55,17 @@ export class MusicOptional {
   public diff_data: MusicDiffData;
 
   public constructor() {
-    let music_list_json = Networks.getJson(music_list_api);
-    let chart_stats_json = Networks.getJson(chart_stats_api);
+    // [music_list_json, chart_stats_json] = Promise.all
+    this.init();
+  }
+
+  public async init() {
+    const music_list_json = await Networks.getJson(music_list_api);
+    const chart_stats_json = await Networks.getJson(chart_stats_api);
     this.list = new MusicList();
     this.diff_data = new MusicDiffData()
     this.parse(music_list_json, chart_stats_json);
+    await MaiMaiDX.INSTANCE.asyncLoad();
   }
 
   public parse(music_list_json: object[], chart_stats_json: object): void {

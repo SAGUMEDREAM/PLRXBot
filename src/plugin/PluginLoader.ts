@@ -8,6 +8,7 @@ import {DailyEvent} from "./DailyEvent";
 import {MaiMaiDX} from "./MaiMaiDX";
 import {Shrine} from "./Shrine";
 import {OtomadHelper} from "./OtomadHelper";
+import {OwlPenguinParrot} from "./OwlPenguinParrot";
 
 export class PluginLoader {
   public static load() {
@@ -20,6 +21,7 @@ export class PluginLoader {
     Plugins.register(new FunnyWords());
     Plugins.register(new Shrine());
     Plugins.register(new OtomadHelper());
+    Plugins.register(new OwlPenguinParrot());
     /*const path: string = Constant.PLUGIN_PATH;
     const files = Files.getDir(path);
     files.forEach((fileDir: string) => {

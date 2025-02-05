@@ -9,7 +9,7 @@ export class CommandLilySearch {
     .onExecute((session, args) => {
       const title = args.merge();
       if (title == "" || args.get(0) == null) {
-        Messages.sendMessageToReply(session, "❗ 缺少搜索参数，请提供搜索关键词。");
+        Messages.sendMessageToReply(session, "缺少搜索参数，请提供搜索关键词。");
         return;
       }
 
@@ -34,7 +34,7 @@ export class CommandLilySearch {
         .then(async result => {
           const code = result["code"];
           if (code !== 200) {
-            Messages.sendMessageToReply(session, "❌请求失败，请稍后再试。");
+            Messages.sendMessageToReply(session, "请求失败，请稍后再试。");
             return;
           }
 
@@ -42,7 +42,7 @@ export class CommandLilySearch {
           const content = data["content"];
 
           if (content.length === 0) {
-            Messages.sendMessageToReply(session, `❗没有找到与【${title}】相关的文件。`);
+            Messages.sendMessageToReply(session, `没有找到与【${title}】相关的文件。`);
             return;
           }
 

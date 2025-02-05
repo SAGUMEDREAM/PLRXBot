@@ -10,10 +10,15 @@ export class Plugins {
   private static PluginMap: Map<string, PluginInitialization> = new Map<string, PluginInitialization>();
   private static DisabledPluginId: string[] = [];
 
-  public static init(): void {}
+  public static init(): void {
+  }
 
   public static register(Initialization: PluginInitialization) {
-    try {this.PluginMap.set(Initialization.plugin_id, Initialization);} catch (e) {LOGGER.error(e)}
+    try {
+      this.PluginMap.set(Initialization.plugin_id, Initialization);
+    } catch (e) {
+      LOGGER.error(e)
+    }
   }
 
   public static load() {
@@ -45,10 +50,16 @@ export class Plugins {
       PluginListener.emit(PluginEvent.PLUGIN_DISABLED, null, pluginId);
     }
   }
+
   public static isEnabled(pluginId: string): boolean {
     return this.PluginMap.has(pluginId);
   }
+
   public static isDisabled(pluginId: string): boolean {
     return this.DisabledPluginId.includes(pluginId);
+  }
+
+  public static getPlugins() {
+    return this.PluginMap;
   }
 }

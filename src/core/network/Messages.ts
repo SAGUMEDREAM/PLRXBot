@@ -2,9 +2,15 @@ import {Context, Dict, Element, h, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {UserManager} from "../user/UserManager";
 import {MessageData} from "./MessageData";
-import fetch from "node-fetch";
-import request, {FormData, Options} from "sync-request";
+import fetch from 'node-fetch';
+import FormData from 'form-data';
 import fs from "node:fs";
+import axios from "axios";
+import {MIMEUtils} from "../utils/MIMEUtils";
+
+const MARKDOWN_CACHE = new Map<string, { values: Element, timestamp: number }>();
+const CACHE_TTL = 60 * 60 * 1000;
+const CACHE_SIZE = 80;
 
 export class Messages {
   public static getNextMessage(
@@ -15,24 +21,40 @@ export class Messages {
     return message;
   }
 
+  public static async getSenderPost(action: () => (any | void | Promise<any> | Promise<void>) = () => null): Promise<void> {
+    let handler = {
+      times: 0,
+      action: () => null
+    }
+    handler.action = action;
+    await handler.action()
+    // for (; handler.times <= 2; ++handler.times) {
+    //   try {
+    //     await handler.action();
+    //     break;
+    //   } catch (err) {
+    //   }
+    // }
+  }
+
   public static sendMessage(
     session: Session<User.Field, Channel.Field, Context>,
     message: any): void {
-    session.sendQueued(message);
+    this.getSenderPost(() => session.sendQueued(message));
   }
 
   public static sendMessageToGroup(
     session: Session<User.Field, Channel.Field, Context>,
     group_id: number,
     message: any) {
-    session.bot?.sendMessage(String(group_id), message);
+    this.getSenderPost(() => session.bot?.sendMessage(String(group_id), message));
   }
 
   public static sendMessageToReply(
     session: Session<User.Field, Channel.Field, Context>,
     message: any) {
     const message_id = session.messageId;
-    session.sendQueued(h('quote', {id: message_id}) + message);
+    this.getSenderPost(() => session.sendQueued(h('quote', {id: message_id}) + message));
   }
 
   public static deleteMessage(
@@ -42,29 +64,55 @@ export class Messages {
   ) {
     let channelId = session.event.message.quote.channel.id;
     let repId = session.event.message.quote.id;
-    session.bot.deleteMessage(channelId, repId);
+    this.getSenderPost(() => session.bot.deleteMessage(channelId, repId));
   }
 
   public static sendPrivateMessage(
     session: Session<User.Field, Channel.Field, Context>,
     user_id: number,
     message: any) {
-    session.bot?.sendMessage(String(user_id), message);
+    this.getSenderPost(() => session.bot?.sendMessage(String(user_id), message));
   }
 
-  public static generateMarkdown(data: any[]): Buffer {
-    let api = "http://localhost:8099/markdown";
-    let fm: FormData = new FormData();
+  public static async getMarkdown(data: any[]): Promise<Element> {
+    const cacheKey = data.join("###");
+
+    if (MARKDOWN_CACHE.has(cacheKey)) {
+      return MARKDOWN_CACHE.get(cacheKey)!.values;
+    }
+
+    const api = "http://127.0.0.1:8099/markdown";
+    const fm: FormData = new FormData();
+
     for (const item of data) {
       fm.append("texts", item);
     }
-    let options: Options = {
-      form: fm,
+
+    const headers = {
+      ...fm.getHeaders(),
+      "Content-Type": "multipart/form-data",
+    };
+
+    try {
+      const request = await axios.post(api, fm, {
+        headers: headers,
+        responseType: "arraybuffer",
+      });
+
+      const buffer = Buffer.from(request.data);
+      const type = MIMEUtils.getType(buffer);
+      const values = h.image(buffer, type);
+      MARKDOWN_CACHE.set(cacheKey, { values, timestamp: Date.now() });
+
+      if (MARKDOWN_CACHE.size > CACHE_SIZE) {
+        const firstKey = MARKDOWN_CACHE.keys().next().value;
+        MARKDOWN_CACHE.delete(firstKey);
+      }
+
+      return values;
+    } catch (error) {
+      throw error;
     }
-    let res = request("POST", api, options);
-    let body: any = res.getBody();
-    let buffer: Buffer = body;
-    return buffer;
   }
 
   public static async sendAudio(
@@ -72,7 +120,7 @@ export class Messages {
     url: string
   ): Promise<void> {
     fs.promises.readFile(url).then(buffer => {
-      Messages.sendMessage(session, h.audio(buffer, 'audio/mpeg'));
+      this.getSenderPost(() => Messages.sendMessage(session, h.audio(buffer, 'audio/mpeg')));
     }).catch(err => {
     });
 
@@ -83,7 +131,7 @@ export class Messages {
     url: string
   ): Promise<void> {
     fs.promises.readFile(url).then(buffer => {
-      Messages.sendMessage(session, h.file(buffer, 'application/octet-stream'));
+      this.getSenderPost(() => Messages.sendMessage(session, h.file(buffer, 'application/octet-stream')));
     }).catch(err => {
       console.error(err)
     });
@@ -94,7 +142,7 @@ export class Messages {
     url: string
   ): Promise<void> {
     fs.promises.readFile(url).then(buffer => {
-      Messages.sendMessage(session, h.video(buffer, 'video/mp4'));
+      this.getSenderPost(() => Messages.sendMessage(session, h.video(buffer, 'video/mp4')));
     }).catch(err => {
     });
   }
@@ -118,7 +166,7 @@ export class Messages {
     attrs: Dict,
     children: Element[],
   } {
-    return h.image(buffer, 'image/png');
+    return h.image(buffer, MIMEUtils.getType(buffer));
   }
 
   public static at(user_id: number): {
@@ -182,11 +230,11 @@ export class Messages {
     return `https://p.qlogo.cn/gh/${group_id}/${group_id}/640/`
   }
 
-  public static getNickname(user_id: string | number): string {
-    let api = `https://api.szfx.top/qq/info/?qq=${user_id}`;
+  public static async getNickname(user_id: string | number): Promise<string> {
+    const api = `https://api.szfx.top/qq/info/?qq=${encodeURIComponent(user_id)}`;
     try {
-      let response = request("GET", api);
-      let json = JSON.parse(response.getBody("utf8"));
+      let response = await axios.get(api);
+      const json = response.data;
       return json["nickname"];
     } catch (error) {
       return null;

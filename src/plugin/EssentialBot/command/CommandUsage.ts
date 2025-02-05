@@ -6,7 +6,7 @@ import {h} from "koishi";
 export class CommandUsage {
   public root = new CommandProvider()
     .addArg("命令")
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       // if(session.bot.user.id == session.event.user.id) return;
       let command = args.mergeWithSpace();
       if (args.mergeWithSpace() == null) {
@@ -21,14 +21,14 @@ export class CommandUsage {
       let parsedCommand = CommandHelper.parseCommandTreeToArray(command);
 
       if(parsedCommand.length == 0) {
-        mdList.push("* ❌ 未知命令\n")
+        mdList.push("* ❌未知命令\n")
       } else {
         parsedCommand.forEach((usage: string) => {
           mdList.push(`* ${usage}\n`);
         });
       }
 
-      Messages.sendMessageToReply(session, h.image(Messages.generateMarkdown(mdList), 'image/png'));
+      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
     });
   public static get(): CommandProvider {
     return new this().root;

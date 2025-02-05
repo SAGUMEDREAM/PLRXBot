@@ -9,7 +9,7 @@ import {PluginEvent} from "../plugins/PluginEvent";
 import {PluginListener} from "../plugins/PluginListener";
 
 export class MessageCHandler {
-  public static handle(session: Session<User.Field, Channel.Field, Context>): void {
+  public static async handle(session: Session<User.Field, Channel.Field, Context>): Promise<void> {
     const user = UserManager.get(session);
     const group = GroupManager.get(session);
     if(user) {

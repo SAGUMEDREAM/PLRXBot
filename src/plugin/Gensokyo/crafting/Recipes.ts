@@ -9,7 +9,7 @@ export class Recipes {
 
   public static registerRecipe(recipeId: string, recipe: Recipe): Recipe {
     if (this.recipes.has(recipeId)) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Recipe with ID ${recipeId} already exists.`);
+      Gensokyo.INSTANCE.pluginLogger.error(`Recipe with ID ${recipeId} already exists.`);
       return null;
     }
     this.recipes.set(recipeId, recipe);
@@ -18,7 +18,7 @@ export class Recipes {
 
   public static register(recipeId: string, builder: RecipeBuilder): Recipe {
     if (this.recipes.has(recipeId)) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Recipe with ID ${recipeId} already exists.`);
+      Gensokyo.INSTANCE.pluginLogger.error(`Recipe with ID ${recipeId} already exists.`);
       return null;
     }
     const recipe = builder.build();

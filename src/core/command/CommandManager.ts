@@ -14,20 +14,24 @@ import {CommandHelper} from "./CommandHelper";
 import {LOGGER} from "../../index";
 import {CommandSudo} from "./entry/CommandSudo";
 import {GroupManager} from "../group/GroupManager";
+import {CommandReload} from "./entry/CommandReload";
 
 export class CommandManager {
   private constructor() {}
   private static readonly INSTANCE = new CommandManager();
   private providers: Map<string, CommandProvider> = new Map();
   private readonly provider_tree: { [key: string]: any } = {};
+
   public static create(): CommandManager {
     const instance = CommandManager.getInstance();
     instance.registerCommand("$sudo", CommandSudo.get());
+    instance.registerCommand(["reload"], CommandReload.get())
     LOGGER.info("Loading Command Manager...")
     LOGGER.info("Loading Command System...")
     LOGGER.info("Loading Command Helper...")
     return this.INSTANCE;
   }
+
   /*public static create(): CommandManager {
     const instance = CommandManager.getInstance();
     this.registerSimpleCommand(".MESSAGE_DATA", (session, args) => {
@@ -201,7 +205,9 @@ export class CommandManager {
   public getProvider() {
     return this.providers;
   }
-  // 暂时弃用
+  /**
+   * @deprecated
+   */
   public buildCommandTree() {
     this.providers.forEach((provider: CommandProvider, command_root: string) => {
       if (provider.getSubCommands().size === 0) {

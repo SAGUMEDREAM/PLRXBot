@@ -7,6 +7,10 @@ export class CommandProvider {
   public static readonly leakArgs = (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => {
     Messages.sendMessage(session, "参数不完整");
   };
+  public static readonly leakPermission = (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => {
+    Messages.sendMessage(session, "权限不足");
+  };
+
   public static T = "";
   private primaryKey: CommandProvider;
   private registryKey: string;

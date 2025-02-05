@@ -8,7 +8,7 @@ import {Items} from "../item/Items";
 
 export class CommandViewInv {
   public root = new CommandProvider()
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const user = UserManager.get(session);
       if (user != null) {
         let mdList = ['## 您的背包库存:\n'];
@@ -19,7 +19,7 @@ export class CommandViewInv {
             mdList.push(`* \`${Text.of(item.getName())}\`：${itemStack.amount}\n`);
           });
         }
-        Messages.sendMessageToReply(session, h.image(Messages.generateMarkdown(mdList), 'image/png'));
+        Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
       }
 
     });

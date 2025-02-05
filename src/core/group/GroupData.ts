@@ -65,7 +65,7 @@ export class GroupData {
       const fr = Files.read(this.path);
       const data = JSON.parse(fr);
       this.groupData = {
-        group_id: data.group_id,
+        group_id: data.target_group_id,
         banned: data.banned,
         permissions: data.permissions,
         data: data.data

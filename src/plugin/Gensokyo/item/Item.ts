@@ -11,42 +11,42 @@ export class ItemStacks {
   }
 
   public addItem(item: Item, amount: number = 1) {
-    if (!item || !item.item_id) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Invalid item provided.`);
+    if (!item || !item.getItemId()) {
+      Gensokyo.INSTANCE.pluginLogger.error(`Invalid item provided.`);
       return;
     }
 
     if (amount <= 0) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Amount must be a positive integer.`);
+      Gensokyo.INSTANCE.pluginLogger.error(`Amount must be a positive integer.`);
       return;
     }
 
     for (const itemStack of this.itemStack) {
-      if (item.item_id === itemStack.item_id) {
+      if (item.getItemId() === itemStack.item_id) {
         itemStack.amount += amount;
         return;
       }
     }
 
     this.itemStack.push({
-      item_id: item.item_id,
+      item_id: item.getItemId(),
       amount: amount,
     });
   }
 
   public removeItem(item: Item, amount: number = 1): boolean {
-    if (!item || !item.item_id) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Invalid item provided.`);
+    if (!item || !item.getItemId()) {
+      Gensokyo.INSTANCE.pluginLogger.error(`Invalid item provided.`);
     }
 
     if (amount <= 0) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Amount must be a positive integer.`);
+      Gensokyo.INSTANCE.pluginLogger.error(`Amount must be a positive integer.`);
       return false;
     }
 
     for (let i = 0; i < this.itemStack.length; i++) {
       const itemStack = this.itemStack[i];
-      if (item.item_id === itemStack.item_id) {
+      if (item.getItemId() === itemStack.item_id) {
         itemStack.amount -= amount;
 
         if (itemStack.amount <= 0) {
@@ -58,18 +58,18 @@ export class ItemStacks {
   }
 
   public hasItem(item: Item, amount: number = 0): boolean {
-    if (!item || !item.item_id) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Invalid item provided.`);
+    if (!item || !item.getItemId()) {
+      Gensokyo.INSTANCE.pluginLogger.error(`Invalid item provided.`);
       return false;
     }
 
     if (amount < 0) {
-      Gensokyo.onlyInstance.pluginLogger.error(`Amount must be a non-negative integer.`);
+      Gensokyo.INSTANCE.pluginLogger.error(`Amount must be a non-negative integer.`);
       return false;
     }
 
     for (const itemStack of this.itemStack) {
-      if (item.item_id === itemStack.item_id && itemStack.amount >= amount) {
+      if (item.getItemId() === itemStack.item_id && itemStack.amount >= amount) {
         return true;
       }
     }
@@ -99,6 +99,10 @@ export class ItemStacks {
   public getUser() {
     return this.user;
   }
+
+  public static getStacks(user: UserProfile): ItemStacks {
+    return user["ITEM_STACKS"];
+  }
 }
 
 export class ItemStack {
@@ -107,9 +111,17 @@ export class ItemStack {
 }
 
 export class Item {
-  public item_id: string = null;
+  private item_id: string = null;
 
   public constructor() {
+  }
+
+  public setItemId(item_id): void {
+    if(this.item_id == null) this.item_id = item_id;
+  }
+
+  public getItemId(): string {
+    return this.item_id;
   }
 
   public getName(): string {

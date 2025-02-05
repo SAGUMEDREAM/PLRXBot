@@ -3,9 +3,12 @@ import {Messages} from "../../../core/network/Messages";
 import {MessageMerging} from "../../../core/network/MessageMerging";
 import {h} from "koishi";
 
+let bf_ct = 0
+
+
 export class CommandCommandHelper {
   public root = new CommandProvider()
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const mdList = [
         '## 蓬莱人形Bot\n',
         '蓬莱人形Bot是一个面向东方Project/音MAD/maimai/二次元QQ群的QQ机器人。\n',
@@ -56,7 +59,7 @@ export class CommandCommandHelper {
         '> 注：如果在使用过程中需要帮助或者是想提建议的可以加入开发群863842932\n'
       ];
 
-      Messages.sendMessageToReply(session, h.image(Messages.generateMarkdown(mdList), 'image/png'));
+      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
     });
 
   public static get(): CommandProvider {

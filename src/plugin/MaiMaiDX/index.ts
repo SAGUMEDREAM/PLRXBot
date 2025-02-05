@@ -14,11 +14,11 @@ import {CommandPlayMusic} from "./command/CommandPlayMusic";
 export class MaiMaiDX extends PluginInitialization {
   public alias = [];
   public optional: MusicOptional;
-  public static onlyInstance: MaiMaiDX;
+  public static INSTANCE: MaiMaiDX;
 
   constructor() {
     super("maimai_dx");
-    MaiMaiDX.onlyInstance = this;
+    MaiMaiDX.INSTANCE = this;
   }
 
   public load() {
@@ -31,7 +31,7 @@ export class MaiMaiDX extends PluginInitialization {
     instance.registerCommand(["搜歌"], CommandSearchMusic.get());
     instance.registerCommand(["点歌"], CommandPlayMusic.get());
 
-    this.asyncLoad();
+    // this.asyncLoad();
   }
 
   public async asyncLoad(): Promise<void> {

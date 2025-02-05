@@ -3,6 +3,7 @@ import {Messages} from "../../../core/network/Messages";
 import request from "sync-request";
 import {Options, FormData} from "sync-request";
 import {h} from "koishi";
+import axios from "axios";
 
 export class Command5K {
   public root = new CommandProvider()
@@ -18,9 +19,8 @@ export class Command5K {
 
       let api = `https://gsapi.cbrx.io/image?top=${encodeURIComponent(top)}&bottom=${encodeURIComponent(bottom)}&noalpha=true`;
 
-      let res = request("GET", api, {});
-      let body: any = res.getBody();
-      let buffer: Buffer = body;
+      let res = await axios.get(api)
+      let buffer: Buffer = res.data;
       Messages.sendMessage(session, h.image(buffer, 'image/png'))
     });
 

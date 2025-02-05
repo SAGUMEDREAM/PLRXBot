@@ -1,9 +1,10 @@
 import {Item} from "../item/Item";
 
 export class Tag {
-  tag_id: string;
-  list: Set<Item>;
-  public constructor() {
+  public readonly tag_id: string;
+  public readonly list: Set<Item>;
+  public constructor(tag_id: string) {
+    this.tag_id = tag_id;
     this.list = new Set<Item>();
   }
   public addItem(item: Item): Tag {

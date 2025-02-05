@@ -9,8 +9,9 @@ import * as cluster from "cluster";
 import { BaseUserProfile } from "./BaseUserProfile";
 import { GCUtils } from "../utils/GCUtils";
 import {botInstance, LOGGER} from "../../index";
+import {Reloadable} from "../impl/Reloadable";
 
-export class UserManager {
+export class UserManager implements Reloadable {
   private static readonly INSTANCE = new UserManager();
   private userdata: Map<number | string, UserProfile> = new Map<number | string, UserProfile>();
 
@@ -30,6 +31,11 @@ export class UserManager {
     setInterval(() => {
       this.userdata.clear();
     }, 3600000 / 2);
+  }
+
+  public reload() {
+    this.userdata.forEach(userInfo => userInfo.save());
+    this.userdata.clear();
   }
 
   public static createUser(user_id: number): UserProfile;

@@ -3,7 +3,7 @@ import {Messages} from "../../../core/network/Messages";
 
 export class CommandAbout {
   public root = new CommandProvider()
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       let mdList = [
         `## 关于本项目\n`,
         `* 网站：https://thonly.cc\n`,
@@ -12,7 +12,7 @@ export class CommandAbout {
         `* 开发群：863842932\n`,
         `* 开发/代码：稀神灵梦\n`
       ];
-      Messages.sendMessageToReply(session, Messages.imageBuffer(Messages.generateMarkdown(mdList)));
+      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
     });
 
   public static get(): CommandProvider {

@@ -25,7 +25,7 @@ export class CommandBilibiliDownload {
           api = `https://api.bilibili.com/x/web-interface/view?bvid=${biliVideoId}`;
         }
 
-        let response = Networks.getJson(api);
+        let response = await Networks.getJson(api);
         let data = response.data;
         let bvid = data["bvid"];
         let aid = data["aid"];
@@ -52,10 +52,10 @@ export class CommandBilibiliDownload {
         mdList.push(`| 播放量             | 弹幕数量               | 点赞              | 投币              | 收藏                  | 分享               |`);
         mdList.push(`|-----------------|--------------------|-----------------|-----------------|---------------------|------------------|`);
         mdList.push(`| ${stat["view"]} | ${stat["danmaku"]} | ${stat["like"]} | ${stat["coin"]} | ${stat["favorite"]} | ${stat["share"]} |`);
-        let md: any = h.image(Messages.generateMarkdown(mdList), 'image/png')
+        let md: any = await Messages.getMarkdown(mdList);
 
         let api2 = `https://api.bilibili.com/x/player/playurl?avid=${aid}&cid=${cid}&qn=1&type=&otype=json&platform=html5&high_quality=1`;
-        let response2 = Networks.getJson(api2);
+        let response2 = await Networks.getJson(api2);
         let data2 = response2.data;
         let durl = data2["durl"];
 

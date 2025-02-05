@@ -5,14 +5,21 @@ import path from "path";
 import { Constant } from "../Constant";
 import { Context, Session } from "koishi";
 import { Channel, User } from "@koishijs/core";
+import {Reloadable} from "../impl/Reloadable";
 
-export class GroupManager {
+export class GroupManager implements Reloadable {
   private static readonly INSTANCE = new GroupManager();
   private group_data: Map<number | string, GroupData> = new Map<number | string, GroupData>();
 
   public load() {
     LOGGER.info("Loading GroupManager...");
   }
+
+  public reload() {
+    this.group_data.forEach((groupData) => groupData.save());
+    this.group_data.clear();
+  }
+
   private static getGroupId(args: number | string | Session<User.Field, Channel.Field, Context>): number | string | null {
     if (typeof args === "number" || typeof args === "string") {
       return args;

@@ -50,10 +50,9 @@ export class CommandJRRP {
       let user = UserManager.get(session);
       let timeMessage = this.getTimeMessage();
       let result = `${timeMessage}${session.event.user.name}\n`;
-      result += `你今天的运气值是: ${this.getDailyLuck(user)}\n抽到的御神签是：\n`;
+      result += `你今天的运气值是: ${parseInt(String(this.getDailyLuck(user) / 1.4))}\n抽到的御神签是：\n`;
       result += `${user.profile.data["jrrp"]["fortune"]}\n`;
       Messages.sendMessageToReply(session, result);
-
     });
 
   private getTimeMessage(): string {

@@ -17,13 +17,14 @@ export type FWMessage = {
 export class FunnyWords extends PluginInitialization {
   constructor() {
     super("funny_words");
-    FunnyWords.onlyInstance = this;
+    FunnyWords.INSTANCE = this;
   }
 
   public static readonly message_db_path = path.resolve(path.join(Utils.getRoot(), 'data', 'caches'), "message_db.json");
   public static MESSAGE_DB: FWMessage[] = [];
-  public static onlyInstance: FunnyWords;
+  public static INSTANCE: FunnyWords;
   public i: number = 0;
+  public enabled = false
 
   private loadData() {
     try {
@@ -43,6 +44,7 @@ export class FunnyWords extends PluginInitialization {
     PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
       let content = session.content;
       if (CommandManager.getInstance().testCommand(content)) return;
+      if (!this.enabled) return;
       this.parseMsg(session);
     });
 

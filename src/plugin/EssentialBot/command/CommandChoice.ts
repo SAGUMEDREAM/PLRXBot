@@ -1,7 +1,5 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {Messages} from "../../../core/network/Messages";
-import {h} from "koishi";
-import path from "path";
 
 export class CommandChoice {
   public root = new CommandProvider()

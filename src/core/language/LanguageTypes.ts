@@ -1,10 +1,10 @@
 import {LanguageProvider} from "./LanguageProvider";
 import {Files} from "../utils/Files";
 import {Constant} from "../Constant";
-import {Logger} from "koishi";
 import {LOGGER} from "../../index";
+import {Reloadable} from "../impl/Reloadable";
 
-export class LanguageTypes {
+export class LanguageTypes implements Reloadable {
   public static readonly Types: Map<string,LanguageProvider> = new Map<string,LanguageProvider>();
   public static Type: LanguageProvider;
   public static init() {
@@ -23,6 +23,12 @@ export class LanguageTypes {
     });
     this.Type = this.Types.get("zh_cn");
   }
+
+  public reload() {
+    LanguageTypes.Types.clear();
+    LanguageTypes.Type = null;
+  }
+
   public static register(registry_key: string): LanguageProvider {
     const provider = new LanguageProvider(registry_key);
     this.Types.set(registry_key, provider);

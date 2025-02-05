@@ -94,7 +94,7 @@ export function apply(ctx: Context) {
     } catch (i) {
       return;
     }
-    MessageCHandler.handle(session);
+    await MessageCHandler.handle(session);
     try {
       PluginListener.emit(PluginEvent.HANDLE_MESSAGE_AFTER, session);
     } catch (i) {

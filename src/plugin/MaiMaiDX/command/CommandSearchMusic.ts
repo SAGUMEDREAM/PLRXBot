@@ -1,13 +1,12 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {Messages} from "../../../core/network/Messages";
 import {MaiMaiDX} from "../index";
-import {h} from "koishi";
 import {music_chart, MusicData} from "../data/MusicData";
 
 export class CommandSearchMusic {
   private root = new CommandProvider()
     .addArg("歌名")
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       let name = args.raw;
       if (!name) {
         Messages.sendMessageToReply(session, "缺少参数");
@@ -19,18 +18,18 @@ export class CommandSearchMusic {
       let resultName: Set<string> = new Set();
       let resultId: Set<string> = new Set();
 
-      for (const aliasArray of MaiMaiDX.onlyInstance.alias) {
+      for (const aliasArray of MaiMaiDX.INSTANCE.alias) {
         if (aliasArray.some((alias: string) => alias.toLowerCase().includes(name))) {
           resultName.add(aliasArray[0]);
         }
       }
 
       for (const songName of resultName) {
-        const musicData = MaiMaiDX.onlyInstance.optional.list.getByName(songName);
+        const musicData = MaiMaiDX.INSTANCE.optional.list.getByName(songName);
         if (musicData) resultId.add(musicData.music_id);
       }
 
-      MaiMaiDX.onlyInstance.optional.list.values.forEach((musicData: MusicData) => {
+      MaiMaiDX.INSTANCE.optional.list.values.forEach((musicData: MusicData) => {
         const basicInfo = musicData.data.basic_info;
         const matchesArtist = basicInfo.artist.toLowerCase().includes(name);
         const matchesGenre = basicInfo.genre.toLowerCase().includes(name);
@@ -41,7 +40,7 @@ export class CommandSearchMusic {
         }
       });
 
-      function generateMarkdown(resultIds: Set<string>): Buffer {
+      async function generateMarkdown(resultIds: Set<string>) {
         const markdownList = [];
         markdownList.push("## 搜索结果\n");
 
@@ -56,7 +55,7 @@ export class CommandSearchMusic {
               markdownList.push(`剩余 ${resultIds.size - 13} 个结果未显示...\n`);
               break;
             }
-            const musicData = MaiMaiDX.onlyInstance.optional.list.values.get(id);
+            const musicData = MaiMaiDX.INSTANCE.optional.list.values.get(id);
             if (musicData != null) {
               markdownList.push(`* ${musicData.data.title}(${musicData.music_id})\n`);
               markdownList.push(`    * 艺术家: ${musicData.data.basic_info.artist}\n`);
@@ -67,12 +66,11 @@ export class CommandSearchMusic {
           }
         }
 
-        return Messages.generateMarkdown(markdownList);
+        return await Messages.getMarkdown(markdownList);
       }
 
-      // 发送消息
-      const markdownBuffer: Buffer = generateMarkdown(resultId);
-      Messages.sendMessageToReply(session, h.image(markdownBuffer, 'image/png'));
+      const markdownBuffer = await generateMarkdown(resultId);
+      Messages.sendMessageToReply(session, markdownBuffer);
 
     });
 

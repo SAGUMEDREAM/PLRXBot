@@ -18,6 +18,7 @@ export class CommandOS {
       const cpuUsage = await this.getCPUUsage();
       const diskUsage = await this.getDiskUsage();
 
+      mdList.push("# 蓬莱人形Bot运行状况")
       mdList.push('## 系统信息\n');
       mdList.push(`CPU型号：${this.getCpuName()}\n\n`);
       mdList.push(`CPU 使用率：${cpuUsage.toFixed(2)}%\n\n`);
@@ -29,8 +30,8 @@ export class CommandOS {
         const total = disk.total;
         const usedPercentage = Number(((disk.used / total) * 100).toFixed(2)); // 已用百分比，保留两位小数
         const freePercentage = Number((100 - usedPercentage).toFixed(2));      // 空闲百分比
-        mdList.push(`* 磁盘${disk.drive} ${disk.used}/${disk.total} GB\n`);
-        mdList.push(`![${disk.drive}](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${freePercentage},${(usedPercentage)}]}]}} "${disk.drive}")\n`,);
+        mdList.push(`* 磁盘${disk.drive} ${disk.used}/${disk.total} GB\n\n`);
+        // mdList.push(`![${disk.drive}](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${freePercentage},${(usedPercentage)}]}]}} "${disk.drive}")\n`,);
       }
 
 
@@ -46,7 +47,7 @@ export class CommandOS {
       // result += `💾 内存: 已用 ${usedMem.toFixed(1)}/${totalMem.toFixed(1)} GB\n`;
       // result += `💽 磁盘使用情况: \n${diskUsage}\n`;
 
-      Messages.sendMessageToReply(session, Messages.imageBuffer(Messages.generateMarkdown(mdList)));
+      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
     });
 
   public static get(): CommandProvider {

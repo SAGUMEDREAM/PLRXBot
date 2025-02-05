@@ -1,5 +1,7 @@
 import asyncio
 from aiohttp import web
+
+from src.handle.maimaib50 import MaiMaiB50
 from src.webloader import WebLoader
 
 

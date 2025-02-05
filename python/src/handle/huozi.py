@@ -31,7 +31,7 @@ def split_pinyin(input_pinyin):
                 matched = True
                 break
         if not matched:
-            print(f"Warning: 无法解析的拼音片段 '{input_pinyin}'")
+            # print(f"Warning: 无法解析的拼音片段 '{input_pinyin}'")
             break
     return result
 
@@ -60,7 +60,7 @@ class HuoZi:
             elif is_pinyin(text):
                 pinyin_list = split_pinyin(text.lower())
             else:
-                print(f"Warning: 输入的内容无法识别: {text}")
+                # print(f"Warning: 输入的内容无法识别: {text}")
                 continue
 
             for pinyin_str in pinyin_list:

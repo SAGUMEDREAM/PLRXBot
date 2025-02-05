@@ -5,44 +5,36 @@ import {UserManager} from "../../../core/user/UserManager";
 
 export class Items {
   public static readonly ITEMS: Map<string, Item> = new Map<string, Item>();
-  public static init() {
-    this.register("fluff", new Item());
-    this.register("cloth", new Item());
-    this.register("wood", new Item());
-    this.register("coal", new Item());
-    this.register("metal_block", new Item());
-    this.register("magic_stone", new Item());
-    this.register("redstone", new Item());
-    this.register("godly_ore", new Item());
-    this.register("bhavaagra", new Item());
-    this.register("moon_stone", new Item());
-    this.register("soul", new Item());
-    this.register("cursed_item", new Item());
-    this.register("blessed_water", new Item());
-    this.register("component", new Item());
-    this.register("mushroom", new Item());
-    this.register("bamboo", new Item());
-    this.register("bamboo_shoots", new Item());
-    this.register("apple", new Item());
-    this.register("fern_powder", new Item());
-    this.register("sweet_potato", new Item());
-    this.register("lily_of_the_valley", new Item());
-    this.register("sakura", new Item());
-    this.register("rose", new Item());
-    this.register("rhododendron", new Item());
-    this.register("red_hakurei", new Item());
-    this.register("underworld_flower", new Item());
-    this.register("orchid", new Item());
-    this.register("flower_of_the_other_shore", new Item());
-    this.register("shamrock", new Item());
-    this.register("sunflower", new Item());
-    this.register("unknown", new Item());
+  public static strange_umbrella;
+  public static water_gun;
+  public static water_cannon;
+  public static robotic_arm;
+  public static camera;
+  public static computer;
+  public static phone;
+  public static cleaner;
+  public static hand_truck;
+  public static ladle;
 
+  public static unknown;
+  public static init() {
+    this.strange_umbrella = this.registerItem("strange_umbrella", new Item());
+    this.water_gun = this.registerItem("water_gun", new Item());
+    this.water_cannon = this.registerItem("water_cannon", new Item());
+    this.robotic_arm = this.registerItem("robotic_arm", new Item());
+    this.camera = this.registerItem("camera", new Item());
+    this.computer = this.registerItem("computer", new Item());
+    this.phone = this.registerItem("phone", new Item());
+    this.cleaner = this.registerItem("cleaner", new Item());
+    this.hand_truck = this.registerItem("hand_truck", new Item());
+    this.ladle = this.registerItem("ladle", new Item());
+
+    this.unknown = this.registerItem("unknown", new Item());
   }
-  public static register(item_id: string, item: Item): Item {
+  public static registerItem(item_id: string, item: Item): Item {
     if(!this.ITEMS.has(item_id)) {
       this.ITEMS.set(item_id, item);
-      item.item_id = item_id;
+      item.setItemId(item_id);
       return item;
     }
     return null;

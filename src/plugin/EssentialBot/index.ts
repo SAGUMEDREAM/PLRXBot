@@ -39,15 +39,19 @@ import {CommandBA} from "./command/CommandBA";
 import {CommandChoice} from "./command/CommandChoice";
 
 export let poke_lock = false;
+export const welcome_black_list = ["787712108", "589711336"]
 
 export class EssentialBot extends PluginInitialization {
+  public static INSTANCE: PluginInitialization;
   constructor() {
     super("essential_bot");
+    EssentialBot.INSTANCE = this;
   }
 
   public load(): void {
     const instance = CommandManager.getInstance();
     PluginListener.on(PluginEvent.MEMBER_JOIN_GROUP, this, (session, args) => {
+      if(welcome_black_list.includes(session?.event?.channel?.id)) return;
       let result: string = '';
       result += Messages.at(Number(session?.event?.user?.id));
       result += ' 欢迎新人入群哦😊👍';

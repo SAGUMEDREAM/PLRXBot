@@ -1,15 +1,15 @@
-import { Context, Session } from "koishi";
-import { Channel, User } from "@koishijs/core";
-import { Messages } from "../../../core/network/Messages";
+import {Context, Session} from "koishi";
+import {Channel, User} from "@koishijs/core";
+import {Messages} from "../../../core/network/Messages";
 import path from "path";
-import { Utils } from "../../../core/utils/Utils";
-import { Files } from "../../../core/utils/Files";
-import { compareTwoStrings } from "../../../core/utils/StringSimilarity";
-import { CommandManager } from "../../../core/command/CommandManager";
+import {Utils} from "../../../core/utils/Utils";
+import {Files} from "../../../core/utils/Files";
+import {compareTwoStrings} from "../../../core/utils/StringSimilarity";
+import {CommandManager} from "../../../core/command/CommandManager";
 import {PluginListener} from "../../../core/plugins/PluginListener";
 
 export class MFFilters {
-  public static lexical_group: string[] = [
+  public static readonly lexical_group: string[] = [
     "tho",
     "thp",
     "茶会",
@@ -20,11 +20,24 @@ export class MFFilters {
     "一宣",
     "二宣",
     "三宣",
-    "终宣"
+    "终宣",
+    "零宣",
+    "报名",
+    "新品",
+    "推出",
+    "接力",
+    "招募",
+    "活动",
+    "制品",
+    "最新",
+    "上市",
+    "交流群",
+    "同好会",
+    "社团群",
   ];
 
-  public static MFCache: string[] = [];
-  public static group_id = 863842932;
+  public static filter_caches: string[] = [];
+  public static target_group_id = 863842932;
   public static readonly cache_path = path.resolve(path.join(Utils.getRoot(), 'data', 'caches'), "message_forwarding_cache.json");
 
   static {
@@ -37,16 +50,16 @@ export class MFFilters {
     const currentTime = Date.now();
 
     if (parsedData.time && currentTime - parsedData.time > 30 * 24 * 60 * 60 * 1000) {
-      this.MFCache = [];
+      this.filter_caches = [];
     } else {
-      this.MFCache = parsedData.cache || [];
+      this.filter_caches = parsedData.cache || [];
     }
 
     this.save();
   }
 
   public static handle(session: Session<User.Field, Channel.Field, Context>, args: any): void {
-    const content_0 = session.content.toLowerCase();
+    // const content_0 = session.content.toLowerCase();
     const content_1 = session.content;
 
     const filteredContent_1 = content_1.replace(/<\/?[^>]+(>|$)/g, "");
@@ -71,9 +84,9 @@ export class MFFilters {
 
     if (isInclude) {
       const ctx = session.content;
-      this.MFCache.push(filteredContent_1.toString());
+      this.filter_caches.push(filteredContent_1.toString());
       this.save();
-      Messages.sendMessageToGroup(session, this.group_id, ctx);
+      Messages.sendMessageToGroup(session, this.target_group_id, ctx);
       PluginListener.cancel();
     }
   }
@@ -81,19 +94,18 @@ export class MFFilters {
   public static save() {
     const data = {
       time: Date.now(),
-      cache: this.MFCache,
+      cache: this.filter_caches,
     };
     Files.write(this.cache_path, JSON.stringify(data, null, 2));
   }
 
   private static isSimilarToCached(newMessage: string): boolean {
-    if (this.MFCache.length === 0) {
+    if (this.filter_caches.length === 0) {
       return false;
     }
 
-    return this.MFCache.some(cachedMessage => {
-      const isSimilar = this.isSimilar(newMessage, cachedMessage);
-      return isSimilar;
+    return this.filter_caches.some((cachedMessage: string) => {
+      return this.isSimilar(newMessage, cachedMessage);
     });
   }
 

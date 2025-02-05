@@ -15,7 +15,7 @@ export class CommandPlayMusic {
         Messages.sendMessageToReply(session, "缺少参数");
         return;
       }
-      let music_data: MusicData = MaiMaiDX.onlyInstance.optional.list.getByName(name);
+      let music_data: MusicData = MaiMaiDX.INSTANCE.optional.list.getByName(name);
       if (music_data == null) {
         Messages.sendMessageToReply(session, "点歌失败");
         return;

@@ -8,10 +8,10 @@ import {music_chart} from "../data/MusicData";
 
 export class CommandRandomMusic {
   private root = new CommandProvider()
-    .onExecute((session, args) => {
-      let rArr: string[]  = Maths.getRandomElement(MaiMaiDX.onlyInstance.alias);
+    .onExecute(async (session, args) => {
+      let rArr: string[]  = Maths.getRandomElement(MaiMaiDX.INSTANCE.alias);
       let name: string = rArr[0];
-      let music_data = MaiMaiDX.onlyInstance.optional.list.getByName(name);
+      let music_data = MaiMaiDX.INSTANCE.optional.list.getByName(name);
       if(music_data == null) {
         Messages.sendMessageToReply(session, "获取失败");
         return;
@@ -49,8 +49,8 @@ export class CommandRandomMusic {
         mdTexts.push(`* 难度: ${levels[index]}\n`);
         mdTexts.push(`* 谱师: ${chart.charter}\n`);
       });
-      let buffer = Messages.generateMarkdown(mdTexts);
-      Messages.sendMessageToReply(session, h.image(buffer, 'image/png'));
+      let buffer = await Messages.getMarkdown(mdTexts);
+      Messages.sendMessageToReply(session, buffer);
     });
 
   public static get(): CommandProvider {
