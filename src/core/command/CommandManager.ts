@@ -15,6 +15,7 @@ import {LOGGER} from "../../index";
 import {CommandSudo} from "./entry/CommandSudo";
 import {GroupManager} from "../group/GroupManager";
 import {CommandReload} from "./entry/CommandReload";
+import {CommandPlugins} from "./entry/CommandPlugins";
 
 export class CommandManager {
   private constructor() {}
@@ -26,6 +27,7 @@ export class CommandManager {
     const instance = CommandManager.getInstance();
     instance.registerCommand("$sudo", CommandSudo.get());
     instance.registerCommand(["reload"], CommandReload.get())
+    instance.registerCommand(["plugins"], CommandPlugins.get())
     LOGGER.info("Loading Command Manager...")
     LOGGER.info("Loading Command System...")
     LOGGER.info("Loading Command Helper...")

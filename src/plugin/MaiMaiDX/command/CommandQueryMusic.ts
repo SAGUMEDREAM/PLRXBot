@@ -21,7 +21,7 @@ export class CommandQueryMusic {
       }
 
       let mdTexts = [
-        `![歌曲封面](https://assets.lxns.net/maimai/jacket/${music_data.music_id}.png!webp "歌曲封面")\n`,
+        `![歌曲封面](${music_data.getImageUrl()} "歌曲封面")\n`,
         `## ${music_data.data.title}\n`,
         `* 艺术家: ${music_data.data.basic_info.artist}\n`,
         `* 分区: ${music_data.data.basic_info.genre}\n`,

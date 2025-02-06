@@ -6,6 +6,16 @@ import {Config} from "./data/Config";
 import {GroupManager} from "./group/GroupManager";
 import {LOGGER} from "../index";
 
+interface cfg {
+  "config": {
+    "master": ""
+  },
+  "server": {
+    "bind_address": "0.0.0.0",
+    "port": 3000
+  }
+}
+
 export class Constant {
   public static PATH: string;
   public static ASSETS_PATH: string;
@@ -20,7 +30,7 @@ export class Constant {
   public static COMMAND_MANAGER: CommandManager;
   public static USER_MANAGER: UserManager;
   public static GROUP_MANAGER: GroupManager;
-  public static CONFIG: Config;
+  public static CONFIG: Config<cfg>;
 
   public static init(): void {
     LOGGER.info("Loading Constants...")
@@ -37,6 +47,15 @@ export class Constant {
     this.COMMON_HEADER = "@kisin-reimu";
     this.USER_MANAGER = UserManager.create();
     this.GROUP_MANAGER = GroupManager.create();
-    this.CONFIG = new Config();
+    this.CONFIG = new Config(Constant.CONFIG_FILE_PATH, {
+      "config": {
+        "master": ""
+      },
+      "server": {
+        "bind_address": "0.0.0.0",
+        "port": 3000
+      }
+    });
+    this.CONFIG.load()
   };
 }

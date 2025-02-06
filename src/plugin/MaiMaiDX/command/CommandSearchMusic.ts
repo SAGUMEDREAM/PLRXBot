@@ -57,7 +57,8 @@ export class CommandSearchMusic {
             }
             const musicData = MaiMaiDX.INSTANCE.optional.list.values.get(id);
             if (musicData != null) {
-              markdownList.push(`* ${musicData.data.title}(${musicData.music_id})\n`);
+              markdownList.push(`* ${musicData.data.title}\n`);
+              markdownList.push(`    * 歌曲ID: ${musicData.music_id}\n`);
               markdownList.push(`    * 艺术家: ${musicData.data.basic_info.artist}\n`);
               markdownList.push(`    * bpm: ${musicData.data.basic_info.bpm}\n`);
               markdownList.push(`    * 分区: ${musicData.data.basic_info.genre}\n`);

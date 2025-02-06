@@ -3,9 +3,6 @@ import {Messages} from "../../../core/network/Messages";
 import {MessageMerging} from "../../../core/network/MessageMerging";
 import {h} from "koishi";
 
-let bf_ct = 0
-
-
 export class CommandCommandHelper {
   public root = new CommandProvider()
     .onExecute(async (session, args) => {
@@ -41,6 +38,7 @@ export class CommandCommandHelper {
         '* `/BA (文本) (文本)`：生成仿BALogo！\n',
         '* `/5k (文本) (文本)`：生成5000兆円欲しい！\n',
         '* `/活字印刷 (文本)`：根据Otto电棍印刷语句\n',
+        '* `/对话 (文本)`：与Bot对话\n',
         '### 舞萌DX相关\n',
         '* `/b50`：根据落雪咖啡屋获取你的B50图\n',
         '* `/别名 (歌曲名称)`：获取歌曲信息\n',

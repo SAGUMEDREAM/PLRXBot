@@ -20,7 +20,7 @@ export class MusicList {
     this.values = new Map<string | number, MusicData>()
   }
 
-  public getById(id: number): MusicData | null {
+  public getById(id: number | string): MusicData | null {
     return this.values.get(id);
   }
 

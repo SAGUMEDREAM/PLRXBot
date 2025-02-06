@@ -14,7 +14,7 @@ export class GroupData {
   public group_id: number;
   public path: string;
   public groupData: BaseGroupData;
-  public static dataFixer = DataFixerBuilder.createBuilder("user_profile")
+  public static dataFixer = DataFixerBuilder.createBuilder("group_profile")
     .build()
   public constructor(group_id: string | number) {
     if (typeof group_id === "number") {

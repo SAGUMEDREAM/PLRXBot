@@ -1,12 +1,60 @@
 import * as satori from "@satorijs/core";
 import {Channel, User} from "@koishijs/core";
 import {Context, Session, Schema, Field} from "koishi";
+import {
+  ChatCompletionAssistantMessageParam,
+  ChatCompletionDeveloperMessageParam, ChatCompletionFunctionMessageParam,
+  ChatCompletionSystemMessageParam, ChatCompletionToolMessageParam, ChatCompletionUserMessageParam
+} from "openai/src/resources/chat/completions";
 
 declare module 'cordis' {
   interface Events<C> {
     'notice'(session: GetSession<C>): void;
   }
 }
+
+export declare namespace Completions {
+  export {
+    type ChatCompletion as ChatCompletion,
+    type ChatCompletionAssistantMessageParam as ChatCompletionAssistantMessageParam,
+    type ChatCompletionAudio as ChatCompletionAudio,
+    type ChatCompletionAudioParam as ChatCompletionAudioParam,
+    type ChatCompletionChunk as ChatCompletionChunk,
+    type ChatCompletionContentPart as ChatCompletionContentPart,
+    type ChatCompletionContentPartImage as ChatCompletionContentPartImage,
+    type ChatCompletionContentPartInputAudio as ChatCompletionContentPartInputAudio,
+    type ChatCompletionContentPartRefusal as ChatCompletionContentPartRefusal,
+    type ChatCompletionContentPartText as ChatCompletionContentPartText,
+    type ChatCompletionDeveloperMessageParam as ChatCompletionDeveloperMessageParam,
+    type ChatCompletionFunctionCallOption as ChatCompletionFunctionCallOption,
+    type ChatCompletionFunctionMessageParam as ChatCompletionFunctionMessageParam,
+    type ChatCompletionMessage as ChatCompletionMessage,
+    type ChatCompletionMessageParam as ChatCompletionMessageParam,
+    type ChatCompletionMessageToolCall as ChatCompletionMessageToolCall,
+    type ChatCompletionModality as ChatCompletionModality,
+    type ChatCompletionNamedToolChoice as ChatCompletionNamedToolChoice,
+    type ChatCompletionPredictionContent as ChatCompletionPredictionContent,
+    type ChatCompletionReasoningEffort as ChatCompletionReasoningEffort,
+    type ChatCompletionRole as ChatCompletionRole,
+    type ChatCompletionStreamOptions as ChatCompletionStreamOptions,
+    type ChatCompletionSystemMessageParam as ChatCompletionSystemMessageParam,
+    type ChatCompletionTokenLogprob as ChatCompletionTokenLogprob,
+    type ChatCompletionTool as ChatCompletionTool,
+    type ChatCompletionToolChoiceOption as ChatCompletionToolChoiceOption,
+    type ChatCompletionToolMessageParam as ChatCompletionToolMessageParam,
+    type ChatCompletionUserMessageParam as ChatCompletionUserMessageParam,
+    type CreateChatCompletionRequestMessage as CreateChatCompletionRequestMessage,
+    type ChatCompletionCreateParams as ChatCompletionCreateParams,
+    type CompletionCreateParams as CompletionCreateParams,
+    type ChatCompletionCreateParamsNonStreaming as ChatCompletionCreateParamsNonStreaming,
+    type CompletionCreateParamsNonStreaming as CompletionCreateParamsNonStreaming,
+    type ChatCompletionCreateParamsStreaming as ChatCompletionCreateParamsStreaming,
+    type CompletionCreateParamsStreaming as CompletionCreateParamsStreaming,
+  };
+}
+
+
+
 declare module "@koishijs/core" {
   interface Session {
     targetId: string;

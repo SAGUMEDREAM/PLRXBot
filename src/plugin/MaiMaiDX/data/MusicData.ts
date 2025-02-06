@@ -43,4 +43,8 @@ export class MusicData {
     this.data = data;
     this.charts = charts;
   }
+  public getImageUrl(): string {
+    const formattedId = this.music_id.padStart(5, '0');
+    return `https://www.diving-fish.com/covers/${encodeURIComponent(formattedId)}.png`;
+  }
 }

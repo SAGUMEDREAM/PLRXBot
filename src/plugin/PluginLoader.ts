@@ -9,6 +9,7 @@ import {MaiMaiDX} from "./MaiMaiDX";
 import {Shrine} from "./Shrine";
 import {OtomadHelper} from "./OtomadHelper";
 import {OwlPenguinParrot} from "./OwlPenguinParrot";
+import {DeepSeek} from "./DeepSeek";
 
 export class PluginLoader {
   public static load() {
@@ -22,6 +23,7 @@ export class PluginLoader {
     Plugins.register(new Shrine());
     Plugins.register(new OtomadHelper());
     Plugins.register(new OwlPenguinParrot());
+    Plugins.register(new DeepSeek());
     /*const path: string = Constant.PLUGIN_PATH;
     const files = Files.getDir(path);
     files.forEach((fileDir: string) => {

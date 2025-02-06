@@ -37,6 +37,7 @@ import {CommandMCS} from "./command/CommandMCS";
 import {Command5K} from "./command/Command5K";
 import {CommandBA} from "./command/CommandBA";
 import {CommandChoice} from "./command/CommandChoice";
+import {CommandInfo} from "./command/CommandInfo";
 
 export let poke_lock = false;
 export const welcome_black_list = ["787712108", "589711336"]
@@ -92,6 +93,7 @@ export class EssentialBot extends PluginInitialization {
     instance.registerCommand(["usage", "用法"], CommandUsage.get());
     instance.registerCommand(["留言"], CommandLeaveMessage.get());
     instance.registerCommand(["sign", "签到"], CommandSign.get());
+    instance.registerCommand(["info", "查询"], CommandInfo.get());
     instance.registerCommand(["like", "赞我"], CommandLike.get());
     instance.registerCommand(["搜索活动", "活动搜索"], CommandTHSearch.get());
     instance.registerCommand(["搜索群组", "群组搜索"], CommandGroupSearch.get());
