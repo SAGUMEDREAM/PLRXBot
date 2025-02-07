@@ -3,8 +3,8 @@ import {Messages} from "../../../core/network/Messages";
 
 export class CommandChoice {
   public root = new CommandProvider()
-    .addArg("数量")
-    .addArg("文本")
+    .addArg("选择的数量")
+    .addArg("数据")
     .onExecute(async (session, args) => {
       let msgs = args.all();
       let count = args.get(0) || 1;

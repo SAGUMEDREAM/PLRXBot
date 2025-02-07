@@ -12,10 +12,14 @@ import {Constant} from "../Constant";
 import {UserManager} from "../user/UserManager";
 import {CommandHelper} from "./CommandHelper";
 import {LOGGER} from "../../index";
-import {CommandSudo} from "./entry/CommandSudo";
+import {CommandSudo} from "./internal/CommandSudo";
 import {GroupManager} from "../group/GroupManager";
-import {CommandReload} from "./entry/CommandReload";
-import {CommandPlugins} from "./entry/CommandPlugins";
+import {CommandReload} from "./internal/CommandReload";
+import {CommandPlugins} from "./internal/CommandPlugins";
+import {CommandTree} from "./internal/CommandTree";
+import {CommandDataFix} from "./internal/CommandDataFix";
+import {CommandUser} from "./internal/CommandUser";
+import {CommandGroup} from "./internal/CommandGroup";
 
 export class CommandManager {
   private constructor() {}
@@ -25,12 +29,17 @@ export class CommandManager {
 
   public static create(): CommandManager {
     const instance = CommandManager.getInstance();
-    instance.registerCommand("$sudo", CommandSudo.get());
+    // instance.registerCommand("$sudo", CommandSudo.get());
+    instance.registerCommand(["user"], CommandUser.get());
+    instance.registerCommand(["group"], CommandGroup.get());
+    instance.registerCommand(["tree"], CommandTree.get());
+    instance.registerCommand(["datafix"], CommandDataFix.get());
     instance.registerCommand(["reload"], CommandReload.get())
     instance.registerCommand(["plugins"], CommandPlugins.get())
-    LOGGER.info("Loading Command Manager...")
-    LOGGER.info("Loading Command System...")
-    LOGGER.info("Loading Command Helper...")
+    LOGGER.info("Loading Command Manager...");
+    LOGGER.info("Loading Command System...");
+    LOGGER.info("Loading Command Helper...");
+    LOGGER.info("Loading Internal Commands...");
     return this.INSTANCE;
   }
 

@@ -9,9 +9,7 @@ export class CommandLike {
       const user = UserManager.get(session);
       if(user) {
         try {
-          for (let i = 0; i < 10; i++) {
-            await session.bot.internal.sendLike(session.userId, 20);
-          }
+          await session.bot.internal.sendLike(session.userId, 20);
           Messages.sendMessageToReply(session, "操作完成");
         } catch (err) {
           Messages.sendMessageToReply(session, "操作失败");

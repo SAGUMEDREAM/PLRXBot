@@ -2,14 +2,14 @@ import {PluginEvent} from "./PluginEvent";
 import {PluginInitialization} from "./PluginInitialization";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
-import {BlackListGroup} from "../utils/BlackListGroup";
+import {DisabledGroupList} from "../config/DisabledGroupList";
 import {Plugins} from "./Plugins";
 
 
 export type PluginListenerFunction = (session: Session<User.Field, Channel.Field, Context>, ...args: any[]) => void;
 export type PluginEventListener = { pluginId?: string; listener: PluginListenerFunction };
 export class PluginListener {
-  public static Events: Map<PluginEvent, PluginEventListener[]> = new Map<PluginEvent, PluginEventListener[]>();
+  public static readonly Events: Map<PluginEvent, PluginEventListener[]> = new Map<PluginEvent, PluginEventListener[]>();
 
   public static on(event: PluginEvent, pluginId: string | PluginInitialization, listener: PluginListenerFunction): void {
     let arg: string;
@@ -34,7 +34,7 @@ export class PluginListener {
   }
 
   public static emit(event: PluginEvent, session?: Session<User.Field, Channel.Field, Context>, ...args: any[]): void {
-    if (session && BlackListGroup.list.includes(session?.event?.channel?.id)) {
+    if (session && DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
       return;
     }
     const listeners = this.Events.get(event);

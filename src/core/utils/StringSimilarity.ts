@@ -1,4 +1,4 @@
-export function compareTwoStrings(first, second) {
+export function compareTwoStrings(first: string, second: string): number {
   first = first.replace(/\s+/g, '')
   second = second.replace(/\s+/g, '')
 
@@ -52,7 +52,7 @@ export function findBestMatch(mainString, targetStrings) {
   return { ratings: ratings, bestMatch: bestMatch, bestMatchIndex: bestMatchIndex };
 }
 
-export function areArgsValid(mainString, targetStrings) {
+export function areArgsValid(mainString: string, targetStrings: string): boolean {
   if (typeof mainString !== 'string') return false;
   if (!Array.isArray(targetStrings)) return false;
   if (!targetStrings.length) return false;

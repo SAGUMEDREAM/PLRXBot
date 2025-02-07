@@ -88,9 +88,7 @@ export class Files {
   public static getDir(_path: string): string[] {
     const files: string[] = fs.readdirSync(_path);
     const paths: string[] = [];
-    files.forEach((filename: string) => {
-      paths.push(path.join(_path, filename))
-    })
+    files.forEach((filename: string) => paths.push(path.join(_path, filename)))
     return paths;
   }
 }

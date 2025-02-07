@@ -2,15 +2,27 @@ import {PluginInitialization} from "../../core/plugins/PluginInitialization";
 import {CommandManager} from "../../core/command/CommandManager";
 import {CommandOtomadHelper} from "./command/CommandOtomadHelper";
 import {CommandProvider} from "../../core/command/CommandProvider";
-import {Context, Session} from "koishi";
+import {Context, h, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {Messages} from "../../core/network/Messages";
 import {CommandNewtone} from "./command/CommandNewtone";
 import {CommandBilibiliDownload} from "./command/CommandBilibiliDownload";
+import {CommandSpherization} from "./command/CommandSpherization";
+import {CommandDespherization} from "./command/CommandDespherization";
+import {CommandCrystalBall} from "./command/CommandCrystalBall";
+import {CommandIMSoHappy} from "./command/CommandIMSoHappy";
+import {CommandMaiFriend} from "./command/CommandMaiFriend";
+import {CommandMaiAwake} from "./command/CommandMaiAwake";
+import {PluginListener} from "../../core/plugins/PluginListener";
+import {PluginEvent} from "../../core/plugins/PluginEvent";
+import path from "path";
+import {Utils} from "../../core/utils/Utils";
 
 export class OtomadHelper extends PluginInitialization {
+  public static INSTANCE: PluginInitialization;
   constructor() {
     super("otomad_helper");
+    OtomadHelper.INSTANCE = this;
   }
 
   private fastUrl(session: Session<User.Field, Channel.Field, Context>, url: string) {
@@ -36,8 +48,13 @@ export class OtomadHelper extends PluginInitialization {
     helper.addFast(["LookAE", "look_ae", "lookae"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.lookae.com/")));
     helper.addFast(["免费日语字体"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.freejapanesefont.com/")));
     instance.registerCommand(["音MAD助手", "otomad_helper", "otomadhelper"], helper.root);
-    instance.registerCommand(["修音","newtone"], CommandNewtone.get());
+    instance.registerCommand(["帮我修音","修音","newtone"], CommandNewtone.get());
     instance.registerCommand(["B站解析","b站解析"], CommandBilibiliDownload.get());
+    instance.registerCommand(["水晶球"], CommandCrystalBall.get());
+    instance.registerCommand(["球面化"], CommandSpherization.get());
+    instance.registerCommand(["逆球面化"], CommandDespherization.get());
+    instance.registerCommand(["我巨爽"], CommandIMSoHappy.get());
+    instance.registerCommand(["旅行伙伴加入"], CommandMaiFriend.get());
+    instance.registerCommand(["旅行伙伴觉醒"], CommandMaiAwake.get());
   }
-
 }

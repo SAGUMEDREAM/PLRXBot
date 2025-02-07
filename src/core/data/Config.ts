@@ -8,10 +8,11 @@ export class Config<T extends object> {
   private config: T;
   private readonly defaultConfig: T;
 
-  public constructor(path: string, defaultConfig: T) {
+  public constructor(path: string, defaultConfig: T, autoLoading = false) {
     this.path = path;
     this.config = defaultConfig;
     this.defaultConfig = defaultConfig;
+    if (autoLoading) this.load();
   }
 
   public load() {
@@ -42,7 +43,12 @@ export class Config<T extends object> {
     return this.config;
   }
 
-  public static createConfig(name: string, object: object) {
-    return new Config(path.join(Utils.getRoot(), 'data', `${name}.json`), object);
+  public static createConfig(name: string, object: object, autoLoading = false) {
+    return new Config(path.join(Utils.getRoot(), 'data', `${name}.json`), object, autoLoading);
   }
+
+  public static createCachesConfig(name: string, object: object, autoLoading = false) {
+    return new Config(path.join(Utils.getRoot(), 'data', 'caches', `${name}.json`), object, autoLoading);
+  }
+
 }

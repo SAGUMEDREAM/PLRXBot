@@ -1,6 +1,7 @@
 import * as satori from "@satorijs/core";
 import {Channel, User} from "@koishijs/core";
 import {Context, Session, Schema, Field} from "koishi";
+
 import {
   ChatCompletionAssistantMessageParam,
   ChatCompletionDeveloperMessageParam, ChatCompletionFunctionMessageParam,

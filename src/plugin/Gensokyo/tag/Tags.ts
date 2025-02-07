@@ -7,7 +7,6 @@ export class Tags {
   public static init(): void {
     this.lucky_draw_pool = this.registerTag("lucky_dra_pool");
     this.lucky_draw_pool.addList([
-      Items.ice_block
     ])
   }
   public static registerTag(tag_id: string): Tag {

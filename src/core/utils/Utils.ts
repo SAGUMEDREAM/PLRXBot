@@ -5,6 +5,7 @@ import {parse, HTMLElement} from 'node-html-parser';
 
 export class Utils {
   public static readonly Files = Files;
+  public static root = null;
   public static fixHtmlTag(url: string): string {
     return url.replaceAll('&amp;', '&');
   }
@@ -72,7 +73,10 @@ export class Utils {
   }*/
 
   public static getRoot(): string {
-    return Utils.findProjectRoot(__dirname);
+    if(Utils.root == null) {
+      Utils.root = Utils.findProjectRoot(__dirname);
+    }
+    return Utils.root;
   }
   public static findProjectRoot(cDir: string): string {
     if (fs.existsSync(path.join(cDir, 'package.json'))) {

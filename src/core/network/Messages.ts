@@ -2,11 +2,12 @@ import {Context, Dict, Element, h, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {UserManager} from "../user/UserManager";
 import {MessageData} from "./MessageData";
-import fetch from 'node-fetch';
 import FormData from 'form-data';
 import fs from "node:fs";
 import axios from "axios";
 import {MIMEUtils} from "../utils/MIMEUtils";
+import {KoishiImages} from "./KoishiImages";
+import {LOGGER} from "../../index";
 
 const MARKDOWN_CACHE = new Map<string, { values: Element, timestamp: number }>();
 const CACHE_TTL = 60 * 60 * 1000;
@@ -169,7 +170,7 @@ export class Messages {
     return h.image(buffer, MIMEUtils.getType(buffer));
   }
 
-  public static at(user_id: number): {
+  public static at(user_id: number | string): {
     type: string | Element.Render<Element.Fragment, any>,
     attrs: Dict,
     children: Element[],
@@ -183,6 +184,28 @@ export class Messages {
     children: Element[],
   } {
     return h('quote', {id: message_id});
+  }
+
+  public static async getImageList(session: Session<User.Field, Channel.Field, Context>): Promise<KoishiImages[]> {
+    const elements = session.elements;
+    const imgs = elements.filter(element => element.type === 'img');
+
+    return await Promise.all(imgs.map(async (img) => {
+      const koishiImg = new KoishiImages();
+      koishiImg.file = img.attrs.file;
+      koishiImg.src = img.attrs.src;
+
+      try {
+        const response = await axios.get(koishiImg.src, {responseType: 'arraybuffer'});
+        koishiImg.buffer = Buffer.from(response.data);
+        koishiImg.mime_type = MIMEUtils.getType(koishiImg.buffer);
+      } catch (error) {
+        LOGGER.error(`图片下载失败: ${koishiImg.src}`);
+        LOGGER.error(error);
+      }
+
+      return koishiImg;
+    }));
   }
 
   public static isAtBot(session: Session<User.Field, Channel.Field, Context>): boolean {

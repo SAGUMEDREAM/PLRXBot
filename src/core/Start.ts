@@ -5,10 +5,14 @@ import {LanguageTypes} from "./language/LanguageTypes";
 import {LOGGER} from "../index";
 import {Plugins} from "./plugins/Plugins";
 import {PluginInitialization} from "./plugins/PluginInitialization";
+import {PluginListener} from "./plugins/PluginListener";
+import {BotList} from "./config/BotList";
+import {DisabledGroupList} from "./config/DisabledGroupList";
 
 export class Start {
 
   public static main(args?: string[]): void {
+    const startTime = Date.now();
     LOGGER.info("==================================================")
     LOGGER.info("Loading @kisin-reimu/bot...")
     Constant.init();
@@ -16,6 +20,9 @@ export class Start {
     Events.init();
     Consoles.main();
     Plugins.load();
+    const endTime = Date.now();
+    const startupTime = endTime - startTime;
+    LOGGER.info(`Koishi framework took ${startupTime}ms to load "蓬莱人形Bot" plugin`)
     LOGGER.info("==================================================");
   }
 
@@ -32,8 +39,11 @@ export class Start {
         }
       });
       Plugins.getPlugins().clear();
+      PluginListener.Events.forEach((listener, event, events) => (listener.length = 0));
       Constant.USER_MANAGER.reload();
       Constant.GROUP_MANAGER.reload();
+      BotList.getInstance().reload();
+      DisabledGroupList.getInstance().reload();
       LOGGER.info("Plugin is reloading");
     } catch (err) {
       LOGGER.error(err);

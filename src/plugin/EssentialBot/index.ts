@@ -31,13 +31,14 @@ import {CommandRejectInvite} from "./command/CommandRejectInvite";
 import {CommandBroadcast} from "./command/CommandBroadcast";
 import {CommandMarkdown} from "./command/CommandMarkdown";
 import {CommandHuoZi} from "./command/CommandHuoZi";
-import {BlackListGroup} from "../../core/utils/BlackListGroup";
+import {DisabledGroupList} from "../../core/config/DisabledGroupList";
 import {CommandLike} from "./command/CommandLike";
 import {CommandMCS} from "./command/CommandMCS";
 import {Command5K} from "./command/Command5K";
-import {CommandBA} from "./command/CommandBA";
 import {CommandChoice} from "./command/CommandChoice";
 import {CommandInfo} from "./command/CommandInfo";
+import {CommandPromotion} from "./command/CommandPromotion";
+import {CommandUploadTHPicture} from "./command/CommandUploadTHPicture";
 
 export let poke_lock = false;
 export const welcome_black_list = ["787712108", "589711336"]
@@ -100,15 +101,17 @@ export class EssentialBot extends PluginInitialization {
     instance.registerCommand(["lily", "莉莉云"], CommandLilySearch.get());
     instance.registerCommand(["关于","about"], CommandAbout.get());
     instance.registerCommand(["jrrp", "今日人品"], CommandJRRP.get());
-    instance.registerCommand(["随机东方图", "random_touhou"], CommandTHPicture.get());
+    instance.registerCommand(["随机东方", "随机东方图", "random_touhou"], CommandTHPicture.get());
+    instance.registerCommand(["上传东方图"], CommandUploadTHPicture.get());
     instance.registerCommand(["活字印刷", "huozi"], CommandHuoZi.get());
     instance.registerCommand(["choice","选择"], CommandChoice.get());
     instance.registerCommand(["5k","5K"], Command5K.get());
-    instance.registerCommand(["ba","BA","balogo"], CommandBA.get());
     instance.registerCommand(["markdown"], CommandMarkdown.get());
     instance.registerCommand(["os"], CommandOS.get());
     instance.registerCommand(["ping"], CommandPing.get());
     instance.registerCommand(["mcs"], CommandMCS.get());
+
+    instance.registerCommand(["宣发"], CommandPromotion.get());
 
     CustomDataFactory.createKey("sign_system", {"timestamp": 0});
     CustomDataFactory.createKey("lucky_seed", 0);
@@ -126,7 +129,7 @@ export class EssentialBot extends PluginInitialization {
     // })
 
     ctxInstance.platform("onebot").on("notice", async (session: Session<User.Field, Channel.Field, Context>) => {
-      if (session && BlackListGroup.list.includes(session?.event?.channel?.id)) {
+      if (session && DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
         return;
       }
       if (session.subtype != "poke") {

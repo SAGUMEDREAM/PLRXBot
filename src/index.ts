@@ -11,7 +11,9 @@ import {Messages} from "./core/network/Messages";
 import { } from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-markdown-to-image-service';
 import { } from 'koishi-plugin-puppeteer'
-import {BlackListGroup} from "./core/utils/BlackListGroup";
+import {DisabledGroupList} from "./core/config/DisabledGroupList";
+import {BotList} from "./core/config/BotList";
+import {MIMEUtils} from "./core/utils/MIMEUtils";
 
 export const LOGGER: Logger = new Logger("@kisin-reimu/bot");
 export const inject = {
@@ -20,9 +22,6 @@ export const inject = {
 
 export let ctxInstance: Context = null;
 export let botInstance: Bot = null;
-export let botList = [
-  "2854196310"
-]
 
 export function apply(ctx: Context) {
   if (ctxInstance == null) ctxInstance = ctx;
@@ -51,13 +50,17 @@ export function apply(ctx: Context) {
     let content = session.content;
     if (content.includes("/测试Markdown")) {
       const imageBuffer = await ctx.markdownToImage.convertToImage(content);
-      session.sendQueued(h.image(imageBuffer, 'image/png'));
+      session.sendQueued(h.image(imageBuffer, MIMEUtils.getType(imageBuffer)));
+    }
+    if(session.userId == '807131829' && session.bot.userId == session.userId && session.content.includes('/bytest')) {
+      // console.log(session.elements);
+      // Messages.sendMessage(session, session.content);
     }
   });
   ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => {
     if (ctxInstance == null || botInstance == null) return;
 
-    if (BlackListGroup.list.includes(session?.event?.channel?.id)) {
+    if (DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
       return;
     }
 
@@ -82,10 +85,11 @@ export function apply(ctx: Context) {
       } catch (ignored) {
         return;
       }
-      if(session.userId == null || session.userId == "" || botList.includes(String(session.userId))) {
-        return;
-      }
       // Messages.sendMessageToReply(session, "Bot不需要艾特使用哦");
+      return;
+    }
+
+    if(session.userId == null || session.userId == "" || BotList.getInstance().getConfigInstance().getConfig().list.includes(String(session.userId))) {
       return;
     }
 

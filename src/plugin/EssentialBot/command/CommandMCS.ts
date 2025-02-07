@@ -15,8 +15,13 @@ export class CommandMCS {
     .addArg("主机地址")
     .addArg("端口")
     .onExecute(async (session, args) => {
-      let host: string = args.get(0);
-      let port: number = args.getNumber(1);
+      const host: string = args.get(0);
+      const port: number = args.getNumber(1) || 25565;
+
+      if(host == null) {
+        CommandProvider.leakArgs(session, args);
+        return
+      }
 
       let mdList = [];
       mdList.push("## 服务器状态\n");

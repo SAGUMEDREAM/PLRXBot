@@ -55,7 +55,8 @@ export class Constant {
         "bind_address": "0.0.0.0",
         "port": 3000
       }
-    });
-    this.CONFIG.load()
+    }, true);
+    LOGGER.info(`Set the root directory to ${this.PATH}`)
+    LOGGER.info("Serialization Configuration...");
   };
 }

@@ -1,7 +1,6 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {GroupManager} from "../../../core/group/GroupManager";
 import {Messages} from "../../../core/network/Messages";
-import {botInstance} from "../../../index";
 
 export class CommandDeMute {
   public root: CommandProvider = new CommandProvider()

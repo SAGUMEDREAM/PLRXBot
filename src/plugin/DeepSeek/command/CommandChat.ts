@@ -71,7 +71,7 @@ export class CommandChat {
 
 
       try {
-        console.log(messages)
+        // console.log(messages)
         const completion = await DeepSeek.OPEN_AI.chat.completions.create({
           messages,
           model: "deepseek-chat",
@@ -96,10 +96,10 @@ export class CommandChat {
         group_data.save();
         userProfile.save();
 
-        Messages.sendMessage(session, content);
+        Messages.sendMessage(session, Messages.at(<any>session.userId) + content);
       } catch (err) {
         DeepSeek.INSTANCE.pluginLogger.error(err)
-        Messages.sendMessage(session, '响应失败, 请联系管理员查看后台');
+        Messages.sendMessage(session, Messages.at(<any>session.userId) + '响应失败');
       }
     });
 
@@ -152,6 +152,8 @@ export function getSystemCharacter() {
   2. **精准信息应答**
     - 东方梗文化解释（角色梗/符卡梗识别）
     - 生活日常知识
+  3. **基本的区分能力**
+    - 能够区分不同用户发的消息
 
   ---
 

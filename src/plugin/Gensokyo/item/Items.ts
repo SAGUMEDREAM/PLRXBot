@@ -5,18 +5,18 @@ import {UserManager} from "../../../core/user/UserManager";
 
 export class Items {
   public static readonly ITEMS: Map<string, Item> = new Map<string, Item>();
-  public static strange_umbrella;
-  public static water_gun;
-  public static water_cannon;
-  public static robotic_arm;
-  public static camera;
-  public static computer;
-  public static phone;
-  public static cleaner;
-  public static hand_truck;
-  public static ladle;
+  public static strange_umbrella: Item;
+  public static water_gun: Item;
+  public static water_cannon: Item;
+  public static robotic_arm: Item;
+  public static camera: Item;
+  public static computer: Item;
+  public static phone: Item;
+  public static cleaner: Item;
+  public static hand_truck: Item;
+  public static ladle: Item;
 
-  public static unknown;
+  public static unknown: Item;
   public static init() {
     this.strange_umbrella = this.registerItem("strange_umbrella", new Item());
     this.water_gun = this.registerItem("water_gun", new Item());
