@@ -50,11 +50,17 @@ export class MessageForwarding extends PluginInitialization {
 
   public handle(session: Session<User.Field, Channel.Field, Context>, args: any) {
     const content_1 = session.content;
+    const hArray = session.elements;
+    let length = 0;
     const filteredContent_1 = content_1.replace(/<\/?[^>]+(>|$)/g, "");
     if (this.config.getConfig().target_group_id == null) {
       return;
     }
-    if (content_1.length <= 35) {
+    hArray.forEach(hElement => {
+      if (hElement.type == 'text') length+=hElement.attrs.content.length;
+      else length++;
+    });
+    if (length <= 35) {
       return;
     }
     if (CommandManager.getInstance().testCommand(content_1)) {

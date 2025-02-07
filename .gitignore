@@ -16,8 +16,9 @@ tsconfig.tsbuildinfo
 *.ntvs*
 *.njsproj
 *.sln
+/data
 /data/group/
 /data/profile/
-data/caches/message_forwarding_cache.json
-data/caches/funny_words_cache.json
-data/deepseek.json
+/data/caches/message_forwarding_cache.json
+/data/caches/funny_words_cache.json
+/data/deepseek.json
