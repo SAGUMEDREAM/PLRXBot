@@ -4,9 +4,12 @@ from src.handle.maimaib50 import MaiMaiB50
 from src.handle.markdown2image import Markdown2Image
 from aiohttp import web
 
+from src.handle.otmc import OtmAudio
 from src.handle.xiuyin import XiuYin
 
 browser = None
+
+
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 # logger = logging.getLogger(__name__)
 
@@ -45,3 +48,4 @@ class WebLoader:
         app.add_routes([web.post('/b50', MaiMaiB50.post)])
         app.add_routes([web.post('/huozi', HuoZi.post)])
         app.add_routes([web.post('/xiuyin', XiuYin.post)])
+        app.add_routes([web.post('/otmc', OtmAudio.post)])

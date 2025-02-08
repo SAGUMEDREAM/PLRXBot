@@ -21,7 +21,7 @@ export class FunnyWords extends PluginInitialization {
     FunnyWords.INSTANCE = this;
   }
 
-  public static readonly message_db_path = path.resolve(path.join(Constant.CACHES_PATH), "message_db.json");
+  public readonly message_db_path = path.resolve(path.join(Constant.CACHES_PATH), "message_db.json");
   public static MESSAGE_DB: FWMessage[] = [];
   public static INSTANCE: FunnyWords;
   public counter: number = 0;
@@ -29,7 +29,7 @@ export class FunnyWords extends PluginInitialization {
 
   private loadData() {
     try {
-      FunnyWords.MESSAGE_DB = JSON.parse(Files.read(FunnyWords.message_db_path));
+      FunnyWords.MESSAGE_DB = JSON.parse(Files.read(this.message_db_path));
       this.saveData();
     } catch (e) {
       FunnyWords.MESSAGE_DB = [];
@@ -76,6 +76,6 @@ export class FunnyWords extends PluginInitialization {
   }
 
   public saveData() {
-    Files.write(FunnyWords.message_db_path, JSON.stringify(FunnyWords.MESSAGE_DB, null, 2));
+    Files.write(this.message_db_path, JSON.stringify(FunnyWords.MESSAGE_DB, null, 2));
   }
 }

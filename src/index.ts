@@ -8,16 +8,16 @@ import {GroupManager} from "./core/group/GroupManager";
 import {PluginEvent} from "./core/plugins/PluginEvent";
 import {PluginListener} from "./core/plugins/PluginListener";
 import {Messages} from "./core/network/Messages";
-import { } from 'koishi-plugin-cron'
+import {} from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-markdown-to-image-service';
-import { } from 'koishi-plugin-puppeteer'
+import {} from 'koishi-plugin-puppeteer'
 import {DisabledGroupList} from "./core/config/DisabledGroupList";
 import {BotList} from "./core/config/BotList";
 import {MIMEUtils} from "./core/utils/MIMEUtils";
 
 export const LOGGER: Logger = new Logger("@kisin-reimu/bot");
 export const inject = {
-  required: ['cron','markdownToImage','puppeteer']
+  required: ['cron', 'markdownToImage', 'puppeteer']
 }
 
 export let ctxInstance: Context = null;
@@ -60,6 +60,10 @@ export function apply(ctx: Context) {
   ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => {
     if (ctxInstance == null || botInstance == null) return;
 
+    if (session == null) {
+      return;
+    }
+
     // if(session.userId != "807131829") return;
     // console.log(h.parse(session.content))
 
@@ -93,7 +97,7 @@ export function apply(ctx: Context) {
       // return;
     }
 
-    if(session.userId == null || BotList.getInstance().getConfigInstance().getConfig().list.includes(String(session.userId))) {
+    if (session.userId == null || BotList.getInstance().getConfigInstance().getConfig().list.includes(String(session.userId))) {
       return;
     }
 

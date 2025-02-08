@@ -24,7 +24,7 @@ const maxCacheSize = 50;
 
 export class MessageForwarding extends PluginInitialization {
   public static INSTANCE: MessageForwarding;
-  public static readonly cache_path = path.resolve(path.join(Constant.CACHES_PATH), "message_forwarding_cache.json");
+  public readonly cache_path = path.resolve(path.join(Constant.CACHES_PATH), "message_forwarding_cache.json");
   public config: Config<forwarding_cache_cfg>;
 
   constructor() {
@@ -33,7 +33,7 @@ export class MessageForwarding extends PluginInitialization {
   }
 
   public load(): void {
-    this.config = new Config(MessageForwarding.cache_path, {
+    this.config = new Config(this.cache_path, {
       "time": 0,
       "word_groups": [],
       "target_group_id": null,

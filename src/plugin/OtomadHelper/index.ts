@@ -13,6 +13,7 @@ import {CommandCrystalBall} from "./command/CommandCrystalBall";
 import {CommandIMSoHappy} from "./command/CommandIMSoHappy";
 import {CommandMaiFriend} from "./command/CommandMaiFriend";
 import {CommandMaiAwake} from "./command/CommandMaiAwake";
+import {CommandSoundCreation} from "./command/CommandSoundCreation";
 
 export class OtomadHelper extends PluginInitialization {
   public static INSTANCE: PluginInitialization;
@@ -45,6 +46,7 @@ export class OtomadHelper extends PluginInitialization {
     helper.addFast(["免费日语字体"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.freejapanesefont.com/")));
     instance.registerCommand(["音MAD助手", "otomad_helper", "otomadhelper"], helper.root);
     instance.registerCommand(["帮我修音","修音","newtone"], CommandNewtone.get());
+    instance.registerCommand(["声音创作","音MAD创作"], CommandSoundCreation.get());
     instance.registerCommand(["B站解析","b站解析"], CommandBilibiliDownload.get());
     instance.registerCommand(["水晶球"], CommandCrystalBall.get());
     instance.registerCommand(["球面化"], CommandSpherization.get());
