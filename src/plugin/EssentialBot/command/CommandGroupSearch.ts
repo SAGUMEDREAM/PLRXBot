@@ -21,14 +21,10 @@ export class CommandGroupSearch {
   public static CACHE_DURATION = 12 * 60 * 60 * 1000 * 2 * 7;
 
   public root = new CommandProvider()
-    .addArg("字段")
-    .addArg("页码")
+    .addRequiredArgument("关键词", "keyword")
+    .addRequiredArgument("页码", "page")
     .onExecute(async (session, args) => {
-      const keyword = args.get(0);
-      if (keyword == null || keyword == "") {
-        Messages.sendMessageToReply(session, `用法: ${"/搜索群组 [名字]"}`);
-        return;
-      }
+      const keyword = args.get("keyword");
 
       Messages.sendMessageToReply(session, `正在搜索中...`);
 

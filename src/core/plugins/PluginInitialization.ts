@@ -1,8 +1,11 @@
 import {Logger} from "koishi";
+import {PluginInfo} from "./PluginInfo";
 
 export abstract class PluginInitialization {
-  public plugin_id: string;
-  public pluginLogger: Logger;
+  public plugin_name: string;
+  public readonly plugin_id: string;
+  public readonly pluginLogger: Logger;
+  public pluginConfig: PluginInfo;
   public static INSTANCE: PluginInitialization;
 
   protected constructor(plugin_id: string) {

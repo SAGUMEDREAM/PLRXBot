@@ -5,8 +5,9 @@ import {h} from "koishi";
 
 export class CommandAlias {
   private root = new CommandProvider()
+    .addRequiredArgument("名称", "name")
     .onExecute(async (session, args) => {
-      let name = args.get(0);
+      let name = args.get("name");
       let sel_arr = [];
       let f_sel_arr = [];
       for (let arr of MaiMaiDX.INSTANCE.alias) {

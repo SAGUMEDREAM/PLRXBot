@@ -7,6 +7,7 @@ import { Utils } from "../../../core/utils/Utils";
 import { SheetYears } from "../sheets/SheetYears";
 import { MessageMerging } from "../../../core/network/MessageMerging";
 import {EssentialBot} from "../index";
+import {CommandArgs} from "../../../core/command/CommandArgs";
 
 export interface THSearch_Object {
   status: string,
@@ -26,15 +27,10 @@ export class CommandTHSearch {
   private static CACHE_DURATION = 12 * 60 * 60 * 1000;
 
   public readonly root = new CommandProvider()
-    .addArg("关键词")
-    .addArg("-H")
+    .addRequiredArgument("关键词", "keyword")
+    .addOptionalArgument("历史模式", "history_mode", false)
     .onExecute(async (session, args) => {
-      const title = args.get(0);
-      if (!title) {
-        Messages.sendMessageToReply(session, `用法: ${"/搜索活动 [名字] [-H]"}`);
-        return;
-      }
-
+      const title = args.get("keyword");
       Messages.sendMessageToReply(session, `正在搜索中...`);
 
       try {
@@ -110,9 +106,9 @@ export class CommandTHSearch {
     return results;
   }
 
-  private sendSearchResults(session: any, results: THSearch_Object[], title: string, args: any): void {
+  private sendSearchResults(session: any, results: THSearch_Object[], title: string, args: CommandArgs): void {
     const nowTimestamp = Date.now();
-    const isHis = args.merge().includes("-H");
+    const isHis = args.getBoolean("history_mode");
 
     const fResults = results.filter((event: THSearch_Object) => {
       const isMatch =

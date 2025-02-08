@@ -10,10 +10,17 @@ import {Shrine} from "./Shrine";
 import {OtomadHelper} from "./OtomadHelper";
 import {OwlPenguinParrot} from "./OwlPenguinParrot";
 import {DeepSeek} from "./DeepSeek";
+import {PythonSupport} from "../core/plugins/base/PythonSupport";
+import {KoishiLoader} from "../core/plugins/base/KoishiLoader";
+import {KoishiCore} from "../core/plugins/base/KoishiCore";
 
 export class PluginLoader {
   public static load() {
     LOGGER.info("Loading Plugins...");
+    Plugins.register(new KoishiCore());
+    Plugins.register(new KoishiLoader());
+    Plugins.register(new PythonSupport());
+
     Plugins.register(new MessageForwarding());
     Plugins.register(new Gensokyo());
     Plugins.register(new EssentialBot());

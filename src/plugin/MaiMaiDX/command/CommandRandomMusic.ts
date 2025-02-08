@@ -1,7 +1,6 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {Messages} from "../../../core/network/Messages";
 import {MaiMaiDX} from "../index";
-import {Networks} from "../../../core/network/Networks";
 import {h} from "koishi";
 import {Maths} from "../../../core/utils/Maths";
 import {music_chart} from "../data/MusicData";

@@ -52,4 +52,7 @@ export class Start {
       LOGGER.info("Plugin reload completed");
     }
   }
+  public static exit(args?: string[]): void {
+    LOGGER.warn("The plugin main thread exits");
+  }
 }

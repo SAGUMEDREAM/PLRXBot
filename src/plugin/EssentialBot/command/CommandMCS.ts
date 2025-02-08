@@ -12,11 +12,11 @@ export interface Status {
 
 export class CommandMCS {
   public root = new CommandProvider()
-    .addArg("主机地址")
-    .addArg("端口")
+    .addRequiredArgument("主机地址", "ip_address")
+    .addOptionalArgument("端口", "port", 25565)
     .onExecute(async (session, args) => {
-      const host: string = args.get(0);
-      const port: number = args.getNumber(1) || 25565;
+      const host: string = args.get("ip_address");
+      const port: number = args.getNumber("port") || 25565;
 
       if(host == null) {
         CommandProvider.leakArgs(session, args);

@@ -8,14 +8,14 @@ import {Item, ItemStacks} from "../item/Item";
 
 export class CommandLuckyDraw {
   public root = new CommandProvider()
-    .addArg("抽奖次数")
+    .addRequiredArgument("抽奖次数", "amount")
     .onExecute((session, args) => {
       const user = UserManager.get(session);
       const eco = EcoSystem.getSystem(user);
       const itemStacks = ItemStacks.getStacks(user);
       const pools = Array.from(Tags.lucky_draw_pool.list);
-      const num = args.getNumber(0) ?? 1;
-      if(eco != null && eco.ecoObj.balance < 100 * num) {
+      const num = args.getNumber("amount") ?? 1;
+      if (eco != null && eco.ecoObj.balance < 100 * num) {
         Messages.sendMessageToReply(session, `您的余额不足 ${num} 円`)
         return;
       }
@@ -25,6 +25,7 @@ export class CommandLuckyDraw {
       eco.save();
       user.save();
     })
+
   public static get(): CommandProvider {
     return new this().root;
   }

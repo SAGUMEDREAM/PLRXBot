@@ -1,16 +1,13 @@
 import {CommandProvider} from "../CommandProvider";
 import {Messages} from "../../network/Messages";
 import {GroupManager} from "../../group/GroupManager";
+import {MultiParameterBuilder} from "../MultiParameter";
 
 export class CommandGroup {
   public readonly ban = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument('用户', 'user')
     .onExecute((session, args) => {
-      const target = args.get(0);
-      if (target == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
+      const target = args.getUserId("user");
       const groupData = GroupManager.get(target);
       if (groupData) {
         groupData.groupData.banned = true;
@@ -22,13 +19,9 @@ export class CommandGroup {
     });
 
   public readonly pardon = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument('用户', 'user')
     .onExecute((session, args) => {
-      const target = args.get(0);
-      if (target == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
+      const target = args.get("user");
       const groupData = GroupManager.get(target);
       if (groupData) {
         groupData.groupData.banned = false;

@@ -12,7 +12,7 @@ export enum PluginEvent {
   MEMBER_JOIN_GROUP,         // 新成员加入群组
   MEMBER_REQUEST_JOIN_GROUP, // 收到加群请求
   BY_AT,                     // 被艾特
-  BY_POKED,                  // 被艾特
+  BY_POKED,                  // 被戳一戳
   PLUGIN_ENABLED,            // 插件加载
   PLUGIN_DISABLED,           // 插件卸载
 }

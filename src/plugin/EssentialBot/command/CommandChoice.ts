@@ -3,15 +3,12 @@ import {Messages} from "../../../core/network/Messages";
 
 export class CommandChoice {
   public root = new CommandProvider()
-    .addArg("选择的数量")
-    .addArg("数据")
+    .addRequiredArgument('选择的数量', 'amount')
+    .addRequiredArgument('数据','data')
     .onExecute(async (session, args) => {
-      let msgs = args.all();
-      let count = args.get(0) || 1;
-      if (msgs == null || msgs.length < 1) {
-        Messages.sendMessageToReply(session, "缺少参数");
-        return;
-      }
+      const msgs = args.all();
+      const count = args.get('amount');
+
       if (isNaN(count) || count <= 0 || count > msgs.length) {
         Messages.sendMessageToReply(session, `请选择有效的数量（1 到 ${msgs.length} 之间）`);
         return;

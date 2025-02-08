@@ -78,6 +78,7 @@ export class Utils {
     }
     return Utils.root;
   }
+
   public static findProjectRoot(cDir: string): string {
     if (fs.existsSync(path.join(cDir, 'package.json'))) {
       return cDir;

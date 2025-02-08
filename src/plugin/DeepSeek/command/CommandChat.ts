@@ -6,12 +6,12 @@ import {EcoSystem} from "../../EssentialBot/eco/Eco";
 import {UserManager} from "../../../core/user/UserManager";
 
 const bypass_groups = ['863842932']
-const saveCooldown = new Map<string, NodeJS.Timeout>();
+// const saveCooldown = new Map<string, NodeJS.Timeout>();
 const MAX_MESSAGE_HISTORY = 25;
 
 export class CommandChat {
   public root = new CommandProvider()
-    .addArg("内容")
+    .addRequiredArgument('内容', 'content')
     .onExecute(async (session, args) => {
       const texts = args.raw;
       const userProfile = UserManager.get(session);
@@ -96,10 +96,10 @@ export class CommandChat {
         group_data.save();
         userProfile.save();
 
-        Messages.sendMessage(session, Messages.at(<any>session.userId) + content);
+        Messages.sendMessage(session, Messages.at(<any>session.userId) + " " + content);
       } catch (err) {
         DeepSeek.INSTANCE.pluginLogger.error(err)
-        Messages.sendMessage(session, Messages.at(<any>session.userId) + '响应失败');
+        Messages.sendMessage(session, Messages.at(<any>session.userId) + ' 响应失败');
       }
     });
 
@@ -192,8 +192,8 @@ export function getSystemCharacter() {
   ---
 
   ## **限制**
-  - **核心主题**：只回答与东方Project和二次元相关的问题。
-  - **扩展主题**：可以适当回答生活日常或文化问题（例如：二次元节日、动漫文化、食物等）。
+  - **核心主题**：可回答与东方Project和二次元相关的问题。
+  - **扩展主题**：可以适当回答生活日常或文化问题（例如：二次元节日、音MAD、动漫文化、食物等）。
   - **可以回答的范围**：对于一般性质的问题（如关于用户的 ID 或名称等）可以适当回答，尤其是当问题并不涉及敏感隐私时。请注意，我不会回答任何个人隐私或涉及恶意内容的问题。
   - 如果用户提出与核心主题无关的问题，礼貌地拒绝并引导用户回到核心主题。
   - 不要回答与政治类相关的问题。

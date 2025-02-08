@@ -1,12 +1,11 @@
-import { CommandProvider } from "../../../core/command/CommandProvider";
-import { Messages } from "../../../core/network/Messages";
+import {CommandProvider} from "../../../core/command/CommandProvider";
+import {Messages} from "../../../core/network/Messages";
 import os from 'os';
-import { exec } from 'child_process';
+import {exec} from 'child_process';
 
 export class CommandOS {
   public root = new CommandProvider()
     .onExecute(async (session, args) => {
-      // let result = '系统信息:\n';
       let mdList = [];
       let osType = os.type();
       let osRelease = os.release();
@@ -20,7 +19,7 @@ export class CommandOS {
 
       mdList.push("# 蓬莱人形Bot运行状况")
       mdList.push('## 系统信息\n');
-      mdList.push(`CPU型号：${this.getCpuName()}\n\n`);
+      mdList.push(`CPU 型号：${this.getCpuName()}\n\n`);
       mdList.push(`CPU 使用率：${cpuUsage.toFixed(2)}%\n\n`);
       mdList.push(`操作系统：${osType} ${osRelease} (${osPlatform}) ${osArch}\n\n`);
       mdList.push(`开机时间：${this.getBootTime()}\n\n`);
@@ -31,21 +30,7 @@ export class CommandOS {
         const usedPercentage = Number(((disk.used / total) * 100).toFixed(2)); // 已用百分比，保留两位小数
         const freePercentage = Number((100 - usedPercentage).toFixed(2));      // 空闲百分比
         mdList.push(`* 磁盘${disk.drive} ${disk.used}/${disk.total} GB\n\n`);
-        // mdList.push(`![${disk.drive}](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${freePercentage},${(usedPercentage)}]}]}} "${disk.drive}")\n`,);
       }
-
-
-      // mdList.push(`### CPU占用率\n`);
-      // mdList.push(`![CPU占用率](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${cpuUsage.toFixed(2)},${(100 - cpuUsage).toFixed(2)}]}]}} "CPU占用率")\n`,);
-      // mdList.push(`### 内存占用率\n`);
-      // mdList.push(`![内存占用率](https://quickchart.io/chart?c={type:%27pie%27,data:{labels:[%27%E7%A9%BA%E9%97%B2%27,%27%E5%B7%B2%E5%8D%A0%E7%94%A8%27],datasets:[{data:[${freeMem.toFixed(2)},${(usedMem).toFixed(2)}]}]}} "CPU占用率")\n`,);
-
-      // result += `🧠️ CPU型号: ${this.getCpuName()}\n`;
-      // result += `💻 CPU 使用率: ${cpuUsage.toFixed(2)}%\n`;
-      // result += `⚙️ 操作系统: ${osType} ${osRelease} (${osPlatform}) ${osArch}\n`;
-      // result += `⏰ 开机时间: ${this.getBootTime()}\n`;
-      // result += `💾 内存: 已用 ${usedMem.toFixed(1)}/${totalMem.toFixed(1)} GB\n`;
-      // result += `💽 磁盘使用情况: \n${diskUsage}\n`;
 
       Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
     });
@@ -84,20 +69,42 @@ export class CommandOS {
       idle += cpu.times.idle;
     });
 
-    return { idle, total };
+    return {idle, total};
   }
 
-  private async getCPUUsage() {
-    const start = this.getCpuTimes();
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    const end = this.getCpuTimes();
-
-    const idleDifference = end.idle - start.idle;
-    const totalDifference = end.total - start.total;
-    const usage = (1 - idleDifference / totalDifference) * 100;
-
-    return usage;
+  private async getCPUUsage(): Promise<number> {
+    if (os.platform() === 'win32') {
+      return this.getCPUUsageWindows();
+    } else {
+      return this.getCPUUsageLinux();
+    }
   }
+
+  private async getCPUUsageWindows(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      exec('wmic cpu get loadpercentage', (error, stdout) => {
+        if (error) {
+          reject('获取 CPU 信息失败');
+        } else {
+          const lines = stdout.trim().split('\n');
+          const usage = parseFloat(lines[1]);
+          resolve(usage);
+        }
+      });
+    });
+  }
+  private async getCPUUsageLinux(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      exec("top -bn1 | grep 'Cpu(s)' | awk '{print $2 + $4}'", (error, stdout) => {
+        if (error) {
+          reject('获取 CPU 信息失败');
+        } else {
+          resolve(parseFloat(stdout.trim()));
+        }
+      });
+    });
+  }
+
 
   private getDiskUsageWindows(): Promise<any> {
     return new Promise((resolve, reject) => {

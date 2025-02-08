@@ -4,14 +4,10 @@ import {Messages} from "../../../core/network/Messages";
 
 export class CommandDeMute {
   public root: CommandProvider = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument("用户", 'user')
     .onExecute((session, args) => {
       (async () => {
-        let target = args.getUserId(0);
-        if (target == null) {
-          Messages.sendMessageToReply(session,"参数不完整");
-          return;
-        }
+        const target = args.getUserId("user");
 
         const group = GroupManager.get(session);
         if (group) {

@@ -1,0 +1,11 @@
+{
+  "id": "python",
+  "version": "25.2.8.1",
+  "name": "Python",
+  "description": "提供蓬莱人形Bot-Python后端连接功能",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

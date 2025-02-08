@@ -6,14 +6,10 @@ import {h} from "koishi";
 
 export class CommandHuoZi {
   public root = new CommandProvider()
-    .addArg("文本")
+    .addRequiredArgument("文本", "text")
     // .requires(session => session.hasPermissionLevel(2))
     .onExecute(async (session, args) => {
       let texts = args.getRaw();
-      if (texts == null) {
-        Messages.sendMessageToReply(session, "缺少参数");
-        return;
-      }
 
       let api = "http://localhost:8099/huozi";
       let data: FormData = new FormData();

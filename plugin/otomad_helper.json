@@ -1,0 +1,11 @@
+{
+  "id": "otomad_helper",
+  "version": "25.2.8.1",
+  "name": "音MAD助手",
+  "description": "提供音MAD工具箱功能",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

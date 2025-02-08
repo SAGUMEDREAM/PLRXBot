@@ -5,37 +5,37 @@ import {botInstance} from "../../../index";
 
 export class CommandMute {
   public root: CommandProvider = new CommandProvider()
-    .addArg("目标").addArg("时间")
-    .onExecute((session, args) => {
-      (async () => {
-        let target = args.getUserId(0);
-        let duration = args.get(1);
-        if (target == null || duration == null) {
-          Messages.sendMessageToReply(session,"参数不完整");
-          return;
-        }
+    .addRequiredArgument("用户", "user")
+    .addRequiredArgument("时间", "time")
+    .onExecute(async (session, args) => {
+      let target = args.getUserId("user");
+      let duration = args.get("time");
+      if (target == null || duration == null) {
+        Messages.sendMessageToReply(session, "参数不完整");
+        return;
+      }
 
-        duration = this.parseDuration(duration);
+      duration = this.parseDuration(duration);
 
-        const group = GroupManager.get(session);
-        if (group) {
-          let hasPerm = session.hasPermission(3);
-          let isAdmin = await group.isGroupAdmin(session.event.user.id);
-          let botIsAdmin = await group.isGroupAdmin(session.bot.user.id)
-          if ((hasPerm || isAdmin) && botIsAdmin) {
-            await botInstance.muteGuildMember(session.event.guild.id, target, duration);
-            const formattedDuration = this.formatDuration(duration);
-            Messages.sendMessageToReply(session, `用户${Messages.at(target)}被禁言${formattedDuration}`);
+      const group = GroupManager.get(session);
+      if (group) {
+        let hasPerm = session.hasPermission(3);
+        let isAdmin = await group.isGroupAdmin(session.event.user.id);
+        let botIsAdmin = await group.isGroupAdmin(session.bot.user.id)
+        if ((hasPerm || isAdmin) && botIsAdmin) {
+          await botInstance.muteGuildMember(session.event.guild.id, target, duration);
+          const formattedDuration = this.formatDuration(duration);
+          Messages.sendMessageToReply(session, `用户${Messages.at(target)}被禁言${formattedDuration}`);
+        } else {
+          if ((hasPerm || isAdmin)) {
+            Messages.sendMessageToReply(session, "禁言失败");
           } else {
-            if((hasPerm || isAdmin)) {
-              Messages.sendMessageToReply(session,"禁言失败");
-            } else {
-              Messages.sendMessageToReply(session,"你没有使用该命令的权限");
-            }
+            Messages.sendMessageToReply(session, "你没有使用该命令的权限");
           }
         }
-      })();
+      }
     })
+
   protected formatDuration(ms: number): string {
     const days = Math.floor(ms / 86400000);
     ms %= 86400000;
@@ -50,6 +50,7 @@ export class CommandMute {
 
     return result.trim(); // 去除末尾多余的空格
   }
+
   protected parseDuration(input: string): number {
     const timeUnits = {
       d: 86400000, // 天 -> 毫秒

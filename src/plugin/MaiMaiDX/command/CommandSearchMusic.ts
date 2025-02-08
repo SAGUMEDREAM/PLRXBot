@@ -5,9 +5,9 @@ import {music_chart, MusicData} from "../data/MusicData";
 
 export class CommandSearchMusic {
   private root = new CommandProvider()
-    .addArg("歌名")
+    .addRequiredArgument("歌名", "name")
     .onExecute(async (session, args) => {
-      let name = args.raw;
+      let name = args.getRaw();
       if (!name) {
         Messages.sendMessageToReply(session, "缺少参数");
         return;
@@ -51,7 +51,7 @@ export class CommandSearchMusic {
           let i = 1;
           for (const id of resultIds) {
             // console.log(id)
-            if(i > 13) {
+            if (i > 13) {
               markdownList.push(`剩余 ${resultIds.size - 13} 个结果未显示...\n`);
               break;
             }

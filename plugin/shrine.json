@@ -1,0 +1,11 @@
+{
+  "id": "shrine",
+  "version": "25.2.8.1",
+  "name": "神社",
+  "description": "提供参拜神社和查询信仰的功能",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

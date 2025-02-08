@@ -1,7 +1,6 @@
 import {Messages} from "../../../core/network/Messages";
 import {UserManager} from "../../../core/user/UserManager";
 import {CommandProvider} from "../../../core/command/CommandProvider";
-import {EcoSystem} from "../eco/Eco";
 
 export class CommandLike {
   public readonly root = new CommandProvider()

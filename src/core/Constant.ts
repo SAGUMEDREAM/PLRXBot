@@ -6,9 +6,10 @@ import {Config} from "./data/Config";
 import {GroupManager} from "./group/GroupManager";
 import {LOGGER} from "../index";
 
-interface cfg {
+export interface core_config {
   "config": {
-    "master": ""
+    "owner": "",
+    "enabled_command_at_parse_feature": boolean
   },
   "server": {
     "bind_address": "0.0.0.0",
@@ -30,7 +31,8 @@ export class Constant {
   public static COMMAND_MANAGER: CommandManager;
   public static USER_MANAGER: UserManager;
   public static GROUP_MANAGER: GroupManager;
-  public static CONFIG: Config<cfg>;
+  public static CONFIG: Config<core_config>;
+  public static NODEJS_TYPESCRIPT_ENVIRONMENT: boolean;
 
   public static init(): void {
     LOGGER.info("Loading Constants...")
@@ -49,13 +51,19 @@ export class Constant {
     this.GROUP_MANAGER = GroupManager.create();
     this.CONFIG = new Config(Constant.CONFIG_FILE_PATH, {
       "config": {
-        "master": ""
+        "owner": "",
+        "enabled_command_at_parse_feature": true
       },
       "server": {
         "bind_address": "0.0.0.0",
         "port": 3000
       }
     }, true);
+    this.NODEJS_TYPESCRIPT_ENVIRONMENT = !!process[Symbol.for('ts-node.register.instance')];
+    if (!this.NODEJS_TYPESCRIPT_ENVIRONMENT) {
+      LOGGER.warn(`This plugin needs to be run in TypeScript, otherwise some unknown errors may occur`)
+    }
+    // console.log(this.NODEJS_TYPESCRIPT_ENVIRONMENT)
     LOGGER.info(`Set the root directory to ${this.PATH}`)
     LOGGER.info("Serialization Configuration...");
   };

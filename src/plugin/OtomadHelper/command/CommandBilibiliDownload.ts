@@ -5,15 +5,11 @@ import {Networks} from "../../../core/network/Networks";
 
 export class CommandBilibiliDownload {
   public root = new CommandProvider()
-    .addArg("BV号|AV号")
-    .addArg("true|false")
+    .addRequiredArgument("BV号|AV号", "video_id")
+    .addRequiredArgument("true|false", "download")
     .onExecute(async (session, args) => {
-      let biliVideoId = args.get(0);
-      if (biliVideoId == null) {
-        Messages.sendMessageToReply(session, "请输入BV/AV号")
-        return;
-      }
-      let returnVideo = args.get(1);
+      let biliVideoId = args.get("video_id");
+      let returnVideo = args.get("download");
       if(returnVideo == null) returnVideo = false;
 
       try {

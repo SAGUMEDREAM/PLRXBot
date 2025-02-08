@@ -1,17 +1,13 @@
-import { CommandProvider } from "../../../core/command/CommandProvider";
-import { Messages } from "../../../core/network/Messages";
+import {CommandProvider} from "../../../core/command/CommandProvider";
+import {Messages} from "../../../core/network/Messages";
 import {ctxInstance, LOGGER} from "../../../index";
 
 export class CommandBroadcast {
   public root = new CommandProvider()
-    .addArg("消息")
-    .requires(session => session.hasPermissionLevel(2))
+    .addRequiredArgument('消息', 'message')
+    .requires(session => session.hasPermissionLevel(3))
     .onExecute(async (session, args) => {
-      let msg = args.merge();
-      if(msg == null || msg == "") {
-        Messages.sendMessageToReply(session,"缺少参数");
-        return;
-      }
+      const msg = args.raw;
       try {
         Messages.sendMessage(session, `正在广播中...`);
         await ctxInstance.broadcast(msg);

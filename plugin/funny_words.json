@@ -1,0 +1,11 @@
+{
+  "id": "funny_words",
+  "version": "25.2.8.1",
+  "name": "说怪话",
+  "description": "随机模仿群友说怪话",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

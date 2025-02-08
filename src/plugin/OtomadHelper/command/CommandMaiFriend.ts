@@ -6,11 +6,10 @@ import path from "path";
 import {Utils} from "../../../core/utils/Utils";
 
 
-const imagePath = path.join(Utils.getRoot(), 'assets', 'maimai', 'awake.png');
+const imagePath = path.join(Utils.getRoot(), 'assets', 'maimai', 'join.png');
 
-export class CommandMaiAwake {
+export class CommandMaiFriend {
   public root = new CommandProvider()
-    .addArg("true|false")
     .onExecute(async (session, args) => {
       await session.sendQueued(h('quote', {id: session.messageId}) + "请发送待处理的图片。");
 

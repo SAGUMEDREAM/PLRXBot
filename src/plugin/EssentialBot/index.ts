@@ -39,12 +39,15 @@ import {CommandChoice} from "./command/CommandChoice";
 import {CommandInfo} from "./command/CommandInfo";
 import {CommandPromotion} from "./command/CommandPromotion";
 import {CommandUploadTHPicture} from "./command/CommandUploadTHPicture";
+import {CommandRejectFriend} from "./command/CommandRejectFriend";
+import {CommandAgreeFriend} from "./command/CommandAgreeFriend";
 
 export let poke_lock = false;
 export const welcome_black_list = ["787712108", "589711336"]
 
 export class EssentialBot extends PluginInitialization {
   public static INSTANCE: PluginInitialization;
+
   constructor() {
     super("essential_bot");
     EssentialBot.INSTANCE = this;
@@ -53,7 +56,7 @@ export class EssentialBot extends PluginInitialization {
   public load(): void {
     const instance = CommandManager.getInstance();
     PluginListener.on(PluginEvent.MEMBER_JOIN_GROUP, this, (session, args) => {
-      if(welcome_black_list.includes(session?.event?.channel?.id)) return;
+      if (welcome_black_list.includes(session?.event?.channel?.id)) return;
       let result: string = '';
       result += Messages.at(Number(session?.event?.user?.id));
       result += ' 欢迎新人入群哦😊👍';
@@ -67,18 +70,35 @@ export class EssentialBot extends PluginInitialization {
       introMessage += `/搜索群组 - 搜索地区或活动的东方相关群组信息\n`;
       introMessage += `/搜索活动 - 搜索东方Project线下活动信息\n`;
       introMessage += `/莉莉云 - 搜索莉莉云网盘文件\n`;
+      introMessage += `/宣发 - 自助东方宣发内容\n`;
       introMessage += `/留言 - 给开发者留言\n`;
       introMessage += `/今日人品 - 获取当日运气值\n`;
       introMessage += `/关于 - 查询关于Bot的信息`;
 
       Messages.sendMessage(session, introMessage);
     });
+
+    PluginListener.on(PluginEvent.REQUEST_FRIEND, this, (session, args) => {
+      let strResult = ``;
+      let event = session.event;
+      let user_id = event.user.id;
+      let channel_id = event?.channel?.id || event?.guild?.id;
+      let message_id = session.messageId
+      strResult += `收到用户${Messages.at(user_id)} 的好友申请\n`;
+      strResult += `用户名：${event?.user?.name}\n`
+      strResult += `用户ID：${user_id}\n`
+      strResult += `备注：${event?._data?.comment}\n`
+      strResult += `会话ID：${message_id}`
+
+      Messages.sendMessageToGroup(session, 863842932, strResult);
+    });
+
     PluginListener.on(PluginEvent.INVITED_TO_GROUP, this, (session, args) => {
       let event = session.event;
       let user_id = event.user.id;
       let group_id = event?.channel?.id || event?.guild?.id;
       let strResult = ``;
-      strResult += `用户${Messages.at(Number(user_id))} (${user_id}) 试图邀请Bot加入至QQ群 ${group_id}\n`;
+      strResult += `用户${Messages.at(user_id)} (${user_id}) 试图邀请Bot加入至QQ群 ${group_id}\n`;
       strResult += `会话ID: ${session.messageId}`;
       Messages.sendMessageToGroup(session, 863842932, strResult);
     });
@@ -88,6 +108,8 @@ export class EssentialBot extends PluginInitialization {
     instance.registerCommand(["解除禁言"], CommandDeMute.get());
     instance.registerCommand(["同意加群"], CommandAgreeInvite.get());
     instance.registerCommand(["拒绝加群"], CommandRejectInvite.get());
+    instance.registerCommand(["同意好友"], CommandAgreeFriend.get());
+    instance.registerCommand(["拒绝好友"], CommandRejectFriend.get());
     instance.registerCommand(["消息广播"], CommandBroadcast.get());
 
     instance.registerCommand(["菜单", "help", "帮助"], CommandCommandHelper.get());
@@ -99,13 +121,13 @@ export class EssentialBot extends PluginInitialization {
     instance.registerCommand(["搜索活动", "活动搜索"], CommandTHSearch.get());
     instance.registerCommand(["搜索群组", "群组搜索"], CommandGroupSearch.get());
     instance.registerCommand(["lily", "莉莉云"], CommandLilySearch.get());
-    instance.registerCommand(["关于","about"], CommandAbout.get());
+    instance.registerCommand(["关于", "about"], CommandAbout.get());
     instance.registerCommand(["jrrp", "今日人品"], CommandJRRP.get());
     instance.registerCommand(["随机东方", "随机东方图", "random_touhou"], CommandTHPicture.get());
     instance.registerCommand(["上传东方图"], CommandUploadTHPicture.get());
     instance.registerCommand(["活字印刷", "huozi"], CommandHuoZi.get());
-    instance.registerCommand(["choice","选择"], CommandChoice.get());
-    instance.registerCommand(["5k","5K"], Command5K.get());
+    instance.registerCommand(["choice", "选择"], CommandChoice.get());
+    instance.registerCommand(["5k", "5K"], Command5K.get());
     instance.registerCommand(["markdown"], CommandMarkdown.get());
     instance.registerCommand(["os"], CommandOS.get());
     instance.registerCommand(["ping"], CommandPing.get());
@@ -119,7 +141,7 @@ export class EssentialBot extends PluginInitialization {
 
     PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
       let content = session.content;
-      if(Messages.isAtBot(session) && content.includes("在吗")) {
+      if (Messages.isAtBot(session) && content.includes("在吗")) {
         session.send("Bot在");
       }
     });
@@ -156,7 +178,7 @@ export class EssentialBot extends PluginInitialization {
     PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
       let content = session.content;
       if ((
-          content.includes("/闭嘴") || content == ("!d"))
+        content.includes("/闭嘴") || content == ("!d"))
       ) {
         let user = UserManager.get(session);
         let userId = String(user.getProfile().user_id);

@@ -1,28 +1,24 @@
-import { Context, Session } from "koishi";
-import { CommandProvider } from "./CommandProvider";
-import { CommandParser } from "./CommandParser";
+import {Context, h, Session} from "koishi";
+import {CommandProvider} from "./CommandProvider";
+import {CommandParser} from "./CommandParser";
 import {CommandArgs} from "./CommandArgs";
 import {Channel, User} from "@koishijs/core";
-import os from "os";
-import {Messages} from "../network/Messages";
-import {Filters} from "../utils/Filters";
-import {Utils} from "../utils/Utils";
-import path from "path";
-import {Constant} from "../Constant";
-import {UserManager} from "../user/UserManager";
 import {CommandHelper} from "./CommandHelper";
 import {LOGGER} from "../../index";
-import {CommandSudo} from "./internal/CommandSudo";
-import {GroupManager} from "../group/GroupManager";
 import {CommandReload} from "./internal/CommandReload";
 import {CommandPlugins} from "./internal/CommandPlugins";
 import {CommandTree} from "./internal/CommandTree";
 import {CommandDataFix} from "./internal/CommandDataFix";
 import {CommandUser} from "./internal/CommandUser";
 import {CommandGroup} from "./internal/CommandGroup";
+import {CommandTestParameter} from "./internal/CommandTestParameter";
+import {TypeOfParameter} from "./MultiParameter";
+import {Constant} from "../Constant";
 
 export class CommandManager {
-  private constructor() {}
+  private constructor() {
+  }
+
   private static readonly INSTANCE = new CommandManager();
   private providers: Map<string, CommandProvider> = new Map();
   private readonly provider_tree: { [key: string]: any } = {};
@@ -36,6 +32,9 @@ export class CommandManager {
     instance.registerCommand(["datafix"], CommandDataFix.get());
     instance.registerCommand(["reload"], CommandReload.get())
     instance.registerCommand(["plugins"], CommandPlugins.get())
+
+    instance.registerCommand(["测试参数"], CommandTestParameter.get());
+
     LOGGER.info("Loading Command Manager...");
     LOGGER.info("Loading Command System...");
     LOGGER.info("Loading Command Helper...");
@@ -191,7 +190,7 @@ export class CommandManager {
     }
 
     commandsToRegister.forEach((cmd) => {
-      if(this.providers.has(cmd)) {
+      if (this.providers.has(cmd)) {
         // LOGGER.warn(`Command ${cmd} has already been registered, this will overwrite the registration!`);
         return;
       }
@@ -206,16 +205,18 @@ export class CommandManager {
     command: string,
     callback: (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => void, permissionCallback?: ((session: Session<User.Field, Channel.Field, Context>) => boolean)): void {
     const instance = CommandManager.getInstance();
-    const provider = new CommandProvider().onExecute((session,args) => callback(session,args))
-    if(permissionCallback && typeof permissionCallback == 'function') {
+    const provider = new CommandProvider().onExecute((session, args) => callback(session, args))
+    if (permissionCallback && typeof permissionCallback == 'function') {
       provider.requires(permissionCallback);
     }
     instance.registerCommand(command, provider);
     CommandHelper.build(command, provider);
   }
+
   public getProvider() {
     return this.providers;
   }
+
   /**
    * @deprecated
    */
@@ -251,28 +252,87 @@ export class CommandManager {
       }
     });
   }
+
   public getCommandTree() {
     return this.provider_tree;
   }
-  public parseCommand(session: Session<User.Field,Channel.Field,Context>): void {
+
+  public parseCommand(session: Session<User.Field, Channel.Field, Context>): void {
     const input = session.content;
     CommandManager.getInstance().executeCommand(session);
   }
 
-  private executeCommand(session: Session<User.Field,Channel.Field,Context>) {
-    const input = session.content;
+  private executeCommand(session: Session<User.Field, Channel.Field, Context>) {
+    let input: string = session.content;
+    if (Constant.CONFIG.getConfig().config.enabled_command_at_parse_feature) {
+      const elements = h.parse(input);
+      const first = elements[0];
+
+      if (first != null && first.type == 'at' && first.attrs.id == session.bot.userId) {
+        elements.shift();
+
+        input = elements.map(el => (typeof el === "string" ? el : el.toString())).join("").trim();
+
+        if (!input) return;
+      }
+    }
     const parser = new CommandParser(input);
-    const { command, args, raw } = parser.parse();
+    const {command, args, raw} = parser.parse();
 
     const provider = this.providers.get(command);
     if (provider) {
-      const commandArgs = new CommandArgs(raw, args);
+      const commandArgs = new CommandArgs(provider, raw, args);
       provider.executeWith(session, commandArgs);
     }
   }
-  public testCommand(command: string): boolean {
-    const cmdParser = command.split(" ");
-    return this.providers.has(cmdParser[0]);
+
+  public testCommand(command: string, session: Session<User.Field, Channel.Field, Context>): boolean {
+    const cmdParser = command.trim().split(/\s+/);
+    const rootCommand = cmdParser[0];
+
+    const provider = this.providers.get(rootCommand);
+    if (!provider) {
+      return false;
+    }
+
+    const args = cmdParser.slice(1);
+    const commandArgs = new CommandArgs(provider, command, args);
+
+    if (provider.getPermissionCallback() && !provider.getPermissionCallback()(session)) {
+      return false;
+    }
+
+    let currentProvider: CommandProvider | undefined = provider;
+    let remainingArgs = commandArgs;
+
+    while (remainingArgs.size() > 0 && currentProvider) {
+      const nextCommand = remainingArgs.at(0);
+      const subProvider = currentProvider.getSubCommands().get(nextCommand);
+
+      if (!subProvider) {
+        break;
+      }
+
+      currentProvider = subProvider;
+      remainingArgs = new CommandArgs(subProvider, remainingArgs.getRaw(), remainingArgs.args.slice(1));
+    }
+
+    if (!currentProvider) {
+      return false;
+    }
+
+    const requiredParams = currentProvider.getMultiParameterBuilder().getList()
+      .filter((param) => param.type === TypeOfParameter.REQUIRED);
+
+    const missingParams = requiredParams.filter((param) => {
+      const value = remainingArgs.getMultiParameter().getMap().get(param.id);
+      return value === undefined || value === null || value === "";
+    });
+
+    return missingParams.length === 0;
   }
-  public static init(): void {};
+
+
+  public static init(): void {
+  };
 }

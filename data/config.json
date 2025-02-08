@@ -1,6 +1,7 @@
 {
   "config": {
-    "master": ""
+    "owner": "807131829",
+    "enabled_command_at_parse_feature": true
   },
   "server": {
     "bind_address": "0.0.0.0",

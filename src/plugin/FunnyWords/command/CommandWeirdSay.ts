@@ -11,7 +11,7 @@ export class CommandWeirdSay {
       Messages.sendMessage(session,result);
 
     })
-    .addArg("关键词");
+    .addRequiredArgument("关键词", "keyword");
 
   private async getMessage(keyword: any | string | null) {
     if(keyword == null) {

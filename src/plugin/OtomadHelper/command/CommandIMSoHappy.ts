@@ -7,16 +7,9 @@ import {ImageUtils} from "../image/ImageUtils";
 
 export class CommandIMSoHappy {
   public root = new CommandProvider()
-    .addArg("true|false")
+    .addRequiredArgument("true|false", "mirror")
     .onExecute(async (session, args) => {
-      let direction = args.get(0);
-      if(direction == "true") {
-        direction = true;
-      } else if(direction == "false") {
-        direction = false;
-      } else {
-        direction = true;
-      }
+      let direction = args.getBoolean("mirror") || true;
 
       await session.sendQueued(h('quote', { id: session.messageId }) + "请发送待处理的图片。");
 

@@ -1,0 +1,11 @@
+{
+  "id": "koishi_core",
+  "version": "25.2.8.1",
+  "name": "Koishi-蓬莱人形Bot核心",
+  "description": "为蓬莱人形Bot提供核心-事件-调度功能",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

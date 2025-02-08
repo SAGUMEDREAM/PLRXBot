@@ -6,10 +6,10 @@ import {h} from "koishi";
 
 export class CommandMarkdown {
   public root = new CommandProvider()
-    .addArg("文本")
-    .requires(session => session.hasPermissionLevel(2))
+    .addRequiredArgument("文本", "texts")
+    .requires(session => session.hasPermissionLevel(3))
     .onExecute(async (session, args) => {
-      let texts = args.merge();
+      let texts = args.raw;
       if (texts == null) {
         Messages.sendMessageToReply(session, "缺少参数");
         return;

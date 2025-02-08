@@ -27,12 +27,12 @@ export class CommandGoogleSheetEditor {
 
   private addNewEventCommand() {
     return new CommandProvider()
-      .addArg("类型")
-      .addArg("活动名称")
-      .addArg("地区")
-      .addArg("日期")
-      .addArg("QQ群")
-      .addArg("状态")
+      .addRequiredArgument("类型", "type")
+      .addRequiredArgument("活动名称", "name")
+      .addRequiredArgument("地区", "area")
+      .addRequiredArgument("日期", "date")
+      .addRequiredArgument("QQ群", "group_id")
+      .addRequiredArgument("状态", "state")
       .onExecute(async (session, args) => {
         if (args.size() < 6) {
           Messages.sendMessageToReply(session, "参数缺失");
@@ -147,9 +147,9 @@ export class CommandGoogleSheetEditor {
 
   private modifyEventCommand() {
     return new CommandProvider()
-      .addArg("活动名称")
-      .addArg("地区/日期/QQ群/状态")
-      .addArg("值")
+      .addRequiredArgument("活动名称", "name")
+      .addRequiredArgument("地区/日期/QQ群/状态", "key")
+      .addRequiredArgument("值", "value")
       .onExecute(async (session, args) => {
         if (args.size() < 3) {
           Messages.sendMessageToReply(session, "参数缺失");
@@ -252,14 +252,14 @@ export class CommandGoogleSheetEditor {
 
   private deleteEventCommand() {
     return new CommandProvider()
-      .addArg("活动名称")
+      .addRequiredArgument("活动名称", "name")
       .onExecute(async (session, args) => {
         if (args.size() < 1) {
           Messages.sendMessageToReply(session, "参数缺失");
           return;
         }
 
-        const name = args.getString(0);
+        const name = args.get("name");
         const deleted = await this.deleteEvent(name);
 
         if (!deleted) {

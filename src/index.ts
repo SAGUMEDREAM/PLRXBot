@@ -47,18 +47,20 @@ export function apply(ctx: Context) {
   });
   ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => {
     // Debug用
-    let content = session.content;
-    if (content.includes("/测试Markdown")) {
-      const imageBuffer = await ctx.markdownToImage.convertToImage(content);
-      session.sendQueued(h.image(imageBuffer, MIMEUtils.getType(imageBuffer)));
-    }
-    if(session.userId == '807131829' && session.bot.userId == session.userId && session.content.includes('/bytest')) {
-      // console.log(session.elements);
-      // Messages.sendMessage(session, session.content);
-    }
+    // let content = session.content;
+    // if (content.includes("/测试Markdown")) {
+    //   const imageBuffer = await ctx.markdownToImage.convertToImage(content);
+    //   await session.sendQueued(h.image(imageBuffer, MIMEUtils.getType(imageBuffer)));
+    // }
+    // if(session.userId == '807131829' && session.bot.userId == session.userId && session.content.includes('/bytest')) {
+    //   // console.log(session.elements);
+    //   // Messages.sendMessage(session, session.content);
+    // }
   });
   ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => {
     if (ctxInstance == null || botInstance == null) return;
+
+    if(session.userId != "807131829") return;
 
     if (DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
       return;
@@ -67,6 +69,7 @@ export function apply(ctx: Context) {
     if (!UserManager.exists(session.event.user.id)) {
       UserManager.createUser(session);
     }
+
 
     if (session?.event?.channel?.type == 0) {
       const group_id = session?.event?.channel?.id;
@@ -86,10 +89,10 @@ export function apply(ctx: Context) {
         return;
       }
       // Messages.sendMessageToReply(session, "Bot不需要艾特使用哦");
-      return;
+      // return;
     }
 
-    if(session.userId == null || session.userId == "" || BotList.getInstance().getConfigInstance().getConfig().list.includes(String(session.userId))) {
+    if(session.userId == null || BotList.getInstance().getConfigInstance().getConfig().list.includes(String(session.userId))) {
       return;
     }
 
@@ -98,6 +101,7 @@ export function apply(ctx: Context) {
     } catch (i) {
       return;
     }
+
     await MessageCHandler.handle(session);
     try {
       PluginListener.emit(PluginEvent.HANDLE_MESSAGE_AFTER, session);

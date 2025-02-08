@@ -19,7 +19,7 @@ export class ShrineObject {
 
 export class Shrine extends PluginInitialization {
   constructor() {
-    super("Shrine");
+    super("shrine");
   }
 
   public load(): void {

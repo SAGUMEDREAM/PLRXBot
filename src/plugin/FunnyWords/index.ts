@@ -23,8 +23,8 @@ export class FunnyWords extends PluginInitialization {
   public static readonly message_db_path = path.resolve(path.join(Utils.getRoot(), 'data', 'caches'), "message_db.json");
   public static MESSAGE_DB: FWMessage[] = [];
   public static INSTANCE: FunnyWords;
-  public i: number = 0;
-  public enabled = false
+  public counter: number = 0;
+  public enabled = false;
 
   private loadData() {
     try {
@@ -43,7 +43,7 @@ export class FunnyWords extends PluginInitialization {
 
     PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
       let content = session.content;
-      if (CommandManager.getInstance().testCommand(content)) return;
+      if (CommandManager.getInstance().testCommand(content, session)) return;
       if (!this.enabled) return;
       this.parseMsg(session);
     });
@@ -67,10 +67,10 @@ export class FunnyWords extends PluginInitialization {
       userId: session.userId,
       msg: session.content
     });
-    this.i++;
-    if (this.i >= 8) {
+    this.counter++;
+    if (this.counter >= 8) {
       this.saveData();
-      this.i = 0;
+      this.counter = 0;
     }
   }
 

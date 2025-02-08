@@ -5,16 +5,11 @@ import {h} from "koishi";
 import {music_chart, MusicData} from "../data/MusicData";
 
 export class CommandQueryMusic {
-
   private root = new CommandProvider()
-    .addArg("歌名")
+    .addRequiredArgument("歌名", "name")
     .onExecute(async (session, args) => {
-      let name = args.raw;
-      if (name == null) {
-        Messages.sendMessageToReply(session, "缺少参数");
-        return;
-      }
-      let music_data: MusicData = MaiMaiDX.INSTANCE.optional.list.getByName(name);
+      const name = args.getRaw();
+      const music_data: MusicData = MaiMaiDX.INSTANCE.optional.list.getByName(name);
       if (music_data == null) {
         Messages.sendMessageToReply(session, "查询失败");
         return;

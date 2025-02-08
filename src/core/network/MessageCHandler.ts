@@ -20,12 +20,12 @@ export class MessageCHandler {
         if(group.groupData.banned) return;
       }
 
-      try {PluginListener.emit(PluginEvent.HANDLE_MESSAGE, session);} catch (i) {return;}
-
       const data = user.getProfileData();
       session.hasPermission = ((permission: any) => UserManager.hasPermission(session, permission));
       session.hasPermissionLevel = ((permissionLevel: any) => UserManager.hasPermissionLevel(session, permissionLevel));
       session.hasGroupPermission = ((permission: any) => GroupManager.hasPermission(session, permission));
+
+      try {PluginListener.emit(PluginEvent.HANDLE_MESSAGE, session);} catch (i) {return;}
 
       if(data["next_message"]["open"] == true) {
         data["next_message"]["open"] = false;

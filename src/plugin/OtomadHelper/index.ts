@@ -13,10 +13,6 @@ import {CommandCrystalBall} from "./command/CommandCrystalBall";
 import {CommandIMSoHappy} from "./command/CommandIMSoHappy";
 import {CommandMaiFriend} from "./command/CommandMaiFriend";
 import {CommandMaiAwake} from "./command/CommandMaiAwake";
-import {PluginListener} from "../../core/plugins/PluginListener";
-import {PluginEvent} from "../../core/plugins/PluginEvent";
-import path from "path";
-import {Utils} from "../../core/utils/Utils";
 
 export class OtomadHelper extends PluginInitialization {
   public static INSTANCE: PluginInitialization;

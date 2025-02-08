@@ -7,12 +7,13 @@ import {Maths} from "../../../core/utils/Maths";
 import {h} from "koishi";
 
 const url = path.resolve(path.join(Utils.getRoot(), 'assets', 'touhou_pic'));
+
 export class CommandTHPicture {
 
   public root = new CommandProvider()
     .onExecute((session, args) => {
       const files = Files.getDir(url);
-      if(!files || files.length == 0) {
+      if (!files || files.length == 0) {
         Messages.sendMessageToReply(session, '图库数量不足');
         return;
       }

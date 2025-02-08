@@ -1,13 +1,13 @@
-import { UserProfile } from "./UserProfile";
-import { Constant } from "../Constant";
+import {UserProfile} from "./UserProfile";
+import {Constant} from "../Constant";
 import fs from "fs";
 import path from "path";
-import { Files } from "../utils/Files";
-import { Context, Session } from "koishi";
-import { Channel, User } from "@koishijs/core";
+import {Files} from "../utils/Files";
+import {Context, Session} from "koishi";
+import {Channel, User} from "@koishijs/core";
 import * as cluster from "cluster";
-import { BaseUserProfile } from "./BaseUserProfile";
-import { GCUtils } from "../utils/GCUtils";
+import {BaseUserProfile} from "./BaseUserProfile";
+import {GCUtils} from "../utils/GCUtils";
 import {botInstance, LOGGER} from "../../index";
 import {Reloadable} from "../impl/Reloadable";
 
@@ -15,7 +15,8 @@ export class UserManager implements Reloadable {
   private static readonly INSTANCE = new UserManager();
   private userdata: Map<number | string, UserProfile> = new Map<number | string, UserProfile>();
 
-  private constructor() {}
+  private constructor() {
+  }
 
   public static getInstance() {
     return Constant.USER_MANAGER;
@@ -105,6 +106,7 @@ export class UserManager implements Reloadable {
       return this.get(args)?.profile || UserManager.createUser(args).profile;
     }
   }
+
   public static loadPfFile(args: number | string) {
     const userDataPath: string = UserManager.getUserDataPath();
     const dPath = path.resolve(userDataPath, (args.toString() + ".json"));
@@ -121,10 +123,10 @@ export class UserManager implements Reloadable {
   public static hasPermissionLevel(session: Session<User.Field, Channel.Field, Context> | number | string, permissionLevel: number): boolean;
   public static hasPermissionLevel(args: number | string | Session<User.Field, Channel.Field, Context>, permissionLevel: number): boolean {
     if (typeof args === "number" || typeof args === "string") {
-      if(args == botInstance.selfId) return true;
+      if (args == botInstance.selfId) return true;
       return this.get(args)?.profile?.permission_level >= permissionLevel;
     } else {
-      if(args.userId == botInstance.selfId) return true;
+      if (args.userId == botInstance.selfId) return true;
       return this.get(args.event.user.id.toString())?.profile?.permission_level >= permissionLevel;
     }
   }
@@ -132,13 +134,14 @@ export class UserManager implements Reloadable {
   public static hasPermission(session: Session<User.Field, Channel.Field, Context> | number | string, permission: string): boolean;
   public static hasPermission(args: number | string | Session<User.Field, Channel.Field, Context>, permission: string): boolean {
     if (typeof args === "number" || typeof args === "string") {
-      if(args == botInstance.selfId) return true;
+      if (args == botInstance.selfId) return true;
       return this.get(args)?.profile?.permissions.includes(permission);
     } else {
-      if(args.userId == botInstance.selfId) return true;
+      if (args.userId == botInstance.selfId) return true;
       return this.get(args.event.user.id.toString())?.profile?.permissions.includes(permission);
     }
   }
+
   public static resetUserData(user_id: number | string): boolean {
     const userIdStr = user_id.toString();
 
@@ -146,7 +149,7 @@ export class UserManager implements Reloadable {
       this.getInstance().userdata.delete(userIdStr);
       const userDataPath = this.getUserPath(userIdStr);
       if (Files.exists(userDataPath)) {
-          Files.delete(userDataPath);
+        Files.delete(userDataPath);
       }
       return true;
     } else {
@@ -172,5 +175,6 @@ export class UserManager implements Reloadable {
     return Constant.USER_DATA_PATH;
   }
 
-  public static init(): void {};
+  public static init(): void {
+  };
 }

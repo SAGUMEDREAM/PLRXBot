@@ -6,11 +6,11 @@ import {MIMEUtils} from "../../../core/utils/MIMEUtils";
 
 export class Command5K {
   public root = new CommandProvider()
-    .addArg("文本")
-    .addArg("文本")
+    .addRequiredArgument('文本', 'text1')
+    .addRequiredArgument('文本', 'text2')
     .onExecute(async (session, args) => {
-      const top = args.get(0);
-      const bottom = args.get(1);
+      const top = args.get('text1');
+      const bottom = args.get('text2');
       if (top == null || bottom == null) {
         Messages.sendMessageToReply(session, "缺少参数");
         return;

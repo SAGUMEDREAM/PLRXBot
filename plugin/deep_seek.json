@@ -1,0 +1,11 @@
+{
+  "id": "deep_seek",
+  "version": "25.2.8.1",
+  "name": "DeepSeek",
+  "description": "DeepSeek 接入蓬莱人形Bot",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

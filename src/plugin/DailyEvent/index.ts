@@ -59,7 +59,7 @@ export class DailyEvent extends PluginInitialization {
 
     let merging = MessageMerging.create(null);
 
-    merging.put(`每日活动倒计时🔈🔈🔈\n距离以下活动开始还有7天!`);
+    merging.put(`每日活动倒计时🔈\n距离以下活动开始还有7天!`);
     for (let event of events7) {
       let name = event[1];
       let group = event[4];

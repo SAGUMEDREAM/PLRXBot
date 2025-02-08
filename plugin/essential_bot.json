@@ -1,0 +1,11 @@
+{
+  "id": "essential_bot",
+  "version": "25.2.8.1",
+  "name": "基础Bot",
+  "description": "蓬莱人形Bot基本功能",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

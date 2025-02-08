@@ -5,14 +5,9 @@ import {MessageMerging} from "../../../core/network/MessageMerging";
 
 export class CommandLilySearch {
   public root = new CommandProvider()
-    .addArg("字段")
+    .addRequiredArgument("关键词", "keyword")
     .onExecute((session, args) => {
       const title = args.merge();
-      if (title == "" || args.get(0) == null) {
-        Messages.sendMessageToReply(session, "缺少搜索参数，请提供搜索关键词。");
-        return;
-      }
-
       const url = "https://cn.thdog.moe/api/fs/search";
       const data = {
         parent: "/分流1",

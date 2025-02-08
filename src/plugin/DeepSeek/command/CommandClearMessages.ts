@@ -5,7 +5,7 @@ import {Messages} from "../../../core/network/Messages";
 
 export class CommandClearMessages {
   public root = new CommandProvider()
-    .requires(session => session.hasPermissionLevel(2))
+    .requires(session => session.hasPermissionLevel(4))
     .onExecute((session, args) => {
       const group_id = session?.event?.channel?.id;
       if (group_id == null) {

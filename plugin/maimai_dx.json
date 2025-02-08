@@ -1,0 +1,11 @@
+{
+  "id": "maimai_dx",
+  "version": "25.2.8.1",
+  "name": "maimai-bot",
+  "description": "提供生成Best50，点歌，查歌，别名，功能",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

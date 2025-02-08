@@ -1,6 +1,5 @@
 import {CommandProvider} from "../CommandProvider";
 import {UserManager} from "../../user/UserManager";
-import {Files} from "../../utils/Files";
 import path from "path";
 import {UserProfile} from "../../user/UserProfile";
 import {Messages} from "../../network/Messages";

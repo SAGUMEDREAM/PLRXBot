@@ -3,14 +3,15 @@ import {Utils} from "../../utils/Utils";
 import {Messages} from "../../network/Messages";
 import {CommandHelper} from "../CommandHelper";
 import {UserManager} from "../../user/UserManager";
+import {MultiParameterBuilder} from "../MultiParameter";
 
 export class CommandUser {
   public readonly edit_permission_level = new CommandProvider()
-    .addArg("目标")
-    .addArg("权限等级")
+    .addRequiredArgument('用户', 'user')
+    .addRequiredArgument('权限等级', 'level')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      const level = args.get(1);
+      const target = args.getUserId("user");
+      const level = args.get("permission_name");
       if (target == null && level == null) {
         CommandProvider.leakArgs(session, args);
         return;
@@ -26,11 +27,11 @@ export class CommandUser {
     });
 
   public readonly permission_add = new CommandProvider()
-    .addArg("目标")
-    .addArg("权限名")
+    .addRequiredArgument('用户', 'user')
+    .addRequiredArgument('权限名', 'permission_name')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      const perm_name = args.get(1);
+      const target = args.getUserId("user");
+      const perm_name = args.get("permission_name");
       if (target == null && perm_name == null) {
         CommandProvider.leakArgs(session, args);
         return;
@@ -49,11 +50,11 @@ export class CommandUser {
       }
     });
   public readonly permission_remove = new CommandProvider()
-    .addArg("目标")
-    .addArg("权限名")
+    .addRequiredArgument('用户', 'user')
+    .addRequiredArgument('权限名', 'permission_name')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      const perm_name = args.get(1);
+      const target = args.getUserId("user");
+      const perm_name = args.get("permission_name");
       if (target == null || perm_name == null) {
         CommandProvider.leakArgs(session, args);
         return;
@@ -74,13 +75,10 @@ export class CommandUser {
     });
 
   public readonly view_profile = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument('用户', 'user')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      if (target == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
+      const target = args.getUserId("user");
+
       const user = UserManager.get(target);
       if (user) {
         const data = user.getProfile().data;
@@ -99,13 +97,13 @@ export class CommandUser {
     });
 
   public readonly edit_profile = new CommandProvider()
-    .addArg("目标")
-    .addArg("字段")
-    .addArg("值")
+    .addRequiredArgument('用户', 'user')
+    .addRequiredArgument('字段', 'key')
+    .addRequiredArgument('值', 'value')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      const targetDataPath = args.get(1);
-      const newValue = args.get(2);
+      const target = args.getUserId("user");
+      const targetDataPath = args.get("key");
+      const newValue = args.get("value");
 
       if (target == null || targetDataPath == null || newValue == null) {
         CommandProvider.leakArgs(session, args);
@@ -148,13 +146,9 @@ export class CommandUser {
     .addSubCommand("remove", this.permission_remove)
   ;
   public readonly view_permission = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument('用户', 'user')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      if (target == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
+      const target = args.getUserId("user");
 
       const user = UserManager.get(target);
       if (user) {
@@ -170,9 +164,9 @@ export class CommandUser {
     });
 
   public readonly view_permission_level = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument('用户', 'user')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
+      const target = args.getUserId("user");
       if (target == null) {
         CommandProvider.leakArgs(session, args);
         return;
@@ -198,13 +192,10 @@ export class CommandUser {
     .addSubCommand("permission_level", this.view_permission_level);
 
   public readonly ban = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument('用户', 'user')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      if (target == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
+      const target = args.getUserId("user");
+
       const user = UserManager.get(target);
       if (user) {
         user.profile.banned = true;
@@ -216,13 +207,10 @@ export class CommandUser {
     });
 
   public readonly pardon = new CommandProvider()
-    .addArg("目标")
+    .addRequiredArgument('用户', 'user')
     .onExecute((session, args) => {
-      const target = args.getUserId(0);
-      if (target == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
+      const target = args.getUserId("user");
+
       const user = UserManager.get(target);
       if (user) {
         user.profile.banned = false;

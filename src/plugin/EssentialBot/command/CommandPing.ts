@@ -4,9 +4,9 @@ import {Networks} from "../../../core/network/Networks";
 
 export class CommandPing {
   public root = new CommandProvider()
-    .addArg("IP/DOMAIN")
+    .addRequiredArgument("目标地址", "address")
     .onExecute(async (session, args) => {
-      let target = args.get(0);
+      let target = args.get("address");
       let result = `${await Networks.ping(`${target}`)}ms`;
       Messages.sendMessageToReply(session, result);
     });

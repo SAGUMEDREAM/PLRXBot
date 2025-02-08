@@ -1,0 +1,11 @@
+{
+  "id": "koishi_loader",
+  "version": "25.2.8.1",
+  "name": "Koishi-蓬莱人形Bot加载器",
+  "description": "为蓬莱人形Bot提供加载插件功能",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

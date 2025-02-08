@@ -1,6 +1,5 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {Messages} from "../../../core/network/Messages";
-import {MessageMerging} from "../../../core/network/MessageMerging";
 import {h} from "koishi";
 
 export class CommandCommandHelper {
@@ -21,7 +20,8 @@ export class CommandCommandHelper {
         '* `/留言 (内容)`：向开发者留言\n',
         '* `/关于`：获取Bot关于部分\n',
         '### 东方Project相关\n',
-        '* `/活动搜索 (活动名称|地区名称|时间) <-H>`：搜索东方线下活动，-H允许查看历史活动信息\n',
+        '* `/活动搜索 (活动名称|地区名称|时间) <true|false>`：搜索东方线下活动\n',
+        '    * true|false：`是否查看历史活动信息`\n',
         '* `/群组搜索 (群号|主办方|群名称)`：搜索各地区东方Project群聊\n',
         '* `/莉莉云 (关键词)`：搜索莉莉云资源\n',
         '* `/随机东方图`：获取一张随机东方图\n',

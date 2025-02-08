@@ -63,7 +63,7 @@ export class MessageForwarding extends PluginInitialization {
     if (length <= 35) {
       return;
     }
-    if (CommandManager.getInstance().testCommand(content_1)) {
+    if (CommandManager.getInstance().testCommand(content_1, session)) {
       return;
     }
     if (session.userId == session.bot.selfId) {

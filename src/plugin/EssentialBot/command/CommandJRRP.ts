@@ -27,8 +27,8 @@ export class CommandJRRP {
   }
 
   public load() {
-    let data: object = JSON.parse(Files.read(path.resolve(path.join(Utils.getRoot(), 'assets'), "Touhou_Fortune_Slips.json")));
-    let slips: [] = data["slips"];
+    const data: object = JSON.parse(Files.read(path.resolve(path.join(Utils.getRoot(), 'assets'), "Touhou_Fortune_Slips.json")));
+    const slips: [] = data["slips"];
     for (const slip of slips) {
       let content = slip["content"];
       let ct0: string = content[0];
