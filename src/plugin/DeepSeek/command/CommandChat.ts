@@ -13,7 +13,7 @@ export class CommandChat {
   public root = new CommandProvider()
     .addRequiredArgument('内容', 'content')
     .onExecute(async (session, args) => {
-      const texts = args.raw;
+      const texts = args.getArgumentsString();
       const userProfile = UserManager.get(session);
       const eco = EcoSystem.getSystem(userProfile);
       const group_id = session?.event?.channel?.id;

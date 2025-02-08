@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {Files} from "./Files";
 import {parse, HTMLElement} from 'node-html-parser';
+import {Config} from "../data/Config";
 
 export class Utils {
   public static readonly Files = Files;
@@ -40,37 +41,6 @@ export class Utils {
   public static getHtmlTagObject(tags: string) {
     return parse(tags);
   }
-
-  /*public static getHtmlObject(html: string): { [tag: string]: any[] | string } {
-    try {
-      const elements: { [tag: string]: any[] | string } = {};
-
-      const $ = cheerio.load(html);
-      const isValidHtml = $('*').length > 0;
-
-      if (isValidHtml) {
-        $('*').each((_, element) => {
-          const tagName = element.tagName.toLowerCase();
-          const attrs = $(element).attr();
-
-          if (!elements[tagName]) {
-            elements[tagName] = [];
-          }
-
-          elements[tagName].push({
-            attributes: attrs,
-            html: $(element).html(),
-          });
-        });
-      } else {
-        return html;
-      }
-
-      return elements;
-    } catch (error) {
-      return html;
-    }
-  }*/
 
   public static getRoot(): string {
     if(Utils.root == null) {

@@ -8,7 +8,7 @@ export class CommandQueryMusic {
   private root = new CommandProvider()
     .addRequiredArgument("歌名", "name")
     .onExecute(async (session, args) => {
-      const name = args.getRaw();
+      const name = args.getArgumentsString();
       const music_data: MusicData = MaiMaiDX.INSTANCE.optional.list.getByName(name);
       if (music_data == null) {
         Messages.sendMessageToReply(session, "查询失败");

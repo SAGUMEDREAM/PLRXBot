@@ -3,7 +3,7 @@ import {MultiParameter} from "./MultiParameter";
 import {CommandProvider} from "./CommandProvider";
 
 export class CommandArgs {
-  public raw: string;
+  protected raw: string;
   public args: (string | h)[];
   protected multiParameter: MultiParameter;
 
@@ -73,6 +73,11 @@ export class CommandArgs {
   public getRaw(): string {
     return this.raw;
   }
+
+  public getArgumentsString(): string {
+    return this.args.join(' ').trim();
+  }
+
 
   public getNumber(key: string): number {
     const value = this.get(key);

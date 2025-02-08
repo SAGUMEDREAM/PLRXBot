@@ -8,6 +8,7 @@ import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {PluginEvent} from "../../core/plugins/PluginEvent";
 import {PluginListener} from "../../core/plugins/PluginListener";
+import {Constant} from "../../core/Constant";
 
 export type FWMessage = {
   userId: string;
@@ -20,7 +21,7 @@ export class FunnyWords extends PluginInitialization {
     FunnyWords.INSTANCE = this;
   }
 
-  public static readonly message_db_path = path.resolve(path.join(Utils.getRoot(), 'data', 'caches'), "message_db.json");
+  public static readonly message_db_path = path.resolve(path.join(Constant.CACHES_PATH), "message_db.json");
   public static MESSAGE_DB: FWMessage[] = [];
   public static INSTANCE: FunnyWords;
   public counter: number = 0;

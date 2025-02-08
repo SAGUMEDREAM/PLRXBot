@@ -2,6 +2,7 @@ import {Files} from "../utils/Files";
 import {LOGGER} from "../../index";
 import path from "path";
 import {Utils} from "../utils/Utils";
+import {Constant} from "../Constant";
 
 export class Config<T extends object> {
   private readonly path: string;
@@ -44,11 +45,11 @@ export class Config<T extends object> {
   }
 
   public static createConfig(name: string, object: object, autoLoading = false) {
-    return new Config(path.join(Utils.getRoot(), 'data', `${name}.json`), object, autoLoading);
+    return new Config(path.join(Constant.DATA_PATH, `${name}.json`), object, autoLoading);
   }
 
   public static createCachesConfig(name: string, object: object, autoLoading = false) {
-    return new Config(path.join(Utils.getRoot(), 'data', 'caches', `${name}.json`), object, autoLoading);
+    return new Config(path.join(Constant.CACHES_PATH, `${name}.json`), object, autoLoading);
   }
 
 }

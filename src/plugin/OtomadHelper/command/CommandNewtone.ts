@@ -5,6 +5,7 @@ import path from "path";
 import { Utils } from "../../../core/utils/Utils";
 import fs from "fs";
 import { Files } from "../../../core/utils/Files";
+import {Constant} from "../../../core/Constant";
 
 export class CommandNewtone {
   public root = new CommandProvider()
@@ -59,7 +60,7 @@ export class CommandNewtone {
           responseType: 'arraybuffer',
         });
 
-        const savedPath = path.join(Utils.getRoot(), 'data', 'caches', `${fileNameWithoutExtension}_c.${fileExtension}`);
+        const savedPath = path.join(Constant.CACHES_PATH, `${fileNameWithoutExtension}_c.${fileExtension}`);
         await fs.promises.writeFile(savedPath, response.data);
 
         await session.sendQueued(h('file', {

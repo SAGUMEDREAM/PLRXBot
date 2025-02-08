@@ -46,7 +46,7 @@ export class Parameter {
   public asString(): string {
     return (() => {
       if (this.type == TypeOfParameter.REQUIRED) return `(${this.name})`;
-      if (this.type == TypeOfParameter.OPTIONAL) return `<${this.name}>x`;
+      if (this.type == TypeOfParameter.OPTIONAL) return `<${this.name}>`;
     })();
   }
 }

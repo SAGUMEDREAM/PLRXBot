@@ -9,14 +9,9 @@ export class CommandMarkdown {
     .addRequiredArgument("文本", "texts")
     .requires(session => session.hasPermissionLevel(3))
     .onExecute(async (session, args) => {
-      let texts = args.raw;
-      if (texts == null) {
-        Messages.sendMessageToReply(session, "缺少参数");
-        return;
-      }
-
-      let api = "http://localhost:8099/markdown";
-      let data: FormData = new FormData();
+      const texts = args.getArgumentsString();
+      const api = "http://localhost:8099/markdown";
+      const data: FormData = new FormData();
       for (const text of texts) {
         data.append("texts", text);
       }

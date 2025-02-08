@@ -10,6 +10,7 @@ import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {compareTwoStrings} from "../../core/utils/StringSimilarity";
 import {Messages} from "../../core/network/Messages";
+import {Constant} from "../../core/Constant";
 
 
 interface forwarding_cache_cfg {
@@ -23,7 +24,7 @@ const maxCacheSize = 50;
 
 export class MessageForwarding extends PluginInitialization {
   public static INSTANCE: MessageForwarding;
-  public static readonly cache_path = path.resolve(path.join(Utils.getRoot(), 'data', 'caches'), "message_forwarding_cache.json");
+  public static readonly cache_path = path.resolve(path.join(Constant.CACHES_PATH), "message_forwarding_cache.json");
   public config: Config<forwarding_cache_cfg>;
 
   constructor() {

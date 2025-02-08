@@ -78,16 +78,16 @@ export class EssentialBot extends PluginInitialization {
       Messages.sendMessage(session, introMessage);
     });
 
-    PluginListener.on(PluginEvent.REQUEST_FRIEND, this, (session, args) => {
+    PluginListener.on(PluginEvent.REQUEST_FRIEND, this,async (session, args) => {
       let strResult = ``;
       let event = session.event;
-      let user_id = event.user.id;
+      let user_id = session.userId;
       let channel_id = event?.channel?.id || event?.guild?.id;
       let message_id = session.messageId
       strResult += `收到用户${Messages.at(user_id)} 的好友申请\n`;
-      strResult += `用户名：${event?.user?.name}\n`
+      strResult += `用户名：${await Messages.getNickname(user_id)}\n`
       strResult += `用户ID：${user_id}\n`
-      strResult += `备注：${event?._data?.comment}\n`
+      strResult += `验证消息：\n${event?._data?.comment}\n`
       strResult += `会话ID：${message_id}`
 
       Messages.sendMessageToGroup(session, 863842932, strResult);

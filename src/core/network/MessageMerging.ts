@@ -3,27 +3,30 @@ import {Messages} from "./Messages";
 import {botInstance} from "../../index";
 
 export class MessageMerging {
-  private lines = [];
+  private messageList = [];
   private session: Session<any, any, any>;
   private attrs: Dict<any, string> = {}
+
   private constructor(session: Session<any, any, any> | null) {
-    if(session != null) {
+    if (session != null) {
       this.session = session;
       this.attrs = {
         userId: this?.session?.selfId,
-        nickname: this?.session?.author?.nickname || this?.session?.username,
+        nickname: this?.session?.author?.name || this?.session?.username,
       }
     } else {
       this.session = null;
       this.attrs = {
         userId: botInstance?.selfId,
-        nickname: botInstance?.user?.nickname || botInstance?.user?.username,
+        nickname: botInstance?.user?.name || botInstance?.user?.name,
       }
     }
   }
+
   public static create(session: Session<any, any, any> | null): MessageMerging {
     return new MessageMerging(session);
   }
+
   public static merging(session: Session<any, any, any> | null, arr: any[], lBreak: boolean = false) {
     let merging = this.create(session);
     for (const arrElement of arr) {
@@ -33,27 +36,31 @@ export class MessageMerging {
   }
 
   public put(message: any, lBreak: boolean = false): MessageMerging {
-    if(lBreak == true) {
-      if(typeof message == 'string' && message.includes("\n") == false) {
+    if (lBreak == true) {
+      if (typeof message == 'string' && message.includes("\n") == false) {
         message += "\n";
       }
     }
-    this.lines.push(message);
+    this.messageList.push(message);
     return this;
   }
+
   public get(): h {
-    let result = Messages.h('figure');
-    for (const line of this.lines) {
-      result.children.push(h('message', this.attrs, line));
+    let messageList = [];
+    for (const message of this.messageList) {
+      messageList.push(h('message', message));
     }
-    return result;
+    return h('message', {forward: true}, messageList);
   }
+
   public clear(): void {
-    this.lines = [];
+    this.messageList = [];
   }
+
   public length(): number {
-    return this.lines.length;
+    return this.messageList.length;
   }
+
   public toString() {
     return this.get();
   }

@@ -22,7 +22,7 @@ export class CommandGroupSearch {
 
   public root = new CommandProvider()
     .addRequiredArgument("关键词", "keyword")
-    .addRequiredArgument("页码", "page")
+    .addOptionalArgument("页码", "page")
     .onExecute(async (session, args) => {
       const keyword = args.get("keyword");
 

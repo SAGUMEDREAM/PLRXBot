@@ -1,29 +1,33 @@
-import {CommandProvider} from "../../../core/command/CommandProvider";
-import {Messages} from "../../../core/network/Messages";
-import request from "sync-request";
-import {Options, FormData} from "sync-request";
-import {h} from "koishi";
+import { CommandProvider } from "../../../core/command/CommandProvider";
+import { Messages } from "../../../core/network/Messages";
+import axios from "axios";
+import FormData from "form-data";
+import { h } from "koishi";
 
 export class CommandHuoZi {
   public root = new CommandProvider()
     .addRequiredArgument("文本", "text")
     // .requires(session => session.hasPermissionLevel(2))
     .onExecute(async (session, args) => {
-      let texts = args.getRaw();
+      const texts = args.getArgumentsString();
+      const api = "http://localhost:8099/huozi";
 
-      let api = "http://localhost:8099/huozi";
-      let data: FormData = new FormData();
+      const formData = new FormData();
       for (const text of texts) {
-        data.append("texts", text);
+        formData.append("texts", text);
       }
 
-      let options: Options = {
-        form: data,
+      try {
+        const res = await axios.post(api, formData, {
+          headers: formData.getHeaders(),
+          responseType: "arraybuffer",
+        });
+
+        const buffer = Buffer.from(res.data);
+        Messages.sendMessage(session, h.audio(buffer, "audio/wav"));
+      } catch (error) {
+        Messages.sendMessage(session, "请求失败，请稍后再试。");
       }
-      let res = request("POST", api, options);
-      let body: any = res.getBody();
-      let buffer: Buffer = body;
-      Messages.sendMessage(session, h.audio(buffer, "audio/wav"))
     });
 
   public static get(): CommandProvider {

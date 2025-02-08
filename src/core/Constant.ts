@@ -9,6 +9,7 @@ import {LOGGER} from "../index";
 export interface core_config {
   "config": {
     "owner": "",
+    "root_path": string,
     "enabled_command_at_parse_feature": boolean
   },
   "server": {
@@ -40,11 +41,11 @@ export class Constant {
     this.ASSETS_PATH = path.join(Utils.getRoot(), 'assets');
     this.DATA_PATH = path.join(Utils.getRoot(), 'data');
     this.PLUGIN_PATH = path.join(Utils.getRoot(), 'plugins');
-    this.USER_DATA_PATH = path.join(Utils.getRoot(), 'data', 'profile');
-    this.GROUP_DATA_PATH = path.join(Utils.getRoot(), 'data', 'group');
-    this.LANGUAGE_PATH = path.join(Utils.getRoot(), 'data', 'lang');
-    this.CONFIG_FILE_PATH = path.join(Utils.getRoot(), 'data', 'config.json');
-    this.CACHES_PATH = path.join(Utils.getRoot(), 'data', 'caches');
+    this.USER_DATA_PATH = path.join(this.DATA_PATH, 'profile');
+    this.GROUP_DATA_PATH = path.join(this.DATA_PATH, 'group');
+    this.LANGUAGE_PATH = path.join(this.DATA_PATH, 'lang');
+    this.CONFIG_FILE_PATH = path.join(this.DATA_PATH, 'config.json');
+    this.CACHES_PATH = path.join(this.DATA_PATH, 'caches');
     this.COMMAND_MANAGER = CommandManager.create();
     this.COMMON_HEADER = "@kisin-reimu";
     this.USER_MANAGER = UserManager.create();
@@ -52,6 +53,7 @@ export class Constant {
     this.CONFIG = new Config(Constant.CONFIG_FILE_PATH, {
       "config": {
         "owner": "",
+        "root_path": null,
         "enabled_command_at_parse_feature": true
       },
       "server": {

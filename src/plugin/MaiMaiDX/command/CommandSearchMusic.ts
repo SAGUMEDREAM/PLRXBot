@@ -7,7 +7,7 @@ export class CommandSearchMusic {
   private root = new CommandProvider()
     .addRequiredArgument("歌名", "name")
     .onExecute(async (session, args) => {
-      let name = args.getRaw();
+      let name = args.getArgumentsString();
       if (!name) {
         Messages.sendMessageToReply(session, "缺少参数");
         return;

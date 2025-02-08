@@ -7,7 +7,7 @@ export class CommandLilySearch {
   public root = new CommandProvider()
     .addRequiredArgument("关键词", "keyword")
     .onExecute((session, args) => {
-      const title = args.merge();
+      const title = args.getArgumentsString();
       const url = "https://cn.thdog.moe/api/fs/search";
       const data = {
         parent: "/分流1",

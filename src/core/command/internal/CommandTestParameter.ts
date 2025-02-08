@@ -6,7 +6,9 @@ export class CommandTestParameter {
     .addRequiredArgument('option1', 'option1')
     .addRequiredArgument('option2', 'option2')
     .onExecute((session, args) => {
-      Messages.sendMessage(session, `option1: ${args.getParameter('option1')}\noption2: ${args.getParameter('option2')}`)
+      Messages.sendMessage(session,
+        `option1: ${args.getParameter('option1')}\noption2: ${args.getParameter('option2')}\nraw: ${args.getRaw()}\nstring: ${args.getArgumentsString()}`
+      )
     });
 
   public static get(): CommandProvider {

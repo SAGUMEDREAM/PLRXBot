@@ -7,7 +7,7 @@ export class CommandBroadcast {
     .addRequiredArgument('消息', 'message')
     .requires(session => session.hasPermissionLevel(3))
     .onExecute(async (session, args) => {
-      const msg = args.raw;
+      const msg = args.getArgumentsString();
       try {
         Messages.sendMessage(session, `正在广播中...`);
         await ctxInstance.broadcast(msg);

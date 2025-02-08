@@ -8,6 +8,7 @@ import {google} from "googleapis";
 import path from "path";
 import {Utils} from "../../../core/utils/Utils";
 import { HttpProxyAgent } from 'http-proxy-agent';
+import {Constant} from "../../../core/Constant";
 
 export const SHEET_URL: string = 'https://thonly.cc/proxy_google_doc/v4/spreadsheets/';
 export const KEY: string = "AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw";
@@ -15,7 +16,7 @@ export const KEY: string = "AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw";
 const proxyUrl = 'http://127.0.0.1:7899'; // 代理服务器地址
 const agent = new HttpProxyAgent(proxyUrl); // 使用 HttpsProxyAgent 配置代理
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const SERVICE_ACCOUNT_PATH = path.join(Utils.getRoot(), 'data', 'service_account.json');  // 指定服务账户 JSON 文件路径
+const SERVICE_ACCOUNT_PATH = path.join(Constant.DATA_PATH, 'service_account.json');  // 指定服务账户 JSON 文件路径
 
 
 export class CommandGoogleSheetEditor {

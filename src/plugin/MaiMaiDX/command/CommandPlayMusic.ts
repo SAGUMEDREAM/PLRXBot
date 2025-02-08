@@ -9,7 +9,7 @@ export class CommandPlayMusic {
   private root = new CommandProvider()
     .addRequiredArgument("歌名", "name")
     .onExecute(async (session, args) => {
-      const name = args.getRaw();
+      const name = args.getArgumentsString();
       const instance = MaiMaiDX.INSTANCE;
       let music_data: MusicData = instance.optional.list.getByName(name) || instance.optional.list.getById(name);
       if (music_data == null) {

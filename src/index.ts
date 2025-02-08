@@ -60,7 +60,8 @@ export function apply(ctx: Context) {
   ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => {
     if (ctxInstance == null || botInstance == null) return;
 
-    if(session.userId != "807131829") return;
+    // if(session.userId != "807131829") return;
+    // console.log(h.parse(session.content))
 
     if (DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
       return;
