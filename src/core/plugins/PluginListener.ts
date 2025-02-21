@@ -4,6 +4,7 @@ import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {DisabledGroupList} from "../config/DisabledGroupList";
 import {Plugins} from "./Plugins";
+import {BotList} from "../config/BotList";
 
 
 export type PluginListenerFunction = (session: Session<User.Field, Channel.Field, Context>, ...args: any[]) => void;
@@ -34,7 +35,13 @@ export class PluginListener {
   }
 
   public static emit(event: PluginEvent, session?: Session<User.Field, Channel.Field, Context>, ...args: any[]): void {
-    if (session && DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
+    if (session == null) {
+      return;
+    }
+    if (session?.userId == null || BotList.getInstance().getConfigInstance().getConfig().list.includes(String(session?.userId))) {
+      return;
+    }
+    if (DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
       return;
     }
     const listeners = this.Events.get(event);

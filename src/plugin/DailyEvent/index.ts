@@ -1,6 +1,6 @@
-import { PluginInitialization } from "../../core/plugins/PluginInitialization";
-import { botInstance, ctxInstance } from "../../index";
-import { MessageMerging } from "../../core/network/MessageMerging";
+import {PluginInitialization} from "../../core/plugins/PluginInitialization";
+import {contextOptional} from "../../index";
+import {MessageMerging} from "../../core/network/MessageMerging";
 
 export class DailyEvent extends PluginInitialization {
   private readonly apiBeta = [
@@ -13,7 +13,7 @@ export class DailyEvent extends PluginInitialization {
   }
 
   public load(): void {
-    ctxInstance.cron('0 12 * * *', async () => {
+    contextOptional.value.cron('0 12 * * *', async () => {
       await this.runDailyTask();
     });
   }
@@ -21,7 +21,7 @@ export class DailyEvent extends PluginInitialization {
   public async runDailyTask(): Promise<void> {
     const taskContent = await this.getTaskContent();
     if (taskContent) {
-      ctxInstance.broadcast(taskContent);
+      await contextOptional.value.broadcast(taskContent);
     }
   }
 

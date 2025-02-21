@@ -7,7 +7,7 @@ import {ImageUtils} from "../image/ImageUtils";
 
 export class CommandIMSoHappy {
   public root = new CommandProvider()
-    .addRequiredArgument("true|false", "mirror")
+    .addOptionalArgument("true|false", "mirror", true)
     .onExecute(async (session, args) => {
       let direction = args.getBoolean("mirror") || true;
 

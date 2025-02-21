@@ -1,4 +1,4 @@
-import { h, Element } from "koishi";
+import {h} from "koishi";
 
 export class CommandParser {
   public input: string;

@@ -3,7 +3,6 @@ import {CommandManager} from "../../core/command/CommandManager";
 import {CommandWeirdSay} from "./command/CommandWeirdSay";
 import {Files} from "../../core/utils/Files";
 import path from "path";
-import {Utils} from "../../core/utils/Utils";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {PluginEvent} from "../../core/plugins/PluginEvent";
@@ -39,7 +38,7 @@ export class FunnyWords extends PluginInitialization {
 
   public load(): void {
     const instance = CommandManager.getInstance();
-    instance.registerCommand(["说怪话"], CommandWeirdSay.get());
+    if(this.enabled) instance.registerCommand(["说怪话"], CommandWeirdSay.get());
     this.loadData();
 
     PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {

@@ -1,4 +1,5 @@
 from src.browser import get_browser
+from src.handle.bpmtest import BPMTest
 from src.handle.huozi import HuoZi
 from src.handle.maimaib50 import MaiMaiB50
 from src.handle.markdown2image import Markdown2Image
@@ -45,7 +46,9 @@ class WebLoader:
     def init_route(self, app):
         app.add_routes([web.post('/markdown', Markdown2Image.post)])
         app.add_routes([web.get('/b50', MaiMaiB50.get)])
+        app.add_routes([web.get('/bpmtest', BPMTest.get)])
         app.add_routes([web.post('/b50', MaiMaiB50.post)])
         app.add_routes([web.post('/huozi', HuoZi.post)])
         app.add_routes([web.post('/xiuyin', XiuYin.post)])
         app.add_routes([web.post('/otmc', OtmAudio.post)])
+        app.add_routes([web.post('/bpmtest', BPMTest.post)])

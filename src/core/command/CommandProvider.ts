@@ -1,9 +1,10 @@
-import {Context, Schema, Session} from 'koishi';
+import {Context, Session} from 'koishi';
 import {CommandArgs} from "./CommandArgs";
 import {Channel, User} from "@koishijs/core";
 import {Messages} from "../network/Messages";
 import {MultiParameterBuilder, TypeOfParameter} from "./MultiParameter";
 import {DeprecatedError} from "../impl/DeprecatedError";
+import {CommandHelper} from "./CommandHelper";
 
 export class CommandProvider {
   public static readonly leakArgs = (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => {
@@ -102,7 +103,9 @@ export class CommandProvider {
 
       if (missingParams.length > 0) {
         const missingNames = missingParams.map(p => p.name).join("，");
-        Messages.sendMessageToReply(session, `缺少必填参数: ${missingNames}`);
+        CommandProvider.generateUsages(args.header).then(e => {
+          Messages.sendMessageToReply(session, `缺少必填参数：${missingNames}\n用法：\n${e}`);
+        });
         return;
       }
 
@@ -128,7 +131,9 @@ export class CommandProvider {
 
       if (missingParams.length > 0) {
         const missingNames = missingParams.map(p => p.name).join("，");
-        Messages.sendMessageToReply(session, `缺少必填参数: ${missingNames}`);
+        CommandProvider.generateUsages(args.header).then(e => {
+          Messages.sendMessageToReply(session, `缺少必填参数：${missingNames}\n用法：\n${e}`);
+        });
         return;
       }
 
@@ -138,6 +143,22 @@ export class CommandProvider {
     }
   }
 
+  public static async generateUsages(command: string) {
+    if (!command.startsWith('/') && !command.startsWith('$')) {
+      command = '/' + command;
+    }
+    let mdList = [];
+    mdList.push(`## ${command} 使用方法\n`);
+    let parsedCommand = CommandHelper.parseCommandTreeToArray(command);
+    if (parsedCommand.length == 0) {
+      mdList.push("❌未知命令\n")
+    } else {
+      parsedCommand.forEach((usage: string) => {
+        mdList.push(`* ${usage}\n`);
+      });
+    }
+    return await Messages.getMarkdown(mdList);
+  }
 
   private checkArgs(args: CommandArgs): boolean {
     return args.size() > 0;

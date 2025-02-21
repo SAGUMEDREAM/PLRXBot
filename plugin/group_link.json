@@ -1,0 +1,11 @@
+{
+  "id": "group_link",
+  "version": "25.2.12.1",
+  "name": "链接群组",
+  "description": "连接两个群的聊天",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

@@ -1,7 +1,7 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {GroupManager} from "../../../core/group/GroupManager";
 import {Messages} from "../../../core/network/Messages";
-import {botInstance} from "../../../index";
+import {botOptional} from "../../../index";
 
 export class CommandKick {
   public root: CommandProvider = new CommandProvider()
@@ -15,12 +15,12 @@ export class CommandKick {
 
       const group = GroupManager.get(target_group_id || session);
       if (group) {
-        let hasPerm = session.hasPermission(3);
+        let hasPerm = session.hasPermissionLevel(3);
         let isAdmin = await group.isGroupAdmin(session.event.user.id);
         let botIsAdmin = await group.isGroupAdmin(session.bot.user.id)
         if ((hasPerm || isAdmin) && botIsAdmin) {
           if (target_group_id != null) {
-            await botInstance.kickGuildMember(target_group_id, target, permanent);
+            await botOptional.value?.kickGuildMember(target_group_id, target, permanent);
           } else {
             await group.kick(target, permanent);
           }

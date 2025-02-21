@@ -1,8 +1,8 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import {Files} from "./Files";
-import {parse, HTMLElement} from 'node-html-parser';
-import {Config} from "../data/Config";
+import {HTMLElement, parse} from 'node-html-parser';
+import {configOptional} from "../../index";
 
 export class Utils {
   public static readonly Files = Files;
@@ -43,11 +43,16 @@ export class Utils {
   }
 
   public static getRoot(): string {
-    if(Utils.root == null) {
-      Utils.root = Utils.findProjectRoot(__dirname);
+    if (Utils.root == null) {
+      const cfgPathValue = configOptional.value.rootPath;
+      const cfgPath = cfgPathValue == "D:\\example\\bot" ? null : cfgPathValue
+      Utils.root = cfgPath != null && Files.exists(cfgPath)
+        ? path.join(configOptional.value.rootPath)
+        : Utils.findProjectRoot(__dirname);
     }
     return Utils.root;
   }
+
 
   public static findProjectRoot(cDir: string): string {
     if (fs.existsSync(path.join(cDir, 'package.json'))) {

@@ -1,4 +1,3 @@
-import request from "sync-request";
 import {UserManager} from "../user/UserManager";
 import {Events} from "../event/Events";
 import {CommandManager} from "../command/CommandManager";
@@ -21,9 +20,6 @@ export class MessageCHandler {
       }
 
       const data = user.getProfileData();
-      session.hasPermission = ((permission: any) => UserManager.hasPermission(session, permission));
-      session.hasPermissionLevel = ((permissionLevel: any) => UserManager.hasPermissionLevel(session, permissionLevel));
-      session.hasGroupPermission = ((permission: any) => GroupManager.hasPermission(session, permission));
 
       try {PluginListener.emit(PluginEvent.HANDLE_MESSAGE, session);} catch (i) {return;}
 

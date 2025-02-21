@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { EssentialBot } from "../../plugin/EssentialBot";
+import {EssentialBot} from "../../plugin/EssentialBot";
 import {LOGGER} from "../../index";
 
 export class KoishiImages {
@@ -11,17 +11,17 @@ export class KoishiImages {
 
   public async saveToPath(targetDir: string): Promise<{ success: boolean; fileName?: string }> {
     try {
-      await fs.promises.mkdir(targetDir, { recursive: true });
+      await fs.promises.mkdir(targetDir, {recursive: true});
     } catch (error) {
       LOGGER.error(error);
-      throw error;
+      throw new Error(error);
     }
 
     let files: string[];
     try {
       files = await fs.promises.readdir(targetDir);
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
 
     const existingFiles = files.filter(file => /^\d+\.[a-z]+$/.test(file));
@@ -34,10 +34,10 @@ export class KoishiImages {
 
     try {
       await fs.promises.writeFile(filePath, this.buffer);
-      return { success: true, fileName: newFileName };
+      return {success: true, fileName: newFileName};
     } catch (error) {
       EssentialBot.INSTANCE.pluginLogger.error(error);
-      return { success: false };
+      return {success: false};
     }
   }
 }

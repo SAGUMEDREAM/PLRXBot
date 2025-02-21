@@ -9,7 +9,7 @@ export class CommandReload {
     .onExecute(async (session, args) => {
       try {
         Messages.sendMessageToReply(session, "蓬莱人形Bot 重载中...");
-        await Start.reload()
+        await Start.closingAndReloading(true)
         Messages.sendMessageToReply(session, "蓬莱人形Bot 重载完成");
       } catch (err) {
         LOGGER.error(err);

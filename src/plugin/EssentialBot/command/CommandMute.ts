@@ -1,7 +1,7 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {GroupManager} from "../../../core/group/GroupManager";
 import {Messages} from "../../../core/network/Messages";
-import {botInstance} from "../../../index";
+import {botOptional} from "../../../index";
 
 export class CommandMute {
   public root: CommandProvider = new CommandProvider()
@@ -19,11 +19,11 @@ export class CommandMute {
 
       const group = GroupManager.get(session);
       if (group) {
-        let hasPerm = session.hasPermission(3);
+        let hasPerm = session.hasPermissionLevel(3);
         let isAdmin = await group.isGroupAdmin(session.event.user.id);
         let botIsAdmin = await group.isGroupAdmin(session.bot.user.id)
         if ((hasPerm || isAdmin) && botIsAdmin) {
-          await botInstance.muteGuildMember(session.event.guild.id, target, duration);
+          await botOptional.value?.muteGuildMember(session.event.guild.id, target, duration);
           const formattedDuration = this.formatDuration(duration);
           Messages.sendMessageToReply(session, `用户${Messages.at(target)}被禁言${formattedDuration}`);
         } else {

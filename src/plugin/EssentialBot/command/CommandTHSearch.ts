@@ -1,11 +1,11 @@
 import path from "path";
-import { CommandProvider } from "../../../core/command/CommandProvider";
+import {CommandProvider} from "../../../core/command/CommandProvider";
 import fetch from "node-fetch";
-import { Messages } from "../../../core/network/Messages";
-import { Files } from "../../../core/utils/Files";
-import { Utils } from "../../../core/utils/Utils";
-import { SheetYears } from "../sheets/SheetYears";
-import { MessageMerging } from "../../../core/network/MessageMerging";
+import {Messages} from "../../../core/network/Messages";
+import {Files} from "../../../core/utils/Files";
+import {Utils} from "../../../core/utils/Utils";
+import {SheetYears} from "../sheets/SheetYears";
+import {MessageMerging} from "../../../core/network/MessageMerging";
 import {EssentialBot} from "../index";
 import {CommandArgs} from "../../../core/command/CommandArgs";
 
@@ -19,7 +19,7 @@ export interface THSearch_Object {
 }
 
 export class CommandTHSearch {
-  public static readonly cache_path = path.resolve(
+  public readonly cache_path = path.resolve(
     path.join(Utils.getRoot(), "data", "caches"),
     "thsearch_cache.json"
   );
@@ -29,13 +29,21 @@ export class CommandTHSearch {
   public readonly root = new CommandProvider()
     .addRequiredArgument("关键词", "keyword")
     .addOptionalArgument("历史模式", "history_mode", false)
+    .addOptionalArgument("是否重载", "reload", false)
     .onExecute(async (session, args) => {
       const title = args.get("keyword");
+      const history_mode = args.getBoolean("history_mode");
+      const reload = args.getBoolean("reload");
       Messages.sendMessageToReply(session, `正在搜索中...`);
 
       try {
         let cacheData = this.getCache();
         const nowTimestamp = Date.now();
+        if(cacheData && reload == true) {
+          cacheData.timestamp = 0;
+          cacheData.results = [];
+          this.setCache(cacheData);
+        }
 
         if (cacheData && nowTimestamp - cacheData.timestamp < CommandTHSearch.CACHE_DURATION) {
           this.sendSearchResults(session, cacheData.results, title, args);
@@ -51,7 +59,7 @@ export class CommandTHSearch {
 
   private getCache(): { timestamp: number; results: THSearch_Object[] } | null {
     try {
-      const data = Files.read(CommandTHSearch.cache_path);
+      const data = Files.read(this.cache_path);
       return JSON.parse(data);
     } catch {
       return null;
@@ -59,7 +67,7 @@ export class CommandTHSearch {
   }
 
   private setCache(data: { timestamp: number; results: THSearch_Object[] }): void {
-    Files.write(CommandTHSearch.cache_path, JSON.stringify(data, null, 2));
+    Files.write(this.cache_path, JSON.stringify(data, null, 2));
   }
 
   private async getAndCacheData(): Promise<THSearch_Object[]> {

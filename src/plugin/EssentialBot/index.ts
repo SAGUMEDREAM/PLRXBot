@@ -8,7 +8,7 @@ import {CommandDeMute} from "./command/CommandDeMute";
 import {CommandUsage} from "./command/CommandUsage";
 import {CommandLilySearch} from "./command/CommandLilySearch";
 import {CommandLeaveMessage} from "./command/CommandLeaveMessage";
-import {CommandCommandHelper} from "./command/CommandHelper";
+import {CommandCommandHelper, HelperMarkdownList} from "./command/CommandHelper";
 import {CommandAbout} from "./command/CommandAbout";
 import {CommandOS} from "./command/CommandOS";
 import {Messages} from "../../core/network/Messages";
@@ -25,7 +25,7 @@ import {GroupManager} from "../../core/group/GroupManager";
 import {UserManager} from "../../core/user/UserManager";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
-import {ctxInstance} from "../../index";
+import {contextOptional} from "../../index";
 import {CommandAgreeInvite} from "./command/CommandAgreeInvite";
 import {CommandRejectInvite} from "./command/CommandRejectInvite";
 import {CommandBroadcast} from "./command/CommandBroadcast";
@@ -41,6 +41,21 @@ import {CommandPromotion} from "./command/CommandPromotion";
 import {CommandUploadTHPicture} from "./command/CommandUploadTHPicture";
 import {CommandRejectFriend} from "./command/CommandRejectFriend";
 import {CommandAgreeFriend} from "./command/CommandAgreeFriend";
+import {CommandRandomText} from "./command/CommandRandomText";
+import {CommandRandomMember} from "./command/CommandRandomMember";
+import {CommandRandomTouhouMusic} from "./command/CommandRandomTouhouMusic";
+import {CommandRandomNumber} from "./command/CommandRandomNumber";
+import {CommandRandomUUID} from "./command/CommandRandomUUID";
+import {CommandUploadTHPictureContinuous} from "./command/CommandUploadTHPictureContinuous";
+import {CommandBA} from "./command/CommandBA";
+import {CommandRandomAnime} from "./command/CommandRandomAnime";
+import {CommandCrazyThursday} from "./command/CommandCrazyThursday";
+import {CommandHomo} from "./command/CommandHomo";
+import {CommandBaiduImage} from "./command/CommandBaiduImage";
+import {CommandXiBao} from "./command/CommandXiBao";
+import {CommandBeiBao} from "./command/CommandBeiBao";
+import {CommandAbbreviation} from "./command/CommandAbbreviation";
+import {CommandTHWiki} from "./command/CommandTHWiki";
 
 export let poke_lock = false;
 export const welcome_black_list = ["787712108", "589711336"]
@@ -78,7 +93,7 @@ export class EssentialBot extends PluginInitialization {
       Messages.sendMessage(session, introMessage);
     });
 
-    PluginListener.on(PluginEvent.REQUEST_FRIEND, this,async (session, args) => {
+    PluginListener.on(PluginEvent.REQUEST_FRIEND, this, async (session, args) => {
       let strResult = ``;
       let event = session.event;
       let user_id = session.userId;
@@ -103,6 +118,17 @@ export class EssentialBot extends PluginInitialization {
       Messages.sendMessageToGroup(session, 863842932, strResult);
     });
 
+    PluginListener.on(PluginEvent.BY_AT, this, async (session, args) => {
+      const elements = session.elements;
+      if (elements.length == 1) {
+        const first = elements[0];
+        if (first.type == 'at' && first.attrs.id == session.bot.userId) {
+          Messages.sendMessage(session, await Messages.getMarkdown(HelperMarkdownList));
+        }
+        PluginListener.cancel();
+      }
+    })
+
     instance.registerCommand(["踢出"], CommandKick.get());
     instance.registerCommand(["禁言"], CommandMute.get());
     instance.registerCommand(["解除禁言"], CommandDeMute.get());
@@ -120,14 +146,29 @@ export class EssentialBot extends PluginInitialization {
     instance.registerCommand(["like", "赞我"], CommandLike.get());
     instance.registerCommand(["搜索活动", "活动搜索"], CommandTHSearch.get());
     instance.registerCommand(["搜索群组", "群组搜索"], CommandGroupSearch.get());
+    instance.registerCommand(["THBWiki维基搜索", "thb搜索", "THB搜索", "东方百科", "thb"], CommandTHWiki.get());
     instance.registerCommand(["lily", "莉莉云"], CommandLilySearch.get());
     instance.registerCommand(["关于", "about"], CommandAbout.get());
     instance.registerCommand(["jrrp", "今日人品"], CommandJRRP.get());
     instance.registerCommand(["随机东方", "随机东方图", "random_touhou"], CommandTHPicture.get());
+    instance.registerCommand(["随机动漫图","随机二次元"], CommandRandomAnime.get());
+    instance.registerCommand(["随机群友"], CommandRandomMember.get());
+    instance.registerCommand(["随机数字"], CommandRandomNumber.get());
+    instance.registerCommand(["随机UUID", "随机uuid"], CommandRandomUUID.get());
+    instance.registerCommand(["随机东方原曲"], CommandRandomTouhouMusic.get());
     instance.registerCommand(["上传东方图"], CommandUploadTHPicture.get());
+    instance.registerCommand(["上传东方图-连续"], CommandUploadTHPictureContinuous.get());
     instance.registerCommand(["活字印刷", "huozi"], CommandHuoZi.get());
+    instance.registerCommand(["发病"], CommandRandomText.get());
     instance.registerCommand(["choice", "选择"], CommandChoice.get());
+    instance.registerCommand(["随机星期四", "随机KFC", "随机kfc", "生成疯狂星期四", "tskfc"], CommandCrazyThursday.get());
+    instance.registerCommand(["百度搜图"], CommandBaiduImage.get());
+    instance.registerCommand(["恶臭论证"], CommandHomo.get());
     instance.registerCommand(["5k", "5K"], Command5K.get());
+    instance.registerCommand(["ba", "BA"], CommandBA.get());
+    instance.registerCommand(["喜报"], CommandXiBao.get());
+    instance.registerCommand(["悲报"], CommandBeiBao.get());
+    instance.registerCommand(["何意味"], CommandAbbreviation.get());
     instance.registerCommand(["markdown"], CommandMarkdown.get());
     instance.registerCommand(["os"], CommandOS.get());
     instance.registerCommand(["ping"], CommandPing.get());
@@ -141,7 +182,7 @@ export class EssentialBot extends PluginInitialization {
 
     PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
       let content = session.content;
-      if (Messages.isAtBot(session) && content.includes("在吗")) {
+      if (Messages.isAtBot(session) && (content.includes("在吗") || content.includes("在吗?") || content.includes("在?"))) {
         session.send("Bot在");
       }
     });
@@ -150,7 +191,7 @@ export class EssentialBot extends PluginInitialization {
     //   session.bot.handleFriendRequest(session.messageId, true);
     // })
 
-    ctxInstance.platform("onebot").on("notice", async (session: Session<User.Field, Channel.Field, Context>) => {
+    contextOptional.value.platform("onebot").on("notice", async (session: Session<User.Field, Channel.Field, Context>) => {
       if (session && DisabledGroupList.getInstance().getConfigInstance().getConfig().list.includes(session?.event?.channel?.id)) {
         return;
       }

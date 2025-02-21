@@ -2,7 +2,7 @@ import {PluginInitialization} from "../../core/plugins/PluginInitialization";
 import {CommandManager} from "../../core/command/CommandManager";
 import {CommandOtomadHelper} from "./command/CommandOtomadHelper";
 import {CommandProvider} from "../../core/command/CommandProvider";
-import {Context, h, Session} from "koishi";
+import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
 import {Messages} from "../../core/network/Messages";
 import {CommandNewtone} from "./command/CommandNewtone";
@@ -14,6 +14,10 @@ import {CommandIMSoHappy} from "./command/CommandIMSoHappy";
 import {CommandMaiFriend} from "./command/CommandMaiFriend";
 import {CommandMaiAwake} from "./command/CommandMaiAwake";
 import {CommandSoundCreation} from "./command/CommandSoundCreation";
+import {CommandRandomTutorial} from "./command/CommandRandomTutorial";
+import {CommandMidiShow} from "./command/CommandMidiShow";
+import {CommandTestBPM} from "./command/CommandTestBPM";
+import {CommandOtmWiki} from "./command/CommandOtmWiki";
 
 export class OtomadHelper extends PluginInitialization {
   public static INSTANCE: PluginInitialization;
@@ -44,8 +48,12 @@ export class OtomadHelper extends PluginInitialization {
     helper.addFast(["MidiShow", "midishow", "midi_show"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.lookae.com/")));
     helper.addFast(["LookAE", "look_ae", "lookae"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.lookae.com/")));
     helper.addFast(["免费日语字体"], new CommandProvider().onExecute((session, args) => this.fastUrl(session, "https://www.freejapanesefont.com/")));
+    instance.registerCommand(["随机教学"], CommandRandomTutorial.get());
+    instance.registerCommand(["midi搜索","MIDI搜索"], CommandMidiShow.get());
     instance.registerCommand(["音MAD助手", "otomad_helper", "otomadhelper"], helper.root);
+    instance.registerCommand(["音骂概念","音mad概念","音MAD概念"], CommandOtmWiki.get());
     instance.registerCommand(["帮我修音","修音","newtone"], CommandNewtone.get());
+    instance.registerCommand(["测BPM","测bpm"], CommandTestBPM.get());
     instance.registerCommand(["声音创作","音MAD创作"], CommandSoundCreation.get());
     instance.registerCommand(["B站解析","b站解析"], CommandBilibiliDownload.get());
     instance.registerCommand(["水晶球"], CommandCrystalBall.get());

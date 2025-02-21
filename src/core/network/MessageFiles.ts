@@ -1,6 +1,6 @@
-import { Context, h, Session } from "koishi";
-import { Channel, User } from "@koishijs/core";
-import { Files } from "../utils/Files";
+import {Context, h, Session} from "koishi";
+import {Channel, User} from "@koishijs/core";
+import {Files} from "../utils/Files";
 import fs from "fs";
 import axios from "axios";
 

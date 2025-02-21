@@ -4,7 +4,7 @@ import {Plugins} from "../../plugins/Plugins";
 
 export class CommandPlugins {
   public readonly root = new CommandProvider()
-    .requires(session => session.hasPermissionLevel(2))
+    .requires(session => session.hasPermissionLevel(1))
     .onExecute(async (session, args) => {
       const mdList = [
         `## 插件列表\n`,

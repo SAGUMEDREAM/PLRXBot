@@ -1,15 +1,13 @@
-import { CommandProvider } from "../../../core/command/CommandProvider";
-import { Messages } from "../../../core/network/Messages";
-import { h } from "koishi";
+import {CommandProvider} from "../../../core/command/CommandProvider";
+import {Messages} from "../../../core/network/Messages";
+import {h} from "koishi";
 import path from "path";
-import { Utils } from "../../../core/utils/Utils";
+import {Utils} from "../../../core/utils/Utils";
 import axios from "axios";
-import { KoishiImages } from "../../../core/network/KoishiImages";
-import { MIMEUtils } from "../../../core/utils/MIMEUtils";
-import { LOGGER } from "../../../index";
-import { Config } from "../../../core/data/Config";
-
-const url = path.resolve(path.join(Utils.getRoot(), 'assets', 'touhou_pic'));
+import {KoishiImages} from "../../../core/network/KoishiImages";
+import {MIMEUtils} from "../../../core/utils/MIMEUtils";
+import {LOGGER} from "../../../index";
+import {Config} from "../../../core/data/Config";
 
 interface th_pic {
   pic_id: number;
@@ -24,6 +22,7 @@ export class CommandUploadTHPicture {
   public config: Config<th_pic_upload_history> = <Config<th_pic_upload_history>>Config.createConfig('th_pic_upload_history', {
     histories: []
   }, true);
+  private url = path.resolve(path.join(Utils.getRoot(), 'assets', 'touhou_pic'));
 
   public root = new CommandProvider()
     .requires(session =>
@@ -60,7 +59,7 @@ export class CommandUploadTHPicture {
             koishiImg.buffer = Buffer.from(response.data);
             koishiImg.mime_type = MIMEUtils.getType(koishiImg.buffer);
 
-            const result = await koishiImg.saveToPath(url);
+            const result = await koishiImg.saveToPath(this.url);
             if (result.success) {
               successCount++;
 

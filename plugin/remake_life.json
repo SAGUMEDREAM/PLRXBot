@@ -1,0 +1,11 @@
+{
+  "id": "remake_life",
+  "version": "25.2.21.1",
+  "name": "人生重来",
+  "description": "By 助拳西",
+  "authors": [
+    "稀神灵梦"
+  ],
+  "environment": "typescript",
+  "depends": []
+}

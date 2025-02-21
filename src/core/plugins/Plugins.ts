@@ -9,7 +9,6 @@ import {Utils} from "../utils/Utils";
 import {Files} from "../utils/Files";
 import {PluginInfo} from "./PluginInfo";
 import {Start} from "../Start";
-import {Constant} from "../Constant";
 
 
 export class Plugins {

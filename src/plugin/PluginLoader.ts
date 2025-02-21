@@ -4,7 +4,6 @@ import {Gensokyo} from "./Gensokyo";
 import {MessageForwarding} from "./MessageForwarding";
 import {FunnyWords} from "./FunnyWords";
 import {EssentialBot} from "./EssentialBot";
-import {DailyEvent} from "./DailyEvent";
 import {MaiMaiDX} from "./MaiMaiDX";
 import {Shrine} from "./Shrine";
 import {OtomadHelper} from "./OtomadHelper";
@@ -13,6 +12,8 @@ import {DeepSeek} from "./DeepSeek";
 import {PythonSupport} from "../core/plugins/base/PythonSupport";
 import {KoishiLoader} from "../core/plugins/base/KoishiLoader";
 import {KoishiCore} from "../core/plugins/base/KoishiCore";
+import {GroupLink} from "./GroupLink";
+import {RemakeLife} from "./RemakeLife";
 
 export class PluginLoader {
   public static load() {
@@ -30,7 +31,9 @@ export class PluginLoader {
     Plugins.register(new Shrine());
     Plugins.register(new OtomadHelper());
     Plugins.register(new OwlPenguinParrot());
+    Plugins.register(new RemakeLife());
     Plugins.register(new DeepSeek());
+    Plugins.register(new GroupLink())
     /*const path: string = Constant.PLUGIN_PATH;
     const files = Files.getDir(path);
     files.forEach((fileDir: string) => {

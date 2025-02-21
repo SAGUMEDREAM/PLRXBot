@@ -1,6 +1,5 @@
 import {Dict, h, Session} from "koishi";
-import {Messages} from "./Messages";
-import {botInstance} from "../../index";
+import {botOptional} from "../../index";
 
 export class MessageMerging {
   private messageList = [];
@@ -17,8 +16,8 @@ export class MessageMerging {
     } else {
       this.session = null;
       this.attrs = {
-        userId: botInstance?.selfId,
-        nickname: botInstance?.user?.name || botInstance?.user?.name,
+        userId: botOptional?.value?.selfId,
+        nickname: botOptional?.value?.user?.name || botOptional?.value?.user?.name,
       }
     }
   }
@@ -34,7 +33,9 @@ export class MessageMerging {
     }
     return merging.get();
   }
-
+  public includes(str: string): boolean {
+    return this.messageList.includes(str);
+  }
   public put(message: any, lBreak: boolean = false): MessageMerging {
     if (lBreak == true) {
       if (typeof message == 'string' && message.includes("\n") == false) {

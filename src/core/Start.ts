@@ -2,7 +2,7 @@ import {Constant} from "./Constant";
 import {Consoles} from "./network/Consoles";
 import {Events} from "./event/Events";
 import {LanguageTypes} from "./language/LanguageTypes";
-import {LOGGER} from "../index";
+import {botOptional, contextOptional, LOGGER} from "../index";
 import {Plugins} from "./plugins/Plugins";
 import {PluginInitialization} from "./plugins/PluginInitialization";
 import {PluginListener} from "./plugins/PluginListener";
@@ -13,8 +13,7 @@ export class Start {
 
   public static main(args?: string[]): void {
     const startTime = Date.now();
-    LOGGER.info("==================================================")
-    LOGGER.info("Loading @kisin-reimu/bot...")
+    LOGGER.info(`Loading "蓬莱人形Bot"...`)
     Constant.init();
     LanguageTypes.init();
     Events.init();
@@ -26,7 +25,9 @@ export class Start {
     LOGGER.info("==================================================");
   }
 
-  public static async reload(args?: string[]): Promise<void> {
+  public static async closingAndReloading(reload: boolean = true, args?: string[]): Promise<void> {
+    contextOptional.value = null;
+    botOptional.value = null;
     try {
       Plugins.getPlugins().forEach((initialization: PluginInitialization) => {
         initialization.pluginLogger.info("Uninstalling plugin...");
@@ -44,12 +45,14 @@ export class Start {
       Constant.GROUP_MANAGER.reload();
       BotList.getInstance().reload();
       DisabledGroupList.getInstance().reload();
-      LOGGER.info("Plugin is reloading");
+      if(reload) LOGGER.info("Plugin is reloading");
     } catch (err) {
       LOGGER.error(err);
     } finally {
-      this.main(args);
-      LOGGER.info("Plugin reload completed");
+      if(reload) {
+        this.main(args);
+        LOGGER.info("Plugin reload completed");
+      }
     }
   }
   public static exit(args?: string[]): void {

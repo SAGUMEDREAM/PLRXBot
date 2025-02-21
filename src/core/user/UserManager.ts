@@ -1,14 +1,11 @@
 import {UserProfile} from "./UserProfile";
 import {Constant} from "../Constant";
-import fs from "fs";
 import path from "path";
 import {Files} from "../utils/Files";
 import {Context, Session} from "koishi";
 import {Channel, User} from "@koishijs/core";
-import * as cluster from "cluster";
 import {BaseUserProfile} from "./BaseUserProfile";
-import {GCUtils} from "../utils/GCUtils";
-import {botInstance, LOGGER} from "../../index";
+import {botOptional, LOGGER} from "../../index";
 import {Reloadable} from "../impl/Reloadable";
 
 export class UserManager implements Reloadable {
@@ -75,7 +72,7 @@ export class UserManager implements Reloadable {
         userProfile = this.loadPfFile(args);
       }
     } else {
-      const userId = args.event.user.id.toString();
+      const userId: string = args.event.user.id.toString();
       userProfile = this.getInstance().userdata.get(userId);
       if (!userProfile) {
         userProfile = this.loadPfFile(userId);
@@ -123,10 +120,10 @@ export class UserManager implements Reloadable {
   public static hasPermissionLevel(session: Session<User.Field, Channel.Field, Context> | number | string, permissionLevel: number): boolean;
   public static hasPermissionLevel(args: number | string | Session<User.Field, Channel.Field, Context>, permissionLevel: number): boolean {
     if (typeof args === "number" || typeof args === "string") {
-      if (args == botInstance.selfId) return true;
+      if (args == botOptional.value.selfId) return true;
       return this.get(args)?.profile?.permission_level >= permissionLevel;
     } else {
-      if (args.userId == botInstance.selfId) return true;
+      if (args.userId == botOptional.value.selfId) return true;
       return this.get(args.event.user.id.toString())?.profile?.permission_level >= permissionLevel;
     }
   }
@@ -134,10 +131,10 @@ export class UserManager implements Reloadable {
   public static hasPermission(session: Session<User.Field, Channel.Field, Context> | number | string, permission: string): boolean;
   public static hasPermission(args: number | string | Session<User.Field, Channel.Field, Context>, permission: string): boolean {
     if (typeof args === "number" || typeof args === "string") {
-      if (args == botInstance.selfId) return true;
+      if (args == botOptional.value.selfId) return true;
       return this.get(args)?.profile?.permissions.includes(permission);
     } else {
-      if (args.userId == botInstance.selfId) return true;
+      if (args.userId == botOptional.value.selfId) return true;
       return this.get(args.event.user.id.toString())?.profile?.permissions.includes(permission);
     }
   }

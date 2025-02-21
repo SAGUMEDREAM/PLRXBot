@@ -5,10 +5,8 @@ import {ImageUtils} from "../image/ImageUtils";
 import path from "path";
 import {Utils} from "../../../core/utils/Utils";
 
-
-const imagePath = path.join(Utils.getRoot(), 'assets', 'maimai', 'awake.png');
-
 export class CommandMaiAwake {
+  private imagePath = path.join(Utils.getRoot(), 'assets', 'maimai', 'awake.png');
   public root = new CommandProvider()
     .onExecute(async (session, args) => {
       await session.sendQueued(h('quote', {id: session.messageId}) + "请发送待处理的图片。");
@@ -27,7 +25,7 @@ export class CommandMaiAwake {
 
       const imageUrl = imageElements[0].attrs.src;
       try {
-        const result = await ImageUtils.generateAvatar(imagePath, imageUrl);
+        const result = await ImageUtils.generateAvatar(this.imagePath, imageUrl);
         Messages.sendMessageToReply(session, result);
       } catch (err) {
         Messages.sendMessageToReply(session, '图片合成失败');

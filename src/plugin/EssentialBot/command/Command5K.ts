@@ -11,17 +11,13 @@ export class Command5K {
     .onExecute(async (session, args) => {
       const top = args.get('text1');
       const bottom = args.get('text2');
-      if (top == null || bottom == null) {
-        Messages.sendMessageToReply(session, "缺少参数");
-        return;
-      }
 
-      let api = `https://gsapi.cbrx.io/image?top=${encodeURIComponent(top)}&bottom=${encodeURIComponent(bottom)}&noalpha=true`;
+      const api = `https://gsapi.cbrx.io/image?top=${encodeURIComponent(top)}&bottom=${encodeURIComponent(bottom)}&noalpha=true`;
 
       try {
-        let res = await axios.get(api, { responseType: 'arraybuffer' });
-        let buffer: Buffer = Buffer.from(res.data);
-        Messages.sendMessage(session, h.image(buffer, MIMEUtils.getType(buffer)));
+        const res = await axios.get(api, { responseType: 'arraybuffer' });
+        const buffer: Buffer = Buffer.from(res.data);
+        Messages.sendMessageToReply(session, h.image(buffer, MIMEUtils.getType(buffer)));
       } catch (error) {
         Messages.sendMessageToReply(session, "生成图片失败，请稍后再试。");
       }

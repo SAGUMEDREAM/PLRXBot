@@ -1,11 +1,11 @@
-import { CommandProvider } from "../../../core/command/CommandProvider";
-import { h } from "koishi";
+import {CommandProvider} from "../../../core/command/CommandProvider";
+import {h} from "koishi";
 import axios from "axios";
 import path from "path";
-import { Utils } from "../../../core/utils/Utils";
 import fs from "fs";
-import { Files } from "../../../core/utils/Files";
+import {Files} from "../../../core/utils/Files";
 import {Constant} from "../../../core/Constant";
+import {OtomadHelper} from "../index";
 
 export class CommandNewtone {
   public root = new CommandProvider()
@@ -30,7 +30,8 @@ export class CommandNewtone {
 
       try {
         const requests = await session["onebot"]._request('get_file', { file_id: fileId });
-        const { status, retcode, data, message } = requests;
+        const { status, retcode, data } = requests;
+        const message = requests["message"];
 
         if (status !== "ok" || retcode !== 0) {
           return session.sendQueued(`获取文件失败: ${message || "未知错误"}`);
@@ -69,8 +70,9 @@ export class CommandNewtone {
         }));
 
         Files.delete(savedPath);
+        Files.delete(url);
       } catch (error) {
-        console.error("修音失败:", error);
+        OtomadHelper.INSTANCE.pluginLogger.error("修音失败:", error);
         await session.sendQueued("修音失败，请稍后重试。");
       }
     });

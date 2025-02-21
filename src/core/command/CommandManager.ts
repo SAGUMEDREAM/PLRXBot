@@ -14,6 +14,12 @@ import {CommandGroup} from "./internal/CommandGroup";
 import {CommandTestParameter} from "./internal/CommandTestParameter";
 import {TypeOfParameter} from "./MultiParameter";
 import {Constant} from "../Constant";
+import {CommandOp} from "./internal/CommandOp";
+import {CommandDeop} from "./internal/CommandDeop";
+import {CommandPardon} from "./internal/CommandPardon";
+import {CommandBan} from "./internal/CommandBan";
+import {CommandExecute} from "./internal/CommandExecute";
+import {CommandStop} from "./internal/CommandStop";
 
 export class CommandManager {
   private constructor() {
@@ -27,10 +33,16 @@ export class CommandManager {
     const instance = CommandManager.getInstance();
     // instance.registerCommand("$sudo", CommandSudo.get());
     instance.registerCommand(["user"], CommandUser.get());
+    instance.registerCommand(["op"], CommandOp.get());
+    instance.registerCommand(["deop"], CommandDeop.get());
+    instance.registerCommand(["ban"], CommandBan.get());
+    instance.registerCommand(["pardon"], CommandPardon.get());
     instance.registerCommand(["group"], CommandGroup.get());
+    instance.registerCommand(["execute"], CommandExecute.get());
     instance.registerCommand(["tree"], CommandTree.get());
     instance.registerCommand(["datafix"], CommandDataFix.get());
     instance.registerCommand(["reload"], CommandReload.get())
+    instance.registerCommand(["stop"], CommandStop.get())
     instance.registerCommand(["plugins"], CommandPlugins.get())
 
     instance.registerCommand(["测试参数"], CommandTestParameter.get());
@@ -283,6 +295,14 @@ export class CommandManager {
     if (provider) {
       const commandArgs = new CommandArgs(provider, raw, args);
       provider.executeWith(session, commandArgs);
+    }
+  }
+
+  public executeCommands(session: Session<User.Field, Channel.Field, Context>, commands: string): void {
+    const strings = commands.split('&&').map(str => str.trim()).filter(str => str.length > 0);
+    for (const string of strings) {
+      session.content = string.trim();
+      CommandManager.getInstance().parseCommand(session);
     }
   }
 

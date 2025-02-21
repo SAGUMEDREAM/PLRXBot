@@ -3,10 +3,7 @@ import {Constant} from "../Constant";
 import path from "path";
 import {Files} from "../utils/Files";
 import {DataFixerBuilder} from "../data/DataFixerBuilder";
-import {Context, Session} from "koishi";
-import {Channel, User} from "@koishijs/core";
-import deasync from 'deasync';
-import {botInstance} from "../../index";
+import {botOptional, contextOptional, onebotOptional} from "../../index";
 import {PluginEvent} from "../plugins/PluginEvent";
 import {PluginListener} from "../plugins/PluginListener";
 
@@ -31,14 +28,14 @@ export class GroupData {
     this.save();
   }
   public async kick(userId: any, block: boolean) {
-    return botInstance.kickGuildMember(this.group_id.toString(), userId, block);
+    return botOptional.value?.kickGuildMember(this.group_id.toString(), userId, block);
   }
   public async mute(userId: any, time: number) {
-    return botInstance.muteGuildMember(this.group_id.toString(), userId, time);
+    return botOptional.value?.muteGuildMember(this.group_id.toString(), userId, time);
   }
   public async isGroupAdmin(userId: any): Promise<boolean> {
     try {
-      const result = await botInstance?.getGuildMemberList(this.group_id.toString());
+      const result = await botOptional?.value?.getGuildMemberList(this.group_id.toString());
       if (!result || !result.data) return false;
 
       return result.data.some(user =>
@@ -49,6 +46,26 @@ export class GroupData {
       return false;
     }
   }
+  public async getMemberList() {
+    let users = await onebotOptional.get()?.getGroupMemberList(
+      this.group_id,
+      true
+    );
+    users = users?.filter(
+      (user) => user.role === "member" && !contextOptional.get().bots[user.user_id]
+    );
+    return users;
+  }
+
+  public async getMemberListAll() {
+    let users = await onebotOptional.get()?.getGroupMemberList(
+      this.group_id,
+      true
+    );
+    users = users?.filter((user) => !contextOptional.get().bots[user.user_id]);
+    return users;
+  }
+
   public dataFixer(): void {
     if(!GroupData.dataFixer.isConfirm()) {
       throw new Error("No data-fixer has been built");
@@ -57,9 +74,11 @@ export class GroupData {
       fixer.verify(this.groupData.data);
     }
   }
+
   public hasPermission(type: string) {
     return this.groupData.permissions.includes(type);
   }
+
   public load() {
     if(Files.exists(this.path)) {
       const fr = Files.read(this.path);

@@ -1,4 +1,5 @@
 import v8 from "v8";
+
 export class GCUtils {
   public static GCRegistry: FinalizationRegistry<any>;
   static {

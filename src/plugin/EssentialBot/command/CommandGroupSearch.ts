@@ -1,11 +1,11 @@
-import { CommandProvider } from "../../../core/command/CommandProvider";
-import { Messages } from "../../../core/network/Messages";
+import {CommandProvider} from "../../../core/command/CommandProvider";
+import {Messages} from "../../../core/network/Messages";
 import fetch from "node-fetch";
-import { GroupDataObject } from "../impl/GroupDataObject";
-import { GroupDataStorage } from "../impl/GroupDataStorage";
+import {GroupDataObject} from "../impl/GroupDataObject";
+import {GroupDataStorage} from "../impl/GroupDataStorage";
 import path from "path";
-import { Utils } from "../../../core/utils/Utils";
-import { Files } from "../../../core/utils/Files";
+import {Utils} from "../../../core/utils/Utils";
+import {Files} from "../../../core/utils/Files";
 import {MessageMerging} from "../../../core/network/MessageMerging";
 
 export class CommandGroupSearch {
@@ -14,7 +14,7 @@ export class CommandGroupSearch {
   public readonly cleanRegex = /\|[^|]+/g;
   public readonly cleanEventNameRegex = /\[\[.*?\]\]/g;
 
-  public static readonly cache_path = path.resolve(
+  public readonly cache_path = path.resolve(
     path.join(Utils.getRoot(), "data", "caches"),
     "group_search_cache.json"
   );
@@ -22,14 +22,16 @@ export class CommandGroupSearch {
 
   public root = new CommandProvider()
     .addRequiredArgument("关键词", "keyword")
-    .addOptionalArgument("页码", "page")
+    .addOptionalArgument("是否重载", "reload", false)
     .onExecute(async (session, args) => {
       const keyword = args.get("keyword");
+      const reload = args.getBoolean("reload");
 
       Messages.sendMessageToReply(session, `正在搜索中...`);
 
-      const cachedData = Files.read(CommandGroupSearch.cache_path);
-      const cacheTimestamp = cachedData ? JSON.parse(cachedData).timestamp : 0;
+      const cachedData = Files.read(this.cache_path);
+      const cacheTimestamp = reload ? 0 : (cachedData ? JSON.parse(cachedData).timestamp : 0);
+
 
       if (Date.now() - cacheTimestamp < CommandGroupSearch.CACHE_DURATION) {
         const resultData = JSON.parse(cachedData).data as GroupDataStorage;
@@ -52,7 +54,7 @@ export class CommandGroupSearch {
             };
 
             text_result.forEach(value => {
-              let match;
+              let match: any;
               while ((match = this.qqGroupRegex.exec(value)) !== null) {
                 let group_name = match[5];
                 group_name = group_name.replace(this.cleanRegex, "").trim();
@@ -74,7 +76,7 @@ export class CommandGroupSearch {
               timestamp: Date.now(),
               data: resultData
             };
-            Files.write(CommandGroupSearch.cache_path, JSON.stringify(cacheData, null, 2));
+            Files.write(this.cache_path, JSON.stringify(cacheData, null, 2));
             this.sendGroupResults(session, keyword, resultData);
           })
           .catch(error => {

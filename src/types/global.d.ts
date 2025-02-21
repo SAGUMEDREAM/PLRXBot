@@ -1,12 +1,22 @@
 import * as satori from "@satorijs/core";
 import {Channel, User} from "@koishijs/core";
-import {Context, Session, Schema, Field} from "koishi";
-
+import {Context} from "koishi";
+import {OneBot} from "koishi-plugin-adapter-onebot";
 import {
   ChatCompletionAssistantMessageParam,
-  ChatCompletionDeveloperMessageParam, ChatCompletionFunctionMessageParam,
-  ChatCompletionSystemMessageParam, ChatCompletionToolMessageParam, ChatCompletionUserMessageParam
+  ChatCompletionDeveloperMessageParam,
+  ChatCompletionFunctionMessageParam,
+  ChatCompletionSystemMessageParam,
+  ChatCompletionToolMessageParam,
+  ChatCompletionUserMessageParam
 } from "openai/src/resources/chat/completions";
+
+declare module '@satorijs/core' {
+  interface Session {
+    onebot?: OneBot.Payload & OneBot.Internal
+  }
+}
+
 
 declare module 'cordis' {
   interface Events<C> {

@@ -1,7 +1,6 @@
 import {Files} from "../utils/Files";
 import {LOGGER} from "../../index";
 import path from "path";
-import {Utils} from "../utils/Utils";
 import {Constant} from "../Constant";
 
 export class Config<T extends object> {

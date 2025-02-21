@@ -1,7 +1,6 @@
 import {CommandProvider} from "../CommandProvider";
 import {Messages} from "../../network/Messages";
 import {GroupManager} from "../../group/GroupManager";
-import {MultiParameterBuilder} from "../MultiParameter";
 
 export class CommandGroup {
   public readonly ban = new CommandProvider()

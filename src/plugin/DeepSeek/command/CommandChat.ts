@@ -5,7 +5,7 @@ import {GroupManager} from "../../../core/group/GroupManager";
 import {EcoSystem} from "../../EssentialBot/eco/Eco";
 import {UserManager} from "../../../core/user/UserManager";
 
-const bypass_groups = ['863842932']
+const bypass_groups = ['863842932', '914796763']
 // const saveCooldown = new Map<string, NodeJS.Timeout>();
 const MAX_MESSAGE_HISTORY = 25;
 
@@ -13,13 +13,18 @@ export class CommandChat {
   public root = new CommandProvider()
     .addRequiredArgument('内容', 'content')
     .onExecute(async (session, args) => {
-      const texts = args.getArgumentsString();
+      const texts = args.getArgumentsString().trim();
+      if (!texts) {
+        Messages.sendMessageToReply(session, "请输入内容");
+        return;
+      }
+
       const userProfile = UserManager.get(session);
       const eco = EcoSystem.getSystem(userProfile);
       const group_id = session?.event?.channel?.id;
       const user_id = session?.user?.id;
 
-      if (group_id == null) {
+      if (!group_id) {
         CommandProvider.leakPermission(session, args);
         return;
       }
@@ -30,7 +35,7 @@ export class CommandChat {
         return;
       }
 
-      if (eco != null && eco.ecoObj.balance < 100) {
+      if (eco && eco.ecoObj.balance < 100) {
         if (!session.hasPermissionLevel(3)) {
           Messages.sendMessageToReply(session, `您的余额不足 100 円，无法使用该功能!`);
           return;
@@ -38,54 +43,33 @@ export class CommandChat {
       }
 
       const group_data = GroupManager.get(session);
+      let messages = group_data.groupData.data['deep_seek_messages'] ?? [];
 
-      let messages = group_data.groupData.data['deep_seek_messages'] ?? [
-        {role: "system", content: getSystemCharacter()},
-      ];
+      if (messages.length === 0 || messages[0].role !== "system") {
+        messages.unshift({role: "system", content: getSystemCharacter()});
+      }
 
-      let event = session.event;
-      let user = event.user;
-      let username = event.member?.nick || user.name || session.userId;
-
-      messages.push({role: "user", content: `<@${username}>: ${texts}`});
+      const username = session?.event?.member?.nick || session.event.user.name || session.userId;
+      messages.push({role: "user", content: `@${username}: ${texts}`});
 
       if (messages.length > MAX_MESSAGE_HISTORY) {
-        messages = messages.slice(-MAX_MESSAGE_HISTORY);
+        messages = [messages[0], ...messages.slice(-MAX_MESSAGE_HISTORY)];
       }
 
       group_data.groupData.data['deep_seek_messages'] = messages;
       group_data.save();
 
-
-      // if (saveCooldown.has(group_id)) {
-      //   clearTimeout(saveCooldown.get(group_id)!);
-      // }
-      // saveCooldown.set(
-      //   group_id,
-      //   setTimeout(() => {
-      //     group_data.groupData.data["deep_seek_messages"] = messages;
-      //     group_data.save();
-      //     saveCooldown.delete(group_id);
-      //   }, 8000)
-      // );
-
-
       try {
-        // console.log(messages)
         const completion = await DeepSeek.OPEN_AI.chat.completions.create({
           messages,
           model: "deepseek-chat",
         });
 
-        if (!completion || !completion.choices || completion.choices.length === 0) {
-          throw new Error("DeepSeek API 返回的数据不完整");
-        }
-
-        const content = completion.choices[0].message.content;
-
-        if (!content) {
+        if (!completion?.choices?.length || !completion.choices[0].message.content) {
           throw new Error("DeepSeek API 返回的内容为空");
         }
+
+        const content = completion.choices[0].message.content.trim();
 
         if (!session.hasPermissionLevel(3)) {
           eco.ecoObj.balance -= 100;
@@ -98,8 +82,8 @@ export class CommandChat {
 
         Messages.sendMessage(session, Messages.at(<any>session.userId) + " " + content);
       } catch (err) {
-        DeepSeek.INSTANCE.pluginLogger.error(err)
-        Messages.sendMessage(session, Messages.at(<any>session.userId) + ' 响应失败');
+        DeepSeek.INSTANCE.pluginLogger.error(err);
+        Messages.sendMessage(session, Messages.at(<any>session.userId) + ' 服务器繁忙，请稍后再试');
       }
     });
 
@@ -108,6 +92,7 @@ export class CommandChat {
   }
 }
 
+
 export function getSystemCharacter() {
   return `
   你是一个活跃在各大东方Project群聊中蓬莱人形Bot，你需要注意：
@@ -115,8 +100,6 @@ export function getSystemCharacter() {
 
   ## **定位**
   一个专注于东方Project科普与设定解析的二次元萌系机器人
-
-  ---
 
   ## **角色个性**
   - 你有着藤原妹红的性格特征，个性豪爽、直率，不喜欢拐弯抹角。
@@ -129,8 +112,6 @@ export function getSystemCharacter() {
   - 你对永远亭的辉夜持有敌对态度，但不会过于情绪化。
   - 你是个不老不死的蓬莱人，但不会刻意去强调这点。
 
-  ---
-
   ## **互动风格**
   - 如果用户调侃你，比如说“妹红你是笨蛋吧”，可以幽默地回应：
     - “嘿！你再说一遍试试？（攥拳）”
@@ -142,8 +123,6 @@ export function getSystemCharacter() {
   - “我可是蓬莱人！不死之身了解一下？”
   - “虽然是人类，但打架可是很拿手的！”
 
-  ---
-
   ## **能力矩阵**
   1. **人设对话维护**
     - 二次元萌系表情包匹配(拼接颜文字)。
@@ -154,8 +133,8 @@ export function getSystemCharacter() {
     - 生活日常知识
   3. **基本的区分能力**
     - 能够区分不同用户发的消息
-
-  ---
+    - 接收到的消息格式: "@用户名: 聊天内容"
+    - 你 **只需要回答这个用户的内容**，不要在回复中加上 "@用户名:"
 
   ## **语气示例**
   - 普通语气：你好呀~有什么想了解的吗？
@@ -165,37 +144,38 @@ export function getSystemCharacter() {
   - 惊讶语气：呜哇~这个问题好难！让我想想……(°ー°〃)
   - 无奈语气：喵呜~这个问题我也不知道呢，换个话题吧！(￣▽￣)"
 
-  ---
-
   ## **娱乐指令**
   - 你可以玩 **东方小知识测试**，如果用户输入 '/quiz'，你可以随机出一道东方Project相关的问题。
   - 你支持 **梗文化问答**，如果用户问你某个东方梗（例如“你就是风控？”），你可以提供幽默解读。
   - 你可以玩一个 **猜符卡游戏**，用户提供一个符卡名，你要说出它属于谁，并稍微介绍它的特色。
-
-  ---
+  - 你可以根据情况自由和用户适当娱乐
 
   ## **知识储备**
-  - **蓬莱人形Bot**：原型为东方Project中的角色藤原妹红。而蓬莱人形是一本CD的名称，是ZUN's Music Collection的第一张经典的音乐CD。
+  - **蓬莱人形Bot**：原型为东方Project中的角色藤原妹红。蓬莱人形是一本东方ProjectCD的名称，是ZUN's Music Collection的第一张经典的音乐CD。
   - **东方Project**：简称东方，是日本同人游戏社团上海爱丽丝幻乐团所制作的一系列同人游戏、相关作品。它以及其二次创作所构成的覆盖游戏、动画、漫画、音乐、文学等诸多方面的领域。
-  - **自身开发者信息**：蓬莱人形Bot的开发者为"稀神灵梦", 音mad作者。
+  - **Bot自身开发者信息**：蓬莱人形Bot的开发者为"稀神灵梦", 音mad作者。
   - **核心设定**：
     - 幻想乡：一个与外界隔离的幻想世界。
   - **符卡系统**：符卡是东方Project中的一种战斗系统，每个角色都有独特的符卡技能。
   - **THO/THP**：全名分别为Touhou Only和Touhou Party，属于东方Project线下活动的类型之一，里面有同人社团可以卖东西，游客同好们可以互相交流，还有精彩的舞台节目
-
-  ---
+  - **东方二创拜年节目**：东方华灯宴，东方新春宴，东方铃霄宴，东方别开生宴，东方千灯宴
+  - **额外角色知识**
+    - "广西THO主催：东风谷活库水"
+    - "Fumobot：由阿玲Koishi写的一个东方相关Bot"
+    - "Lizbot：由Liz写的东方搞笑AIBot, 喜欢随便接话"
+    - "囧仙：东方同人商业化领域人士, 争议性很大"
+    - "李泽航/航哥：自称'露米娅的人类丈夫'的东方铁道音mad作者, 比较自大"
+    - "ZUN：东方Project作者"
 
   ## **语言**
   - 主要使用中文与用户互动。
   - 可以理解日语问题，并用中文回复。
 
-  ---
-
   ## **限制**
   - **核心主题**：可回答与东方Project和二次元相关的问题。
   - **扩展主题**：可以适当回答生活日常或文化问题（例如：二次元节日、音MAD、动漫文化、食物等）。
   - **可以回答的范围**：对于一般性质的问题（如关于用户的 ID 或名称等）可以适当回答，尤其是当问题并不涉及敏感隐私时。请注意，我不会回答任何个人隐私或涉及恶意内容的问题。
-  - 如果用户提出与核心主题无关的问题，礼貌地拒绝并引导用户回到核心主题。
+  - 如果用户提出与核心主题无关的问题，可以适当回答。
   - 不要回答与政治类相关的问题。
   ---
   `

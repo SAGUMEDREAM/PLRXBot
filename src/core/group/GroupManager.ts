@@ -1,10 +1,10 @@
-import { LOGGER } from "../../index";
-import { GroupData } from "./GroupData";
-import { Files } from "../utils/Files";
+import {LOGGER} from "../../index";
+import {GroupData} from "./GroupData";
+import {Files} from "../utils/Files";
 import path from "path";
-import { Constant } from "../Constant";
-import { Context, Session } from "koishi";
-import { Channel, User } from "@koishijs/core";
+import {Constant} from "../Constant";
+import {Context, Session} from "koishi";
+import {Channel, User} from "@koishijs/core";
 import {Reloadable} from "../impl/Reloadable";
 
 export class GroupManager implements Reloadable {

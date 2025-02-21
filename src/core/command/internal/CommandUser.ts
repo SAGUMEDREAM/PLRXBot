@@ -1,9 +1,6 @@
 import {CommandProvider} from "../CommandProvider";
-import {Utils} from "../../utils/Utils";
 import {Messages} from "../../network/Messages";
-import {CommandHelper} from "../CommandHelper";
 import {UserManager} from "../../user/UserManager";
-import {MultiParameterBuilder} from "../MultiParameter";
 
 export class CommandUser {
   public readonly edit_permission_level = new CommandProvider()
@@ -11,12 +8,8 @@ export class CommandUser {
     .addRequiredArgument('权限等级', 'level')
     .onExecute((session, args) => {
       const target = args.getUserId("user");
-      const level = args.get("permission_name");
-      if (target == null && level == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
-      const user = UserManager.get(target);
+      const level = args.get("level");
+      const user = UserManager.getOrCreate(target);
       if (user) {
         user.profile.permission_level = Number(level);
         user.save();
@@ -32,11 +25,7 @@ export class CommandUser {
     .onExecute((session, args) => {
       const target = args.getUserId("user");
       const perm_name = args.get("permission_name");
-      if (target == null && perm_name == null) {
-        CommandProvider.leakArgs(session, args);
-        return;
-      }
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         if (user.profile.permissions.includes(perm_name)) {
           Messages.sendMessageToReply(session, `用户 ${target} 已经拥有权限 ${perm_name}`)
@@ -59,7 +48,7 @@ export class CommandUser {
         CommandProvider.leakArgs(session, args);
         return;
       }
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         const permissionIndex = user.profile.permissions.indexOf(perm_name);
         if (permissionIndex === -1) {
@@ -79,7 +68,7 @@ export class CommandUser {
     .onExecute((session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         const data = user.getProfile().data;
         const result0 =
@@ -88,7 +77,7 @@ export class CommandUser {
           + `封禁状态: ${user.getProfile().banned ? "是" : "否"}\n`
           + `权限等级:${user.getProfile().permission_level}\n`
           + "数据: "
-        const result1 = JSON.stringify(data);
+        const result1 = JSON.stringify(data,null,2);
         const results = result0 + result1;
         Messages.sendMessageToReply(session, results);
       } else {
@@ -110,7 +99,7 @@ export class CommandUser {
         return;
       }
 
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         const data = user.getProfile().data;
 
@@ -150,7 +139,7 @@ export class CommandUser {
     .onExecute((session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         const permissions = user.profile.permissions;
         if (permissions.length > 0) {
@@ -172,7 +161,7 @@ export class CommandUser {
         return;
       }
 
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         const permissionLevel = user.profile.permission_level;
         Messages.sendMessageToReply(session, `用户 ${target} 的权限级别: ${permissionLevel}`);
@@ -196,7 +185,7 @@ export class CommandUser {
     .onExecute((session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         user.profile.banned = true;
         user.save()
@@ -211,7 +200,7 @@ export class CommandUser {
     .onExecute((session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.get(target);
+      const user = UserManager.getOrCreate(target);
       if (user) {
         user.profile.banned = false;
         user.save()

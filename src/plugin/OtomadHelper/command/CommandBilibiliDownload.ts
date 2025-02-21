@@ -6,10 +6,10 @@ import {Networks} from "../../../core/network/Networks";
 export class CommandBilibiliDownload {
   public root = new CommandProvider()
     .addRequiredArgument("BV号|AV号", "video_id")
-    .addRequiredArgument("true|false", "download")
+    .addOptionalArgument("true|false", "download")
     .onExecute(async (session, args) => {
       let biliVideoId = args.get("video_id");
-      let returnVideo = args.get("download");
+      let returnVideo = args.getBoolean("download");
       if(returnVideo == null) returnVideo = false;
 
       try {

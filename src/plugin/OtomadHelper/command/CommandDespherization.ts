@@ -8,7 +8,7 @@ import {ImageUtils} from "../image/ImageUtils";
 export class CommandDespherization {
   public root = new CommandProvider()
     .onExecute(async (session, args) => {
-      await session.sendQueued(h('quote', { id: session.messageId }) + "请发送待处理的图片。");
+      await session.sendQueued(h('quote', {id: session.messageId}) + "请发送待处理的图片。");
 
       const next = await session.prompt(30000);
       if (!next) {
@@ -28,7 +28,7 @@ export class CommandDespherization {
       }));
 
       const buffers = await Promise.all(imageList.map(async img => {
-        const response = await axios.get(img.src, { responseType: 'arraybuffer' });
+        const response = await axios.get(img.src, {responseType: 'arraybuffer'});
         return Buffer.from(response.data);
       }));
 
