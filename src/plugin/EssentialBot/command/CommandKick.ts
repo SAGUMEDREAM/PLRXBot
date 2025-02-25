@@ -13,23 +13,23 @@ export class CommandKick {
       let target_group_id = args.get("group_id");
       let permanent = args.get("permanent");
 
-      const group = GroupManager.get(target_group_id || session);
+      const group = await GroupManager.get(target_group_id || session);
       if (group) {
         let hasPerm = session.hasPermissionLevel(3);
-        let isAdmin = await group.isGroupAdmin(session.event.user.id);
-        let botIsAdmin = await group.isGroupAdmin(session.bot.user.id)
+        let isAdmin = await group.isGroupAdmin(session.userId);
+        let botIsAdmin = await group.isGroupAdmin(session.selfId)
         if ((hasPerm || isAdmin) && botIsAdmin) {
           if (target_group_id != null) {
             await botOptional.value?.kickGuildMember(target_group_id, target, permanent);
           } else {
             await group.kick(target, permanent);
           }
-          Messages.sendMessageToReply(session, "成功踢出用户" + Messages.at(target));
+          await Messages.sendMessageToReply(session, "成功踢出用户" + Messages.at(target));
         } else {
           if ((hasPerm || isAdmin)) {
-            Messages.sendMessageToReply(session, "踢出失败");
+            await Messages.sendMessageToReply(session, "踢出失败");
           } else {
-            Messages.sendMessageToReply(session, "你没有使用该命令的权限");
+            await Messages.sendMessageToReply(session, "你没有使用该命令的权限");
           }
         }
       }

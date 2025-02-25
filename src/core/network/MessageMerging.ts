@@ -1,5 +1,7 @@
 import {Dict, h, Session} from "koishi";
 import {botOptional} from "../../index";
+import {Messages} from "./Messages";
+import {MIMEUtils} from "../utils/MIMEUtils";
 
 export class MessageMerging {
   private messageList = [];
@@ -22,20 +24,23 @@ export class MessageMerging {
     }
   }
 
-  public static create(session: Session<any, any, any> | null): MessageMerging {
+  public static createBuilder(session: Session<any, any, any> | null): MessageMerging {
     return new MessageMerging(session);
   }
 
-  public static merging(session: Session<any, any, any> | null, arr: any[], lBreak: boolean = false) {
-    let merging = this.create(session);
+  public static async ofArray(session: Session<any, any, any> | null, arr: any[], lBreak: boolean = false): Promise<h> {
+    const builder = this.createBuilder(session);
     for (const arrElement of arr) {
-      merging.put(arrElement, lBreak);
+      builder.put(arrElement, lBreak);
     }
-    return merging.get();
+    const h1: h = await builder.get();
+    return h1;
   }
+
   public includes(str: string): boolean {
     return this.messageList.includes(str);
   }
+
   public put(message: any, lBreak: boolean = false): MessageMerging {
     if (lBreak == true) {
       if (typeof message == 'string' && message.includes("\n") == false) {
@@ -46,12 +51,21 @@ export class MessageMerging {
     return this;
   }
 
-  public get(): h {
-    let messageList = [];
-    for (const message of this.messageList) {
-      messageList.push(h('message', message));
+  public async get(notSupport: boolean = false): Promise<h> {
+    const isNotSupport = notSupport == true || this.session.platform == "qq" || this.session.platform == "qqguild";
+    const messageList = [];
+    if (isNotSupport) {
+      messageList.push("**合并转发**\n");
+      for (const message of this.messageList) {
+        messageList.push(`> ${message}\n`)
+      }
+      return await Messages.markdown(messageList);
+    } else {
+      for (const message of this.messageList) {
+        messageList.push(h('message', message));
+      }
+      return h('message', {forward: true}, messageList);
     }
-    return h('message', {forward: true}, messageList);
   }
 
   public clear(): void {
@@ -62,7 +76,11 @@ export class MessageMerging {
     return this.messageList.length;
   }
 
-  public toString() {
-    return this.get();
+  public async asString(): Promise<string> {
+    return (await this.get()).toString();
+  }
+
+  public toString(): string {
+    return this.messageList.toString();
   }
 }

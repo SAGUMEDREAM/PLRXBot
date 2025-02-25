@@ -95,10 +95,10 @@ export class RemakeLife extends PluginInitialization {
   }
 
   public load(): void {
-    const instance = CommandManager.getInstance();
+    const instance = this.commandManager;
     instance.registerCommand(["remake", "重开"],
       new CommandProvider()
-        .onExecute((session, args) => {
+        .onExecute(async (session, args) => {
           const region = Random.pick([...regions, ...specialRegions]);
           if (region) {
             let location: string;
@@ -111,9 +111,9 @@ export class RemakeLife extends PluginInitialization {
               location = Random.pick(locations)
             }
             const identity = Random.pick(getSpecialIdentities(location));
-            Messages.sendMessageToReply(session, `重开成功！你出生在${region}的${location}，是${identity}！`);
+            await Messages.sendMessageToReply(session, `重开成功！你出生在${region}的${location}，是${identity}！`);
           } else {
-            Messages.sendMessageToReply(session, `重开失败！你没能出生！`);
+            await Messages.sendMessageToReply(session, `重开失败！你没能出生！`);
           }
         })
     );

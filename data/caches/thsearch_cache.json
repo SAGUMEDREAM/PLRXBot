@@ -1,5 +1,5 @@
 {
-  "timestamp": 1733248785981,
+  "timestamp": 1740239467475,
   "results": [
     {
       "status": "如期",
@@ -479,7 +479,7 @@
       "area": "黑龙江省",
       "time": "暂无",
       "group_id": "561123675",
-      "timestamp": 1733248793981
+      "timestamp": 1740239475475
     },
     {
       "status": "如期",
@@ -496,22 +496,6 @@
       "time": "2024/12/15",
       "group_id": "205126938",
       "timestamp": 1734192000000
-    },
-    {
-      "status": "",
-      "name": "",
-      "area": "",
-      "time": "",
-      "group_id": "",
-      "timestamp": null
-    },
-    {
-      "status": "",
-      "name": " ",
-      "area": "",
-      "time": "",
-      "group_id": "",
-      "timestamp": null
     },
     {
       "status": "如期",
@@ -1386,14 +1370,6 @@
       "timestamp": 1723910400000
     },
     {
-      "status": "如期",
-      "name": "东方PartyNight 南京×江苏·THO 金陵幻梦行",
-      "area": "",
-      "time": "",
-      "group_id": "",
-      "timestamp": null
-    },
-    {
       "status": "定档",
       "name": "沈阳THO6·东方莲白冬",
       "area": "辽宁省",
@@ -1402,7 +1378,7 @@
       "timestamp": 1736524800000
     },
     {
-      "status": "计划",
+      "status": "定档",
       "name": "吉林THO",
       "area": "吉林省",
       "time": "2025/1/18",
@@ -1482,11 +1458,27 @@
       "timestamp": 1739030400000
     },
     {
+      "status": "定档",
+      "name": "琴岛THO",
+      "area": "山东省",
+      "time": "2025/4/4",
+      "group_id": "574073900",
+      "timestamp": 1743696000000
+    },
+    {
       "status": "计划",
       "name": "浙江THO",
       "area": "浙江省",
       "time": "2025/4/5",
       "group_id": "789663988",
+      "timestamp": 1743782400000
+    },
+    {
+      "status": "定档",
+      "name": "深圳THO-云幽萃梦",
+      "area": "广东省",
+      "time": "2025/4/5",
+      "group_id": "766317147",
       "timestamp": 1743782400000
     },
     {
@@ -1501,8 +1493,40 @@
       "status": "计划",
       "name": "天津THO-03",
       "area": "天津市",
-      "time": "2025/6/1",
+      "time": "2025/5/1",
       "group_id": "925550208",
+      "timestamp": 1746028800000
+    },
+    {
+      "status": "计划",
+      "name": "长沙THO5",
+      "area": "湖南省",
+      "time": "2025/5/1",
+      "group_id": "877094590",
+      "timestamp": 1746028800000
+    },
+    {
+      "status": "计划",
+      "name": "东莞THO-03",
+      "area": "广东省",
+      "time": "2025/5/2",
+      "group_id": "383095645",
+      "timestamp": 1746115200000
+    },
+    {
+      "status": "计划",
+      "name": "安徽THO",
+      "area": "安徽省",
+      "time": "2025/5/3",
+      "group_id": "698852727",
+      "timestamp": 1746201600000
+    },
+    {
+      "status": "计划",
+      "name": "南京市THO",
+      "area": "江苏省",
+      "time": "2025/6/1",
+      "group_id": "808308004",
       "timestamp": 1748707200000
     },
     {
@@ -1510,8 +1534,16 @@
       "name": "汴京THO2",
       "area": "河南省",
       "time": "2025/7/5",
-      "group_id": "暂无",
+      "group_id": "531998464",
       "timestamp": 1751644800000
+    },
+    {
+      "status": "计划",
+      "name": "郑州天狗ONLY",
+      "area": "河南省",
+      "time": "暂无",
+      "group_id": "828374353",
+      "timestamp": 1740239475475
     },
     {
       "status": "计划",
@@ -1523,6 +1555,14 @@
     },
     {
       "status": "计划",
+      "name": "扬州THO01",
+      "area": "江苏省",
+      "time": "2025/7/12",
+      "group_id": "1028986517",
+      "timestamp": 1752249600000
+    },
+    {
+      "status": "计划",
       "name": "江西THO4 ",
       "area": "江西省",
       "time": "2025/7/12",
@@ -1531,27 +1571,51 @@
     },
     {
       "status": "计划",
-      "name": "贵阳THO03-东方麓酌筵",
-      "area": "贵州省",
-      "time": "2025/7/19",
-      "group_id": "676576626",
-      "timestamp": 1752854400000
-    },
-    {
-      "status": "计划",
       "name": "FUMO ONLY 03",
       "area": "江苏省",
       "time": "2025/7/19",
-      "group_id": "774398628",
+      "group_id": "210857240",
       "timestamp": 1752854400000
     },
     {
       "status": "计划",
       "name": "广西THO5-幻想华诞",
       "area": "广西壮族自治区",
-      "time": "2025/7/20",
+      "time": "2025/7/19",
       "group_id": "774398628",
+      "timestamp": 1752854400000
+    },
+    {
+      "status": "计划",
+      "name": "唐山THO",
+      "area": "河北省",
+      "time": "2025/7/19",
+      "group_id": "931919529",
+      "timestamp": 1752854400000
+    },
+    {
+      "status": "计划",
+      "name": "山东THO",
+      "area": "山东省",
+      "time": "2025/7/19",
+      "group_id": "856223214",
+      "timestamp": 1752854400000
+    },
+    {
+      "status": "取消",
+      "name": "天津雀THO01-东方雀台歌",
+      "area": "天津市",
+      "time": "2025/7/20",
+      "group_id": "809931149",
       "timestamp": 1752940800000
+    },
+    {
+      "status": "计划",
+      "name": "郑州THO09",
+      "area": "河南省",
+      "time": "2025/7/26",
+      "group_id": "75572859",
+      "timestamp": 1753459200000
     },
     {
       "status": "计划",
@@ -1579,11 +1643,19 @@
     },
     {
       "status": "计划",
-      "name": "天津雀THO01-东方雀台歌",
-      "area": "天津市",
-      "time": "2025/7/20",
-      "group_id": "809931149",
-      "timestamp": 1752940800000
+      "name": "徐州THO",
+      "area": "江苏省",
+      "time": "2025/7/27",
+      "group_id": "938381516",
+      "timestamp": 1753545600000
+    },
+    {
+      "status": "计划",
+      "name": "金陵THO",
+      "area": "江苏省",
+      "time": "2025/8/X",
+      "group_id": "981050777",
+      "timestamp": null
     },
     {
       "status": "计划",
@@ -1591,6 +1663,14 @@
       "area": "河南省",
       "time": "2025/8/2",
       "group_id": "596864576",
+      "timestamp": 1754064000000
+    },
+    {
+      "status": "计划",
+      "name": "烟台THO02",
+      "area": "山东省",
+      "time": "2025/8/2",
+      "group_id": "526544033",
       "timestamp": 1754064000000
     },
     {
@@ -1618,6 +1698,14 @@
       "timestamp": 1754755200000
     },
     {
+      "status": "计划",
+      "name": "南京THO",
+      "area": "江苏省",
+      "time": "2025/10/22",
+      "group_id": "870555749",
+      "timestamp": 1761062400000
+    },
+    {
       "status": "定档",
       "name": "新疆THO01—东方大巴扎",
       "area": "新疆维吾尔自治区",
@@ -1634,79 +1722,39 @@
       "timestamp": 1759593600000
     },
     {
-      "status": "计划",
-      "name": "川东THO",
-      "area": "四川省",
-      "time": "待定",
-      "group_id": "985556373",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "齐齐哈尔THO",
-      "area": "黑龙江省",
-      "time": "待定",
-      "group_id": "561123675",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "宁夏THO",
-      "area": "宁夏回族自治区",
-      "time": "待定",
-      "group_id": "752227087",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "盘锦THO",
-      "area": "辽宁省",
-      "time": "待定",
-      "group_id": "946540880",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "西藏THO",
-      "area": "西藏自治区",
-      "time": "待定",
-      "group_id": "暂无",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "海南西方ONLY",
-      "area": "海南省",
-      "time": "待定",
-      "group_id": "967350467",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "湘阴THO",
-      "area": "湖南省",
-      "time": "待定",
-      "group_id": "741901287",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "舟山THO",
+      "status": "定档",
+      "name": "宁波THO5",
       "area": "浙江省",
-      "time": "待定",
-      "group_id": "暂无",
-      "timestamp": null
+      "time": "2025/10/6",
+      "group_id": "216067663",
+      "timestamp": 1759680000000
     },
     {
       "status": "计划",
-      "name": "湘阴THO",
-      "area": "湖南省",
-      "time": "待定",
-      "group_id": "741901287",
-      "timestamp": null
+      "name": "南京THO-08",
+      "area": "江苏省",
+      "time": "2025/10/22",
+      "group_id": "870555749",
+      "timestamp": 1761062400000
     },
     {
       "status": "计划",
+      "name": "内蒙古THO",
+      "area": "内蒙古自治区",
+      "time": "待定",
+      "group_id": "874856775",
+      "timestamp": null
+    },
+    {
+      "status": "定档",
+      "name": "南昌东方Only例会 豫章幻想茶会·肆",
+      "area": "江西省",
+      "time": "2025/1/1",
+      "group_id": "610546073",
+      "timestamp": 1735660800000
+    },
+    {
+      "status": "定档",
       "name": "苏州THP",
       "area": "江苏省",
       "time": "2025/1/12",
@@ -1715,19 +1763,51 @@
     },
     {
       "status": "定档",
-      "name": "粤西THP02",
-      "area": "广东省",
-      "time": "2025/1/12",
-      "group_id": "300251596",
-      "timestamp": 1736611200000
+      "name": "内江东方茶会",
+      "area": "四川省",
+      "time": "2025/1/15",
+      "group_id": "126885854",
+      "timestamp": 1736870400000
     },
     {
-      "status": "计划",
+      "status": "定档",
       "name": "江门THP",
       "area": "广东省",
       "time": "2025/1/18",
       "group_id": "175110765",
       "timestamp": 1737129600000
+    },
+    {
+      "status": "定档",
+      "name": "南宁幻想朱槿绘翠6",
+      "area": "广西壮族自治区",
+      "time": "2025/1/18",
+      "group_id": "1016994470",
+      "timestamp": 1737129600000
+    },
+    {
+      "status": "定档",
+      "name": "盐城THP",
+      "area": "江苏省",
+      "time": "2025/1/19",
+      "group_id": "615087231",
+      "timestamp": 1737216000000
+    },
+    {
+      "status": "定档",
+      "name": "粤西THP02",
+      "area": "广东省",
+      "time": "2025/1/21",
+      "group_id": "300251596",
+      "timestamp": 1737388800000
+    },
+    {
+      "status": "定档",
+      "name": "通辽THP01 白音白雪宴",
+      "area": "内蒙古自治区",
+      "time": "2025/1/21",
+      "group_id": "602907559",
+      "timestamp": 1737388800000
     },
     {
       "status": "定档",
@@ -1738,7 +1818,31 @@
       "timestamp": 1737648000000
     },
     {
-      "status": "计划",
+      "status": "定档",
+      "name": "马鞍山THP·东方舞梨雨2",
+      "area": "安徽省",
+      "time": "2025/1/26",
+      "group_id": "864471000",
+      "timestamp": 1737820800000
+    },
+    {
+      "status": "定档",
+      "name": "徐州THP04",
+      "area": "江苏省",
+      "time": "2025/2/1",
+      "group_id": "261251252",
+      "timestamp": 1738339200000
+    },
+    {
+      "status": "定档",
+      "name": "潮汕THP04~秘封粤东之旅",
+      "area": "广东省",
+      "time": "2025/2/2",
+      "group_id": "700076261",
+      "timestamp": 1738425600000
+    },
+    {
+      "status": "定档",
       "name": "无锡THP",
       "area": "江苏省",
       "time": "2025/2/2",
@@ -1752,6 +1856,14 @@
       "time": "2025/2/2",
       "group_id": "596864576",
       "timestamp": 1738425600000
+    },
+    {
+      "status": "定档",
+      "name": "桂林THP",
+      "area": "广西壮族自治区",
+      "time": "2025/2/3",
+      "group_id": "777067859",
+      "timestamp": 1738512000000
     },
     {
       "status": "计划",
@@ -1770,20 +1882,92 @@
       "timestamp": 1738598400000
     },
     {
-      "status": "计划",
+      "status": "定档",
+      "name": "玉林THP",
+      "area": "广西壮族自治区",
+      "time": "2025/2/5",
+      "group_id": "238267656",
+      "timestamp": 1738684800000
+    },
+    {
+      "status": "定档",
       "name": "泉州THP",
       "area": "福建省",
-      "time": "2025/2/8",
+      "time": "2025/2/9",
       "group_id": "757830608",
-      "timestamp": 1738944000000
+      "timestamp": 1739030400000
     },
     {
       "status": "计划",
+      "name": "秦皇岛东方线下茶会",
+      "area": "河北省",
+      "time": "2025/2/9",
+      "group_id": "912832761",
+      "timestamp": 1739030400000
+    },
+    {
+      "status": "计划",
+      "name": "北京THP",
+      "area": "北京市",
+      "time": "2025/3/22",
+      "group_id": "256712815",
+      "timestamp": 1742572800000
+    },
+    {
+      "status": "计划",
+      "name": "山西THUP",
+      "area": "山西省",
+      "time": "2025/5/2",
+      "group_id": "830395537",
+      "timestamp": 1746115200000
+    },
+    {
+      "status": "计划",
+      "name": "宁波thp3",
+      "area": "浙江省",
+      "time": "2025/5/4",
+      "group_id": "216067663",
+      "timestamp": 1746288000000
+    },
+    {
+      "status": "计划",
+      "name": "肇庆THP",
+      "area": "广东省",
+      "time": "2025/5/31",
+      "group_id": "940790736",
+      "timestamp": 1748620800000
+    },
+    {
+      "status": "计划",
+      "name": "台州thp2",
+      "area": "浙江省",
+      "time": "2025/6/1",
+      "group_id": "876156112",
+      "timestamp": 1748707200000
+    },
+    {
+      "status": "取消",
       "name": "湖州THP",
       "area": "浙江省",
       "time": "2025/7/5",
       "group_id": "734445919",
       "timestamp": 1751644800000
+    },
+    {
+      "status": "计划",
+      "name": "贵州铜仁东方茶会",
+      "area": "贵州省",
+      "time": "2025/7/12",
+      "group_id": "951156607",
+      "timestamp": 1752249600000
+    },
+    {
+      "status": "计划",
+      "name": "惠州THP",
+      "area": "广东省",
+      "time": "2025/7/13",
+      "group_id": "950810811",
+      "timestamp": 1752336000000
     },
     {
       "status": "计划",
@@ -1795,158 +1979,102 @@
     },
     {
       "status": "计划",
-      "name": "通辽THP",
-      "area": "内蒙古自治区",
-      "time": "待定",
-      "group_id": "602907559",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "盐城THP",
-      "area": "江苏省",
-      "time": "待定",
-      "group_id": "615087231",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "秦皇岛东方线下活动",
-      "area": "河北省",
-      "time": "待定",
-      "group_id": "912832761",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "柳州THP",
-      "area": "广西壮族自治区",
-      "time": "待定",
-      "group_id": "932216117",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "营口THP",
-      "area": "辽宁省",
-      "time": "待定",
-      "group_id": "559354558",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "鞍山THP",
-      "area": "辽宁省",
-      "time": "待定",
-      "group_id": "928042289",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "河南平顶山THP",
-      "area": "河南省",
-      "time": "待定",
-      "group_id": "695500845",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "肇庆THP",
+      "name": "珠海THP",
       "area": "广东省",
-      "time": "待定",
-      "group_id": "940790736",
-      "timestamp": null
+      "time": "2025/7/20",
+      "group_id": "571188233",
+      "timestamp": 1752940800000
     },
     {
-      "status": "计划",
-      "name": "镇江THP",
-      "area": "江苏省",
-      "time": "待定",
-      "group_id": "556531771",
-      "timestamp": null
+      "status": "定档",
+      "name": "丽水THP2",
+      "area": "浙江省",
+      "time": "2025/8/2",
+      "group_id": "952368440",
+      "timestamp": 1754064000000
     },
     {
-      "status": "计划",
-      "name": "乐山THP",
-      "area": "四川省",
-      "time": "待定",
-      "group_id": "786445568",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "辽阳东方茶会",
-      "area": "辽宁省",
-      "time": "待定",
-      "group_id": "819850026",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "天南大联合东方聚会",
-      "area": "多地区",
-      "time": "待定",
-      "group_id": "536930559",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "宿迁THP",
-      "area": "江苏省",
-      "time": "待定",
-      "group_id": "771227741",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "东川THP",
+      "status": "定档",
+      "name": "云南THP 云岭寻芳行",
       "area": "云南省",
-      "time": "待定",
-      "group_id": "246208337",
-      "timestamp": null
+      "time": "2025/8/9",
+      "group_id": "暂无",
+      "timestamp": 1754668800000
     },
     {
-      "status": "计划",
-      "name": "️唐山THP",
-      "area": "河北省",
-      "time": "待定",
-      "group_id": "122315914",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "常德THP",
-      "area": "湖南省",
-      "time": "待定",
-      "group_id": "895053119",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "南通THP",
+      "status": "定档",
+      "name": "东方幻梦游园会",
       "area": "江苏省",
-      "time": "待定",
-      "group_id": "1048929006",
-      "timestamp": null
+      "time": "2025/9/14",
+      "group_id": "1017075177",
+      "timestamp": 1757779200000
     },
     {
       "status": "计划",
-      "name": "贵州铜仁东方茶会",
-      "area": "贵州省",
-      "time": "待定",
-      "group_id": "951156607",
-      "timestamp": null
-    },
-    {
-      "status": "计划",
-      "name": "德阳THP",
+      "name": "内江THP",
       "area": "四川省",
-      "time": "待定",
-      "group_id": "917280247",
-      "timestamp": null
+      "time": "暂无",
+      "group_id": "126885854",
+      "timestamp": 1740239475475
     },
     {
       "status": "计划",
+      "name": "绵阳THP2-绵州绮梦巡",
+      "area": "四川省",
+      "time": "暂无",
+      "group_id": "836589881",
+      "timestamp": 1740239475475
+    },
+    {
+      "status": "计划",
+      "name": "赣东北THP ~ 信川靈幻紀行",
+      "area": "江西省",
+      "time": "2025/7/19",
+      "group_id": "1031987369",
+      "timestamp": 1752854400000
+    },
+    {
+      "status": "计划",
+      "name": "韶关THP～恋上丹霞",
+      "area": "广东省",
+      "time": "2025/8/16",
+      "group_id": "667169623",
+      "timestamp": 1755273600000
+    },
+    {
+      "status": "计划",
+      "name": "营口THP01～东方星缘港",
+      "area": "辽宁省",
+      "time": "2025/8/17",
+      "group_id": "559354558",
+      "timestamp": 1755360000000
+    },
+    {
+      "status": "计划",
+      "name": "南京东方幻梦游园会",
+      "area": "江苏省",
+      "time": "2025/9/14",
+      "group_id": "1017075177",
+      "timestamp": 1757779200000
+    },
+    {
+      "status": "定档",
+      "name": "长安大学THP",
+      "area": "陕西省",
+      "time": "2025/1/1",
+      "group_id": "893843978",
+      "timestamp": 1735660800000
+    },
+    {
+      "status": "定档",
+      "name": "武汉东方高校庙会",
+      "area": "湖北省",
+      "time": "2025/1/1",
+      "group_id": "821393346",
+      "timestamp": 1735660800000
+    },
+    {
+      "status": "定档",
       "name": "桂林东方高校联合例会",
       "area": "广西壮族自治区",
       "time": "2025/1/1",
@@ -1955,7 +2083,7 @@
     },
     {
       "status": "定档",
-      "name": "湖北东方高校联合会",
+      "name": "湖北武汉东方高校联合会",
       "area": "湖北省",
       "time": "2025/1/1",
       "group_id": "821393346",
@@ -1968,6 +2096,70 @@
       "time": "待定",
       "group_id": "755436974",
       "timestamp": null
+    },
+    {
+      "status": "计划",
+      "name": "济南高校东方例会02~齐鲁历行",
+      "area": "山东省",
+      "time": "2025/2/22",
+      "group_id": "712074670",
+      "timestamp": 1740153600000
+    },
+    {
+      "status": "计划",
+      "name": "上财东方例会01",
+      "area": "上海市",
+      "time": "2025/3/8",
+      "group_id": "950687679",
+      "timestamp": 1741363200000
+    },
+    {
+      "status": "计划",
+      "name": "北京东方百校天则",
+      "area": "北京市",
+      "time": "2025/4/5",
+      "group_id": "875442220",
+      "timestamp": 1743782400000
+    },
+    {
+      "status": "计划",
+      "name": "第一届南中医THP",
+      "area": "江苏省",
+      "time": "2025/4/19",
+      "group_id": "1031757240",
+      "timestamp": 1744992000000
+    },
+    {
+      "status": "计划",
+      "name": "深圳THEP",
+      "area": "广东省",
+      "time": "2025/5/3",
+      "group_id": "922796400",
+      "timestamp": 1746201600000
+    },
+    {
+      "status": "计划",
+      "name": "沈航THP03～东方引大尾",
+      "area": "辽宁省",
+      "time": "2025/5/待定",
+      "group_id": "902963497",
+      "timestamp": null
+    },
+    {
+      "status": "计划",
+      "name": "南京东方高校联合例会",
+      "area": "江苏省",
+      "time": "2025/5/17",
+      "group_id": "479677381",
+      "timestamp": 1747411200000
+    },
+    {
+      "status": "定档",
+      "name": "苏州THO 墨韵平江 夜场LIVE",
+      "area": "江苏省",
+      "time": "2025/1/19",
+      "group_id": "739875187",
+      "timestamp": 1737216000000
     }
   ]
 }

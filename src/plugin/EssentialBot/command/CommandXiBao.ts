@@ -13,7 +13,7 @@ export class CommandXiBao {
     .onExecute(async (session, args) => {
       const text = args.getArgumentsString();
       const img: Buffer = fs.readFileSync(path.resolve(Constant.ASSETS_PATH, `xibao.jpg`));
-      const result = await contextOptional.get()?.puppeteer.render(
+      const result = await contextOptional.get()["puppeteer"]["render"](
         html({
           text,
           fontFamily: '"HarmonyOS Sans SC", "Source Han Sans CN", sans-serif',
@@ -26,7 +26,7 @@ export class CommandXiBao {
           importCSS: 'https://gitee.com/ifrank/harmonyos-fonts/raw/main/css/harmonyos_sans_sc.css'
         })
       );
-      Messages.sendMessageToReply(session, result);
+      await Messages.sendMessageToReply(session, result);
     });
 
   public static get(): CommandProvider {

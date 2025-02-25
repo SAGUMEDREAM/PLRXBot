@@ -57,7 +57,7 @@ export class CommandMCS {
         }
       }
 
-      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
+      await Messages.sendMessageToReply(session, await Messages.markdown(mdList));
 
     });
 

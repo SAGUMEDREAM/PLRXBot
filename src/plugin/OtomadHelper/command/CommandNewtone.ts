@@ -9,6 +9,7 @@ import {OtomadHelper} from "../index";
 
 export class CommandNewtone {
   public root = new CommandProvider()
+    .platform("onebot")
     .onExecute(async (session, args) => {
       await session.sendQueued(h('quote', { id: session.messageId }) + "请发送待修音的文件");
       const file = await session.prompt(30000);
@@ -75,7 +76,7 @@ export class CommandNewtone {
         OtomadHelper.INSTANCE.pluginLogger.error("修音失败:", error);
         await session.sendQueued("修音失败，请稍后重试。");
       }
-    });
+    }).platform("onebot");
 
   public static get(): CommandProvider {
     const instance = new this();

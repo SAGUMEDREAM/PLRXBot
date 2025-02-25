@@ -1,4 +1,4 @@
-import {UserProfile} from "./UserProfile";
+import {UserInfo} from "./UserInfo";
 import {Constant} from "../Constant";
 import path from "path";
 import {Files} from "../utils/Files";
@@ -10,7 +10,7 @@ import {Reloadable} from "../impl/Reloadable";
 
 export class UserManager implements Reloadable {
   private static readonly INSTANCE = new UserManager();
-  private userdata: Map<number | string, UserProfile> = new Map<number | string, UserProfile>();
+  private userdata: Map<number | string, UserInfo> = new Map<number | string, UserInfo>();
 
   private constructor() {
   }
@@ -26,90 +26,88 @@ export class UserManager implements Reloadable {
 
   public load() {
     LOGGER.info("Loading UserManager...");
-    setInterval(() => {
-      this.userdata.clear();
-    }, 3600000 / 2);
+    // setInterval(() => {
+    //   this.userdata.clear();
+    // }, 3600000 / 2);
   }
 
-  public reload() {
-    this.userdata.forEach(userInfo => userInfo.save());
+  public async reload() {
+    for (const userInfo of this.userdata.values()) {
+      await userInfo.save();
+    }
     this.userdata.clear();
   }
 
-  public static createUser(user_id: number): UserProfile;
-  public static createUser(session: Session<User.Field, Channel.Field, Context>): UserProfile;
-  public static createUser(arg: number | Session<User.Field, Channel.Field, Context>): UserProfile {
+  public static async createUser(user_id: number): Promise<UserInfo>;
+  public static async createUser(session: Session<User.Field, Channel.Field, Context>): Promise<UserInfo>;
+  public static async createUser(arg: number | Session<User.Field, Channel.Field, Context>): Promise<UserInfo> {
     if (typeof arg === 'number') {
-      const user: UserProfile = new UserProfile(arg);
+      const user: UserInfo = await UserInfo.getConstructor(arg);
       this.getInstance().userdata.set(arg, user);
       return user;
     } else {
-      const user: UserProfile = new UserProfile(arg);
+      const user: UserInfo = await UserInfo.getConstructor(arg);
       this.getInstance().userdata.set(arg.event.user.id, user);
       return user;
     }
   }
 
-  public static getUserPath(user_id: number | string): string {
-    return path.resolve(this.getUserDataPath(), user_id + ".json");
-  }
-
   public static exists(user_id: number | string): boolean {
-    return this.has(user_id) || Files.exists(path.resolve(this.getUserDataPath(), user_id + ".json"));
+    return this.has(user_id) || Files.exists(path.resolve(this.getDataPath(), user_id + ".json"));
   }
 
   public static has(user_id: number | string): boolean {
-    return this.getInstance().userdata.has(user_id) || Files.exists(path.resolve(this.getUserDataPath(), user_id + ".json"));
+    return this.getInstance().userdata.has(user_id) || Files.exists(path.resolve(this.getDataPath(), user_id + ".json"));
   }
 
-  public static get(session: Session<User.Field, Channel.Field, Context> | number | string): null | UserProfile;
-  public static get(args: number | string | Session<User.Field, Channel.Field, Context>): null | UserProfile {
-    let userProfile = null;
+  public static async get(session: Session<User.Field, Channel.Field, Context> | number | string): Promise<null | UserInfo>;
+  public static async get(args: number | string | Session<User.Field, Channel.Field, Context>): Promise<null | UserInfo> {
+    let user = null;
 
     if (typeof args === "number" || typeof args === "string") {
-      userProfile = this.getInstance().userdata.get(args.toString());
-      if (!userProfile) {
-        userProfile = this.loadPfFile(args);
+      user = this.getInstance().userdata.get(args.toString());
+      if (!user) {
+        user = await this.loadFromFile(args);
       }
     } else {
-      const userId: string = args.event.user.id.toString();
-      userProfile = this.getInstance().userdata.get(userId);
-      if (!userProfile) {
-        userProfile = this.loadPfFile(userId);
+      const userId: string = args.userId.toString();
+      user = this.getInstance().userdata.get(userId);
+      if (!user) {
+        user = await this.loadFromFile(userId);
       }
     }
 
-    return userProfile;
+    return user;
   }
 
-  public static getOrCreate(session: Session<User.Field, Channel.Field, Context> | number | string): null | UserProfile;
-  public static getOrCreate(args: number | string | Session<User.Field, Channel.Field, Context>): UserProfile {
+  public static async getOrCreate(session: Session<User.Field, Channel.Field, Context> | number | string): Promise<null | UserInfo>;
+  public static async getOrCreate(args: number | string | Session<User.Field, Channel.Field, Context>): Promise<UserInfo> {
     if (typeof args === 'number') {
-      return this.get(args) || UserManager.createUser(args);
+      return await this.get(args) || UserManager.createUser(args);
     } else if (typeof args === 'string') {
-      return this.get(args) || UserManager.createUser(Number(args));
+      return await this.get(args) || UserManager.createUser(Number(args));
     } else {
-      return this.get(args) || UserManager.createUser(args);
+      return await this.get(args) || UserManager.createUser(args);
     }
   }
 
-  public static getProfile(session: Session<User.Field, Channel.Field, Context> | number | string): null | BaseUserProfile;
-  public static getProfile(args: number | string | Session<User.Field, Channel.Field, Context>): BaseUserProfile {
+  public static async getProfile(session: Session<User.Field, Channel.Field, Context> | number | string): Promise<null | BaseUserProfile>;
+  public static async getProfile(args: number | string | Session<User.Field, Channel.Field, Context>): Promise<BaseUserProfile> {
     if (typeof args === 'number') {
-      return this.get(args)?.profile || UserManager.createUser(args).profile;
+      return (await this.get(args))?.profile || (await UserManager.createUser(args)).profile;
     } else if (typeof args === 'string') {
-      return this.get(args)?.profile || UserManager.createUser(Number(args)).profile;
+      return (await this.get(args))?.profile || (await UserManager.createUser(Number(args))).profile;
     } else {
-      return this.get(args)?.profile || UserManager.createUser(args).profile;
+      return (await this.get(args))?.profile || (await UserManager.createUser(args)).profile;
     }
   }
 
-  public static loadPfFile(args: number | string) {
-    const userDataPath: string = UserManager.getUserDataPath();
+  public static async loadFromFile(args: number | string) {
+    const userDataPath: string = UserManager.getDataPath();
     const dPath = path.resolve(userDataPath, (args.toString() + ".json"));
     if (Files.exists(dPath)) {
       const user_id = Files.getFileName(dPath);
-      const user: UserProfile = new UserProfile(dPath);
+      const user: UserInfo = await UserInfo.getConstructor(dPath);
       this.getInstance().userdata.set(user_id, user);
       return user;
     } else {
@@ -117,25 +115,25 @@ export class UserManager implements Reloadable {
     }
   }
 
-  public static hasPermissionLevel(session: Session<User.Field, Channel.Field, Context> | number | string, permissionLevel: number): boolean;
-  public static hasPermissionLevel(args: number | string | Session<User.Field, Channel.Field, Context>, permissionLevel: number): boolean {
+  public static async hasPermissionLevel(session: Session<User.Field, Channel.Field, Context> | number | string, permissionLevel: number): Promise<boolean>;
+  public static async hasPermissionLevel(args: number | string | Session<User.Field, Channel.Field, Context>, permissionLevel: number): Promise<boolean> {
     if (typeof args === "number" || typeof args === "string") {
       if (args == botOptional.value.selfId) return true;
-      return this.get(args)?.profile?.permission_level >= permissionLevel;
+      return (await this.get(args))?.profile?.permission_level >= permissionLevel;
     } else {
       if (args.userId == botOptional.value.selfId) return true;
-      return this.get(args.event.user.id.toString())?.profile?.permission_level >= permissionLevel;
+      return (await this.get(args.userId.toString()))?.profile?.permission_level >= permissionLevel;
     }
   }
 
-  public static hasPermission(session: Session<User.Field, Channel.Field, Context> | number | string, permission: string): boolean;
-  public static hasPermission(args: number | string | Session<User.Field, Channel.Field, Context>, permission: string): boolean {
+  public static async hasPermission(session: Session<User.Field, Channel.Field, Context> | number | string, permission: string): Promise<boolean>;
+  public static async hasPermission(args: number | string | Session<User.Field, Channel.Field, Context>, permission: string): Promise<boolean> {
     if (typeof args === "number" || typeof args === "string") {
       if (args == botOptional.value.selfId) return true;
-      return this.get(args)?.profile?.permissions.includes(permission);
+      return (await this.get(args))?.profile?.permissions.includes(permission);
     } else {
       if (args.userId == botOptional.value.selfId) return true;
-      return this.get(args.event.user.id.toString())?.profile?.permissions.includes(permission);
+      return (await this.get(args.userId.toString()))?.profile?.permissions.includes(permission);
     }
   }
 
@@ -144,7 +142,7 @@ export class UserManager implements Reloadable {
 
     if (this.getInstance().userdata.has(userIdStr)) {
       this.getInstance().userdata.delete(userIdStr);
-      const userDataPath = this.getUserPath(userIdStr);
+      const userDataPath = this.getFilePath(userIdStr);
       if (Files.exists(userDataPath)) {
         Files.delete(userDataPath);
       }
@@ -164,12 +162,16 @@ export class UserManager implements Reloadable {
     }
   }
 
-  public getUserDataMap(): Map<number | string, UserProfile> {
+  public getUserDataMap(): Map<number | string, UserInfo> {
     return this.userdata;
   }
 
-  public static getUserDataPath() {
+  public static getDataPath() {
     return Constant.USER_DATA_PATH;
+  }
+
+  public static getFilePath(user_id: number | string): string {
+    return path.resolve(this.getDataPath(), user_id + ".json");
   }
 
   public static init(): void {

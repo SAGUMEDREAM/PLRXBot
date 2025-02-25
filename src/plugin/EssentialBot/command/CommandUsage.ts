@@ -10,7 +10,7 @@ export class CommandUsage {
       // if(session.bot.user.id == session.event.user.id) return;
       let command = args.mergeWithSpace();
       if (args.mergeWithSpace() == null) {
-        CommandProvider.leakArgs(session, args);
+        await CommandProvider.leakArgs(session, args);
         return;
       }
       if (!command.startsWith('/') && !command.startsWith('$')) {
@@ -28,7 +28,7 @@ export class CommandUsage {
         });
       }
 
-      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
+      await Messages.sendMessageToReply(session, await Messages.markdown(mdList));
     });
 
   public static get(): CommandProvider {

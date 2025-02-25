@@ -5,8 +5,8 @@ import {Messages} from "../../../core/network/Messages";
 
 export class CommandSign {
   public readonly root = new CommandProvider()
-    .onExecute((session, args) => {
-      const user = UserManager.get(session);
+    .onExecute(async (session, args) => {
+      const user = await UserManager.get(session);
       if (user) {
         const nowDate = new Date();
         const dataDate = new Date(user.profile.data["sign_system"]["timestamp"]);
@@ -17,7 +17,7 @@ export class CommandSign {
           nowDate.getDate() > dataDate.getDate()
         ) {
           user.profile.data["sign_system"]["timestamp"] = nowDate.getTime();
-          let eco = EcoSystem.getSystem(user);
+          const eco = EcoSystem.getSystem(user);
 
           let randomBalance = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
 
@@ -27,7 +27,7 @@ export class CommandSign {
           let finalBalance = Math.floor(randomBalance * criticalRate);
           eco.ecoObj.balance += finalBalance;
 
-          user.save();
+          await user.save();
 
           let result = `${Messages.at(Number(String(user.profile.user_id)))} `;
           result += `签到成功！🎉\n`;
@@ -36,9 +36,9 @@ export class CommandSign {
           result += `最终奖励：${finalBalance} 円\n`;
           result += `当前余额：${eco.ecoObj.balance} 円。\n`;
 
-          Messages.sendMessageToReply(session, result);
+          await Messages.sendMessageToReply(session, result);
         } else {
-          Messages.sendMessageToReply(session, "你今天已经签到过了哦，别忘了明天再来！");
+          await Messages.sendMessageToReply(session, "你今天已经签到过了哦，别忘了明天再来！");
         }
       }
     });

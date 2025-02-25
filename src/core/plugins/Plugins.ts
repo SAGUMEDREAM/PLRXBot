@@ -1,6 +1,6 @@
 import {PluginInitialization} from "./PluginInitialization";
 import {PluginEvent} from "./PluginEvent";
-import {PluginListener} from "./PluginListener";
+import {ListenerArgs, PluginListener} from "./PluginListener";
 import {PluginLoader} from "../../plugin/PluginLoader";
 import {LOGGER} from "../../index";
 import {CustomHandleEvents} from "./CustomHandleEvents";
@@ -9,6 +9,7 @@ import {Utils} from "../utils/Utils";
 import {Files} from "../utils/Files";
 import {PluginInfo} from "./PluginInfo";
 import {Start} from "../Start";
+import {Constant} from "../Constant";
 
 
 export class Plugins {
@@ -30,7 +31,7 @@ export class Plugins {
     CustomHandleEvents.registerCustomHandles();
     PluginLoader.load();
     let b = this.verify();
-    if(!b) {
+    if (!b) {
       Start.exit();
       throw new Error(`The plugin verification failed, 蓬莱人形Bot failed to start`);
     }
@@ -58,15 +59,15 @@ export class Plugins {
           pluginList.push(initialization.plugin_id);
           pluginDepends[initialization.plugin_id] = parse.depends || [];
 
-          // if (parse.environment == "typescript" && Constant.NODEJS_TYPESCRIPT_ENVIRONMENT == false) {
-          //   LOGGER.warn(
-          //     `${initialization.plugin_id} needs to run in a pure TypeScript environment, but your environment may cause errors in the plugin.`
-          //   );
-          // } else if (parse.environment == "javascript" && Constant.NODEJS_TYPESCRIPT_ENVIRONMENT == true) {
-          //   LOGGER.warn(
-          //     `${initialization.plugin_id} needs to run in a pure JavaScript environment, but your environment may cause errors in the plugin.`
-          //   );
-          // }
+          if (parse.environment == "typescript" && Constant.NODEJS_TYPESCRIPT_ENVIRONMENT == false) {
+            LOGGER.warn(
+              `${initialization.plugin_id} needs to run in a pure TypeScript environment, but your environment may cause errors in the plugin.`
+            );
+          } else if (parse.environment == "javascript" && Constant.NODEJS_TYPESCRIPT_ENVIRONMENT == true) {
+            LOGGER.warn(
+              `${initialization.plugin_id} needs to run in a pure JavaScript environment, but your environment may cause errors in the plugin.`
+            );
+          }
         } catch (error) {
           LOGGER.error(`Unable to read plugin configuration file ${config_path}`);
           LOGGER.error(error);
@@ -96,21 +97,34 @@ export class Plugins {
   }
 
   public static loadPluginConfig(initialization: PluginInitialization) {
-
   }
 
-  public static enable(pluginId: string) {
+  public static async enable(pluginId: string): Promise<void> {
     const index = this.DisabledPluginId.indexOf(pluginId);
     if (index !== -1) {
       this.DisabledPluginId.splice(index, 1);
-      PluginListener.emit(PluginEvent.PLUGIN_ENABLED, null, pluginId);
+      await PluginListener.emit(PluginEvent.PLUGIN_ENABLED, null, ListenerArgs.create().append("pluginId", pluginId));
+      for (const listeners of PluginListener.Events.values()) {
+        for (const pluginEventListener of listeners) {
+          if (pluginId == pluginEventListener.pluginId) {
+            pluginEventListener.enabled = true;
+          }
+        }
+      }
     }
   }
 
-  public static disable(pluginId: string) {
+  public static async disable(pluginId: string): Promise<void> {
     if (this.PluginMap.has(pluginId)) {
       this.DisabledPluginId.push(pluginId);
-      PluginListener.emit(PluginEvent.PLUGIN_DISABLED, null, pluginId);
+      await PluginListener.emit(PluginEvent.PLUGIN_DISABLED, null, ListenerArgs.create().append("pluginId", pluginId));
+      for (const listeners of PluginListener.Events.values()) {
+        for (const pluginEventListener of listeners) {
+          if (pluginId == pluginEventListener.pluginId) {
+            pluginEventListener.enabled = false;
+          }
+        }
+      }
     }
   }
 
@@ -122,7 +136,7 @@ export class Plugins {
     return this.DisabledPluginId.includes(pluginId);
   }
 
-  public static getPlugins() {
+  public static getPlugins(): Map<string, PluginInitialization> {
     return this.PluginMap;
   }
 }

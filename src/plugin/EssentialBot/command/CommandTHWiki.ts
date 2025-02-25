@@ -27,7 +27,7 @@ export class CommandTHWiki {
           timestamp: string
         }[] = query["search"];
 
-        const merging = MessageMerging.create(session);
+        const merging = MessageMerging.createBuilder(session);
         merging.put(`THBWiki搜索关键词: ${keyword}\n关键词匹配总数: ${searchinfo.totalhits}展示1...6搜索结果：\n`);
 
         for (const mergingElement of search) {
@@ -43,9 +43,9 @@ export class CommandTHWiki {
         }
 
         merging.put(`更多结果：https://thwiki.cc/index.php?search=${encodeURIComponent(keyword)}`);
-        Messages.sendMessage(session, merging.get());
+        await Messages.sendMessage(session, await merging.get());
       } catch (err) {
-        Messages.sendMessageToReply(session, "获取失败");
+        await Messages.sendMessageToReply(session, "获取失败");
         EssentialBot.INSTANCE.pluginLogger.error(err);
       }
     });

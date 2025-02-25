@@ -9,7 +9,7 @@ export class CommandWeirdSay {
     .onExecute(async (session, args) => {
       let keyword = args.merge();
       let result = await this.getMessage(keyword);
-      Messages.sendMessage(session, result);
+      await Messages.sendMessage(session, result);
     });
 
 

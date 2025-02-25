@@ -1,3 +1,3 @@
 export interface Reloadable {
-  reload(): void;
+  reload(): Promise<void>;
 }

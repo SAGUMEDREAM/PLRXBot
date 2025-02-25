@@ -24,10 +24,10 @@ export class CommandMidiShow {
           const $ = cheerio.load(response.data);
           const results = $('#search-result > div');
           const resultText = $('.row .col-6 p').text().trim();
-          const merging = MessageMerging.create(session);
+          const builder = MessageMerging.createBuilder(session);
 
           if (results.length === 0 || $(results[0]).attr('data-key') === '') {
-            Messages.sendMessageToReply(session, "没有找到相关MIDI……");
+            await Messages.sendMessageToReply(session, "没有找到相关MIDI……");
           } else {
             results.slice(0, OutputLength).each((index, result) => {
               const title = $(result).find('.text-hover-primary').text().trim();
@@ -38,8 +38,8 @@ export class CommandMidiShow {
 
               const header = `MIDI 搜索结果:`
               const text = `标题: ${title}\n上传用户: ${uploader}\n乐曲时长: ${duration}\n音轨数量: ${trackCount}\n详细链接: https://www.midishow.com/midi/${key}.html`;
-              if(!merging.includes(header)) merging.put(header);
-              merging.put(text);
+              if(!builder.includes(header)) builder.put(header);
+              builder.put(text);
             });
 
             if(results.length > OutputLength) {
@@ -51,18 +51,18 @@ export class CommandMidiShow {
                 max = num;
                 left = num - OutputLength;
               }
-              merging.put(`一共 ${max} 个搜索结果\n剩余 ${left} 个结果未展示...`)
+              builder.put(`一共 ${max} 个搜索结果\n剩余 ${left} 个结果未展示...`)
             }
 
-            const mergedText = merging.get();
-            Messages.sendMessage(session, mergedText);
+            const merged = await builder.get();
+            await Messages.sendMessage(session, merged);
           }
         } else {
-          Messages.sendMessageToReply(session, "网络错误，MIDI搜索失败");
+          await Messages.sendMessageToReply(session, "网络错误，MIDI搜索失败");
         }
       } catch (err) {
         OtomadHelper.INSTANCE.pluginLogger.error(err);
-        Messages.sendMessageToReply(session, "网络错误，MIDI搜索失败");
+        await Messages.sendMessageToReply(session, "网络错误，MIDI搜索失败");
       }
     });
 

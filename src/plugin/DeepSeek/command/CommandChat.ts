@@ -15,41 +15,41 @@ export class CommandChat {
     .onExecute(async (session, args) => {
       const texts = args.getArgumentsString().trim();
       if (!texts) {
-        Messages.sendMessageToReply(session, "请输入内容");
+        await Messages.sendMessageToReply(session, "请输入内容");
         return;
       }
 
-      const userProfile = UserManager.get(session);
+      const userProfile = await UserManager.get(session);
       const eco = EcoSystem.getSystem(userProfile);
       const group_id = session?.event?.channel?.id;
       const user_id = session?.user?.id;
 
       if (!group_id) {
-        CommandProvider.leakPermission(session, args);
+        await CommandProvider.leakPermission(session, args);
         return;
       }
 
       const guildMemberList = await session.bot.getGuildMemberList(group_id);
       if (guildMemberList.data.length <= 90 && !bypass_groups.includes(group_id)) {
-        CommandProvider.leakPermission(session, args);
+        await CommandProvider.leakPermission(session, args);
         return;
       }
 
       if (eco && eco.ecoObj.balance < 100) {
         if (!session.hasPermissionLevel(3)) {
-          Messages.sendMessageToReply(session, `您的余额不足 100 円，无法使用该功能!`);
+          await Messages.sendMessageToReply(session, `您的余额不足 100 円，无法使用该功能!`);
           return;
         }
       }
 
-      const group_data = GroupManager.get(session);
+      const group_data = await GroupManager.get(session);
       let messages = group_data.groupData.data['deep_seek_messages'] ?? [];
 
       if (messages.length === 0 || messages[0].role !== "system") {
         messages.unshift({role: "system", content: getSystemCharacter()});
       }
 
-      const username = session?.event?.member?.nick || session.event.user.name || session.userId;
+      const username = session?.event?.member?.nick || session.username || session.userId;
       messages.push({role: "user", content: `@${username}: ${texts}`});
 
       if (messages.length > MAX_MESSAGE_HISTORY) {
@@ -57,7 +57,7 @@ export class CommandChat {
       }
 
       group_data.groupData.data['deep_seek_messages'] = messages;
-      group_data.save();
+      await group_data.save();
 
       try {
         const completion = await DeepSeek.OPEN_AI.chat.completions.create({
@@ -71,19 +71,19 @@ export class CommandChat {
 
         const content = completion.choices[0].message.content.trim();
 
-        if (!session.hasPermissionLevel(3)) {
+        if (!await session.hasPermissionLevel(3)) {
           eco.ecoObj.balance -= 100;
           eco.save();
         }
 
         messages.push({role: "assistant", content});
-        group_data.save();
-        userProfile.save();
+        await group_data.save();
+        await userProfile.save();
 
-        Messages.sendMessage(session, Messages.at(<any>session.userId) + " " + content);
+        await Messages.sendMessage(session, Messages.at(<any>session.userId) + " " + content);
       } catch (err) {
         DeepSeek.INSTANCE.pluginLogger.error(err);
-        Messages.sendMessage(session, Messages.at(<any>session.userId) + ' 服务器繁忙，请稍后再试');
+        await Messages.sendMessage(session, Messages.at(<any>session.userId) + ' 服务器繁忙，请稍后再试');
       }
     });
 

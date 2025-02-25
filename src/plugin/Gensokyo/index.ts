@@ -1,6 +1,6 @@
 import {PluginInitialization} from "../../core/plugins/PluginInitialization";
 import {Items} from "./item/Items";
-import {UserProfile} from "../../core/user/UserProfile";
+import {UserInfo} from "../../core/user/UserInfo";
 import {PluginEvent} from "../../core/plugins/PluginEvent";
 import {PluginListener} from "../../core/plugins/PluginListener";
 import {CustomDataFactory} from "../../core/data/CustomDataFactory";
@@ -22,20 +22,20 @@ export class Gensokyo extends PluginInitialization {
     Tags.init();
     Recipes.init();
 
-    const instance = CommandManager.getInstance();
+    const instance = this.commandManager;
     instance.registerCommand(["view", "查询库存"], CommandViewInv.get());
     instance.registerCommand(["lucky_draw", "抽奖"], CommandLuckyDraw.get());
 
     CustomDataFactory.createKey("item_stacks",[]);
-    PluginListener.on(PluginEvent.LOADING_PROFILE, this.plugin_id, (session, args) => {
-      let user: UserProfile = args;
-      user["ITEM_STACKS"] = new ItemStacks(user);
-      user["ITEM_STACKS"].load();
+    PluginListener.on(PluginEvent.LOADING_PROFILE, this.plugin_id, async (session, args) => {
+      let user: UserInfo = args.get("user");
+      user.setCustom("ITEM_STACKS", new ItemStacks(user))
+      user.getCustom("ITEM_STACKS")?.load();
     });
-    PluginListener.on(PluginEvent.SAVING_PROFILE, this.plugin_id, (session, args) => {
-      let user: UserProfile = args;
-      let itemStacks: ItemStacks = user["ITEM_STACKS"];
-      if(itemStacks != null && itemStacks.save) itemStacks.save();
+    PluginListener.on(PluginEvent.SAVING_PROFILE, this.plugin_id, async (session, args) => {
+      let user: UserInfo = args.get("user");
+      let itemStacks: ItemStacks = user.getCustom("ITEM_STACKS");
+      if(itemStacks != null) itemStacks.save();
     });
   }
 }

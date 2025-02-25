@@ -5,11 +5,11 @@ import {UserManager} from "../../../core/user/UserManager";
 export class CommandRejectInvite {
   public root = new CommandProvider()
     .addRequiredArgument("会话ID", "session_id")
-    .requires(session => session.hasPermissionLevel(3))
+    .requires(async (session) => await session.hasPermissionLevel(3))
     .onExecute(async (session, args) => {
-      let id = args.get("session_id");
+      const id = args.get("session_id");
+      const user = await UserManager.get(session);
       let result = ``;
-      let userProfile = UserManager.get(session);
 
       try {
         await session.bot.handleGuildRequest(id, false);
@@ -17,7 +17,7 @@ export class CommandRejectInvite {
       } catch (err) {
         result += `拒绝请求时出现了错误`;
       } finally {
-        Messages.sendMessageToReply(session, result);
+        await Messages.sendMessageToReply(session, result);
       }
     });
 

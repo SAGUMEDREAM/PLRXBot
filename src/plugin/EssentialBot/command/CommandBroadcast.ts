@@ -5,15 +5,15 @@ import {contextOptional, LOGGER} from "../../../index";
 export class CommandBroadcast {
   public root = new CommandProvider()
     .addRequiredArgument('消息', 'message')
-    .requires(session => session.hasPermissionLevel(3))
+    .requires(async (session) => await session.hasPermissionLevel(3))
     .onExecute(async (session, args) => {
       const msg = args.getArgumentsString();
       try {
-        Messages.sendMessage(session, `正在广播中...`);
+        await Messages.sendMessage(session, `正在广播中...`);
         await contextOptional.value.broadcast(msg);
-        Messages.sendMessage(session, `广播完成`);
+        await Messages.sendMessage(session, `广播完成`);
       } catch (err) {
-        Messages.sendMessage(session, `广播失败`);
+        await Messages.sendMessage(session, `广播失败`);
         LOGGER.error(err);
       }
     });

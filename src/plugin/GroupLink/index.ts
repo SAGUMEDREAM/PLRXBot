@@ -42,16 +42,16 @@ export class GroupLink extends PluginInitialization {
   }
 
   public load(): void {
-    const commandManager = CommandManager.getInstance();
+    const commandManager = this.commandManager;
     this.config = Config.createConfig("group_link", {
       binds: []
     }, true) as Config<GroupLinkConfig>;
     commandManager.registerCommand(["添加互通"],
       new CommandProvider()
-        .requires(session => session.hasPermissionLevel(4))
+        .requires(async (session) => session.hasPermissionLevel(4))
         .addRequiredArgument("目标群号1", "group_id_1")
         .addRequiredArgument("目标群号2", "group_id_2")
-        .onExecute((session, args) => {
+        .onExecute(async (session, args) => {
           const group_id_1 = args.getString("group_id_1");
           const group_id_2 = args.getString("group_id_2");
           this.getConfigBinds().push(
@@ -61,17 +61,17 @@ export class GroupLink extends PluginInitialization {
             }
           );
           this.config.save();
-          Messages.sendMessageToReply(session, `${group_id_1} 已连接至 ${group_id_2}`);
+          await Messages.sendMessageToReply(session, `${group_id_1} 已连接至 ${group_id_2}`);
         })
     );
     commandManager.registerCommand(["删除互通"],
       new CommandProvider()
-        .requires(session => session.hasPermissionLevel(4))
+        .requires(async (session) => await session.hasPermissionLevel(4))
         .addRequiredArgument("任意目标群号", "group_id")
-        .onExecute((session, args) => {
+        .onExecute(async (session, args) => {
           const bind = this.getBind(args.getString("group_id"));
           if (bind == null) {
-            Messages.sendMessageToReply(session, "不存在该互通");
+            await Messages.sendMessageToReply(session, "不存在该互通");
             return;
           }
           const group_id_1 = bind.group_id_1;
@@ -82,14 +82,14 @@ export class GroupLink extends PluginInitialization {
             binds.splice(index, 1);
           }
           this.config.save();
-          Messages.sendMessageToReply(session, `解绑群号 ${group_id_1} ${group_id_2}`);
+          await Messages.sendMessageToReply(session, `解绑群号 ${group_id_1} ${group_id_2}`);
         })
     );
-    PluginListener.on(PluginEvent.HANDLE_MESSAGE_BEFORE, this.plugin_id, (session: Session<User.Field, Channel.Field, Context>, ...args: any[]) => {
+    PluginListener.on(PluginEvent.HANDLE_MESSAGE_BEFORE, this.plugin_id, async (session: Session<User.Field, Channel.Field, Context>, ...args: any[]) => {
       if (session == null) {
         return;
       }
-      const groupId = session?.event?.channel?.id || session?.event?.guild?.id;
+      const groupId = session.channelId || session.guildId;
       if (session.userId == session.bot.userId) {
         return;
       }
@@ -99,7 +99,7 @@ export class GroupLink extends PluginInitialization {
       if (groupId == null) {
         return;
       }
-      let usrName = `@${session.event.user.nick || session.event.user.name}`;
+      let usrName = `@${session.username}`;
       let content: string = session.content;
       let elements: h[] = session.elements;
       let elements_result = ``;
@@ -120,9 +120,9 @@ export class GroupLink extends PluginInitialization {
       }
       const message = `(${usrName}): ` + content;
       if (groupId == bind.group_id_1) {
-        Messages.sendMessageToGroup(session, Number(bind.group_id_2), message);
+        await Messages.sendMessageToGroup(session, Number(bind.group_id_2), message);
       } else if (groupId == bind.group_id_2) {
-        Messages.sendMessageToGroup(session, Number(bind.group_id_1), message);
+        await Messages.sendMessageToGroup(session, Number(bind.group_id_1), message);
       }
     });
   }

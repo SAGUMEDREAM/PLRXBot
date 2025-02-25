@@ -8,9 +8,9 @@ export class Events {
 
   public static init(): void {
     LOGGER.info("Loading Events...")
-    this.register("next_message", (args: any) => {
+    this.register("next_message",async (args: any) => {
       const session: Session<User.Field, Channel.Field, Context> = args;
-      const user = UserManager.get(session);
+      const user = await UserManager.get(session);
 
     });
   }

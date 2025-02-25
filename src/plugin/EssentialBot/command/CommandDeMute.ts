@@ -7,19 +7,19 @@ export class CommandDeMute {
     .addRequiredArgument("用户", 'user')
     .onExecute(async (session, args) => {
       const target = args.getUserId("user");
-      const group = GroupManager.get(session);
+      const group = await GroupManager.get(session);
       if (group) {
         let hasPerm = session.hasPermissionLevel(3);
-        let isAdmin = await group.isGroupAdmin(session.event.user.id);
-        let botIsAdmin = await group.isGroupAdmin(session.bot.user.id)
+        let isAdmin = await group.isGroupAdmin(session.userId);
+        let botIsAdmin = await group.isGroupAdmin(session.userId)
         if ((hasPerm || isAdmin) && botIsAdmin) {
           await group.mute(target, 0);
-          Messages.sendMessage(session, `用户${Messages.at(target)}被解除禁言`);
+          await Messages.sendMessage(session, `用户${Messages.at(target)}被解除禁言`);
         } else {
           if ((hasPerm || isAdmin)) {
-            Messages.sendMessageToReply(session, "解除禁言失败");
+            await Messages.sendMessageToReply(session, "解除禁言失败");
           } else {
-            Messages.sendMessageToReply(session, "你没有使用该命令的权限");
+            await Messages.sendMessageToReply(session, "你没有使用该命令的权限");
           }
         }
       }

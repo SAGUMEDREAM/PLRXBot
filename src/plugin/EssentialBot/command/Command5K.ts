@@ -17,9 +17,9 @@ export class Command5K {
       try {
         const res = await axios.get(api, { responseType: 'arraybuffer' });
         const buffer: Buffer = Buffer.from(res.data);
-        Messages.sendMessageToReply(session, h.image(buffer, MIMEUtils.getType(buffer)));
+        await Messages.sendMessageToReply(session, h.image(buffer, MIMEUtils.getType(buffer)));
       } catch (error) {
-        Messages.sendMessageToReply(session, "生成图片失败，请稍后再试。");
+        await Messages.sendMessageToReply(session, "生成图片失败，请稍后再试。");
       }
     });
 

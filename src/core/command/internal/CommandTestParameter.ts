@@ -11,7 +11,7 @@ export class CommandTestParameter {
     .addOptionalArgument('option6', 'option6', null)
     .addOptionalArgument('option7', 'option7', null)
     .addOptionalArgument('option8', 'option8', null)
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       let message = '';
       message += `option1: ${args.getParameter('option1')} type: ${typeof args.getParameter('option1')}\n`;
       message += `option2: ${args.getParameter('option2')} type: ${typeof args.getParameter('option2')}\n`;
@@ -23,9 +23,7 @@ export class CommandTestParameter {
       message += `option8: ${args.getParameter('option8')} type: ${typeof args.getParameter('option8')}\n`;
       message += `raw: ${args.getRaw()}\nstring: ${args.getArgumentsString()}`
 
-      Messages.sendMessage(session,
-        message
-      )
+      await Messages.sendMessage(session, message);
     });
 
   public static get(): CommandProvider {

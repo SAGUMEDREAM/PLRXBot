@@ -24,7 +24,7 @@ export class LanguageTypes implements Reloadable {
     this.Type = this.Types.get("zh_cn");
   }
 
-  public reload() {
+  public async reload(): Promise<void> {
     LanguageTypes.Types.clear();
     LanguageTypes.Type = null;
   }

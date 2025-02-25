@@ -25,27 +25,25 @@ export class CommandUploadTHPictureContinuous {
   private url = path.resolve(path.join(Utils.getRoot(), 'assets', 'touhou_pic'));
 
   public root = new CommandProvider()
-    .requires(session =>
-      session.hasPermissionLevel(1) ||
-      session.hasPermission("upload") ||
-      session.hasGroupPermission(1)
+    .requires(async (session) =>
+      await session.hasPermissionLevel(1) ||
+      await session.hasPermission("upload") ||
+      await session.hasGroupPermission(1)
     )
     .onExecute(async (session, args) => {
       let successCount = 0;
       let failCount = 0;
 
-      // 开始循环，直到满足退出条件
       while (true) {
         await session.sendQueued('请发送需要上传的图片，输入 `.cancel` 取消');
 
         const nexts = await session.prompt(30000);
         if (!nexts) {
-          return Messages.sendMessageToReply(session, "输入超时。");
+          return await Messages.sendMessageToReply(session, "输入超时。");
         }
 
-        // 如果用户输入 `.cancel`，退出上传
         if (nexts.trim().toLowerCase() === ".cancel") {
-          return Messages.sendMessageToReply(session, "上传已取消");
+          return await Messages.sendMessageToReply(session, "上传已取消");
         }
 
         const nextElements = h.parse(nexts);
@@ -53,7 +51,7 @@ export class CommandUploadTHPictureContinuous {
 
         // 如果没有图片，退出上传
         if (imageElements.length === 0) {
-          return Messages.sendMessageToReply(session, "未检测到图片，请重新发送，或者输入 `.cancel` 取消上传。");
+          return await Messages.sendMessageToReply(session, "未检测到图片，请重新发送，或者输入 `.cancel` 取消上传。");
         }
 
         // 处理每一张图片
@@ -92,17 +90,17 @@ export class CommandUploadTHPictureContinuous {
         // 每次上传后给出反馈
         let message = `上传完成: 成功 ${successCount} 张`;
         if (failCount > 0) message += `，失败 ${failCount} 张`;
-        Messages.sendMessage(session, message);
+        await Messages.sendMessage(session, message);
 
         // 用户如果继续上传图片，循环继续
         // 如果用户不再发送图片或发的是非图片内容，结束循环
         const continueUpload = await session.prompt(15000);
         if (!continueUpload || continueUpload.trim().toLowerCase() === ".cancel") {
-          Messages.sendMessage(session, '上传会话关闭');
+          await Messages.sendMessage(session, '上传会话关闭');
           break;
         }
       }
-    });
+    }).platform("onebot");
 
   public static get(): CommandProvider {
     const instance = new this();

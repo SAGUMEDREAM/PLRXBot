@@ -23,7 +23,7 @@ export class MaiMaiDX extends PluginInitialization {
 
   public load() {
     this.optional = new MusicOptional();
-    let instance = CommandManager.getInstance();
+    const instance = this.commandManager;
     instance.registerCommand(["b50"], CommandB50.get());
     instance.registerCommand(["alias", "别名"], CommandAlias.get());
     instance.registerCommand(["随机歌曲"], CommandRandomMusic.get());

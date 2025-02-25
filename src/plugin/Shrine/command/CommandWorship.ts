@@ -9,10 +9,10 @@ export class CommandWorship {
   private readonly cost = 140;
   private readonly requiredFaith = 100;
   public root = new CommandProvider()
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       let result = "";
       let atUser = Messages.at(Number(session.userId))
-      let user = UserManager.get(session);
+      let user = await UserManager.get(session);
       let shrine = Shrines.getObject(user);
       let eco = EcoSystem.getSystem(user);
       if (eco.ecoObj.balance >= this.cost) {
@@ -31,7 +31,7 @@ export class CommandWorship {
       } else {
         result += `${atUser} 参拜神社需要 ${this.cost} 円!`;
       }
-      Messages.sendMessageToReply(session, result);
+      await Messages.sendMessageToReply(session, result);
     });
 
   private checkLevelUp(shrine: ShrineObject): boolean {

@@ -6,7 +6,7 @@ import {MessageMerging} from "../../../core/network/MessageMerging";
 export class CommandLilySearch {
   public root = new CommandProvider()
     .addRequiredArgument("关键词", "keyword")
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const title = args.getArgumentsString();
       const url = "https://cn.thdog.moe/api/fs/search";
       const data = {
@@ -29,7 +29,7 @@ export class CommandLilySearch {
         .then(async result => {
           const code = result["code"];
           if (code !== 200) {
-            Messages.sendMessageToReply(session, "请求失败，请稍后再试。");
+            await Messages.sendMessageToReply(session, "请求失败，请稍后再试。");
             return;
           }
 
@@ -37,12 +37,12 @@ export class CommandLilySearch {
           const content = data["content"];
 
           if (content.length === 0) {
-            Messages.sendMessageToReply(session, `没有找到与【${title}】相关的文件。`);
+            await Messages.sendMessageToReply(session, `没有找到与【${title}】相关的文件。`);
             return;
           }
 
-          const merging = MessageMerging.create(session);
-          merging.put(`>>>${title} 的搜索结果如下:\n✨共找到 ${content.length} 个结果。`, true);
+          const builder = MessageMerging.createBuilder(session);
+          builder.put(`>>>${title} 的搜索结果如下:\n✨共找到 ${content.length} 个结果。`, true);
 
           for (const [index, packCtx] of content.entries()) {
             let name = packCtx["name"];
@@ -53,14 +53,14 @@ export class CommandLilySearch {
             resultText += `文件名: ${name}\n`;
             resultText += `所属目录: ${parent}\n`;
             resultText += `下载链接: ${url}\n`;
-            merging.put(resultText);
+            builder.put(resultText);
           }
-          merging.put(`\n数据来源: https://touhou.group/`);
+          builder.put(`\n数据来源: https://touhou.group/`);
 
-          Messages.sendMessage(session, merging.get());
+          await Messages.sendMessage(session, await builder.get());
         })
-        .catch(error => {
-          Messages.sendMessageToReply(session, "❌请求失败，请稍后再试。");
+        .catch(async (error) => {
+          await Messages.sendMessageToReply(session, "❌请求失败，请稍后再试。");
         });
     });
 

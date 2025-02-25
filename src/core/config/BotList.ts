@@ -20,7 +20,7 @@ export class BotList implements Reloadable {
     return this.INSTANCE;
   }
 
-  public reload(): void {
+  public async reload(): Promise<void> {
     this.config = <Config<BotListImpl>>Config.createConfig("bot_list", {list: []});
   }
 

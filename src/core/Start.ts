@@ -41,10 +41,10 @@ export class Start {
       });
       Plugins.getPlugins().clear();
       PluginListener.Events.forEach((listener, event, events) => (listener.length = 0));
-      Constant.USER_MANAGER.reload();
-      Constant.GROUP_MANAGER.reload();
-      BotList.getInstance().reload();
-      DisabledGroupList.getInstance().reload();
+      await Constant.USER_MANAGER.reload();
+      await Constant.GROUP_MANAGER.reload();
+      await BotList.getInstance().reload();
+      await DisabledGroupList.getInstance().reload();
       if(reload) LOGGER.info("Plugin is reloading");
     } catch (err) {
       LOGGER.error(err);

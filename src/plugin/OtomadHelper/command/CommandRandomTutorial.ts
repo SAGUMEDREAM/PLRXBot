@@ -23,10 +23,10 @@ export class CommandRandomTutorial {
         if (selected[0] === '/') {
           selected = 'https://otomad.wiki' + selected;
         }
-        Messages.sendMessage(session, selected);
+        await Messages.sendMessage(session, selected);
       } catch (err) {
         OtomadHelper.INSTANCE.pluginLogger.error(err);
-        Messages.sendMessageToReply(session, "请求失败");
+        await Messages.sendMessageToReply(session, "请求失败");
       }
     });
   public static get(): CommandProvider {

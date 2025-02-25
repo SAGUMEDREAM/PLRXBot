@@ -5,20 +5,32 @@ import {BaseUserProfile} from "./BaseUserProfile";
 import {UserManager} from "./UserManager";
 import {DataFixerBuilder} from "../data/DataFixerBuilder";
 import {PluginEvent} from "../plugins/PluginEvent";
-import {PluginListener} from "../plugins/PluginListener";
+import {ListenerArgs, PluginListener} from "../plugins/PluginListener";
 import {botOptional} from "../../index";
 
-export class UserProfile {
+export class UserInfo {
+  public arg: any;
   public profile: BaseUserProfile;
   public path: string;
-  public static dataFixer = DataFixerBuilder.createBuilder("user_profile")
-    .createDataKey("next_message",{"open": false, "message": null, "state": 0 })
+  public static dataFixer: DataFixerBuilder = DataFixerBuilder.createBuilder("user_profile")
+    .createDataKey("next_message", {"open": false, "message": null, "state": 0})
     .build();
 
-  constructor(path: string);
-  constructor(user_id: number);
-  constructor(session: Session<User.Field, Channel.Field, Context>);
-  constructor(arg: string | number | Session<User.Field, Channel.Field, Context>) {
+  protected constructor(path: string);
+  protected constructor(user_id: number);
+  protected constructor(session: Session<User.Field, Channel.Field, Context>);
+  protected constructor(arg: string | number | Session<User.Field, Channel.Field, Context>) {
+    this.arg = arg;
+  }
+
+  public static async getConstructor(arg: any): Promise<UserInfo> {
+    const user = new UserInfo(arg);
+    await user.init();
+    return user;
+  }
+
+  private async init() {
+    const arg = this.arg;
     if (typeof arg == 'string') {
       this.path = arg;
     } else if (typeof arg == 'number') {
@@ -31,8 +43,8 @@ export class UserProfile {
         permissions: [],
         data: {}
       };
-      this.path = UserManager.getUserPath(arg);
-      this.save();
+      this.path = UserManager.getFilePath(arg);
+      await this.save();
     } else {
       this.profile = {
         username: arg.event.user.name,
@@ -43,25 +55,27 @@ export class UserProfile {
         permissions: [],
         data: {}
       };
-      this.path = UserManager.getUserPath(arg.event.user.id);
-      this.save();
+      this.path = UserManager.getFilePath(arg.event.user.id);
+      await this.save();
     }
-    this.loadProfile();
-    this.dataFixer();
-    this.loadModule();
-    this.save();
+    await this.load();
+    await this.save();
+    return this;
   }
+
   public custom(fields: any, ...arg: any[]) {
     this[fields](...arg);
   }
+
   public setCustom(target: any, fields: any) {
     this[target] = fields;
   }
+
   public getCustom(fields: any) {
-    return this[fields];
+    return this[fields] != null ? this[fields] : null;
   }
 
-  private loadProfile() {
+  private async load(): Promise<void> {
     if (Files.exists(this.path)) {
       this.profile = JSON.parse(Files.read(this.path));
     } else {
@@ -75,45 +89,47 @@ export class UserProfile {
         data: {}
       };
     }
-  }
-  public loadModule(): void {
-    PluginListener.emit(PluginEvent.LOADING_PROFILE, null, this);
+    await PluginListener.emit(PluginEvent.LOADING_PROFILE, null, ListenerArgs.create().append("user", this));
     this.dataFixer();
   }
+
   public dataFixer(): void {
-    if(!UserProfile.dataFixer.isConfirm()) {
+    if (!UserInfo.dataFixer.isConfirm()) {
       throw new Error("No data-fixer has been built");
     }
-    for (const [key, fixer] of UserProfile.dataFixer.all()) {
+    for (const [key, fixer] of UserInfo.dataFixer.all()) {
       fixer.verify(this.profile.data);
     }
   }
 
   public hasPermission(permissions: string): boolean {
-    if(this.profile.user_id == botOptional.value?.selfId) return true;
+    if (this.profile.user_id == botOptional.value?.selfId) return true;
     return this.profile.permissions.includes(permissions);
   }
 
   public hasPermissionLevel(permission_level: number): boolean {
-    if(this.profile.user_id == botOptional.value?.selfId) return true;
+    if (this.profile.user_id == botOptional.value?.selfId) return true;
     return this.profile.permission_level >= permission_level;
   }
 
   public getProfile(): BaseUserProfile {
     return this.profile;
   }
+
   public getProfileData(): any {
     return this.profile.data;
   }
+
   public setDataKey(key: any, value: any): void {
     this.profile.data[key] = value;
   }
+
   public getDataKey(key: any): any {
     return this.profile.data[key];
   }
 
-  public save() {
-    PluginListener.emit(PluginEvent.SAVING_PROFILE, null, this);
+  public async save(): Promise<void> {
+    await PluginListener.emit(PluginEvent.SAVING_PROFILE, null, ListenerArgs.create().append("user", this));
     this.dataFixer();
     Files.write(this.path, JSON.stringify(this.profile, null, 2));
   }

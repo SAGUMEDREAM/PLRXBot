@@ -14,6 +14,7 @@ import {KoishiLoader} from "../core/plugins/base/KoishiLoader";
 import {KoishiCore} from "../core/plugins/base/KoishiCore";
 import {GroupLink} from "./GroupLink";
 import {RemakeLife} from "./RemakeLife";
+import {QPlatform} from "./QPlatform";
 
 export class PluginLoader {
   public static load() {
@@ -33,7 +34,9 @@ export class PluginLoader {
     Plugins.register(new OwlPenguinParrot());
     Plugins.register(new RemakeLife());
     Plugins.register(new DeepSeek());
-    Plugins.register(new GroupLink())
+    Plugins.register(new GroupLink());
+
+    Plugins.register(new QPlatform());
     /*const path: string = Constant.PLUGIN_PATH;
     const files = Files.getDir(path);
     files.forEach((fileDir: string) => {

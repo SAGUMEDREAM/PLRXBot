@@ -6,69 +6,69 @@ export class CommandUser {
   public readonly edit_permission_level = new CommandProvider()
     .addRequiredArgument('用户', 'user')
     .addRequiredArgument('权限等级', 'level')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
       const level = args.get("level");
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         user.profile.permission_level = Number(level);
-        user.save();
-        Messages.sendMessageToReply(session, `已将 ${target} 的用户权限等级设置为 ${level}`)
+        await user.save();
+        await Messages.sendMessageToReply(session, `已将 ${target} 的用户权限等级设置为 ${level}`)
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
   public readonly permission_add = new CommandProvider()
     .addRequiredArgument('用户', 'user')
     .addRequiredArgument('权限名', 'permission_name')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
       const perm_name = args.get("permission_name");
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         if (user.profile.permissions.includes(perm_name)) {
-          Messages.sendMessageToReply(session, `用户 ${target} 已经拥有权限 ${perm_name}`)
+          await Messages.sendMessageToReply(session, `用户 ${target} 已经拥有权限 ${perm_name}`)
         } else {
           user.profile.permissions.push(perm_name);
-          user.save();
-          Messages.sendMessageToReply(session, `已为用户 ${target} 添加权限 ${perm_name}`)
+          await user.save();
+          await Messages.sendMessageToReply(session, `已为用户 ${target} 添加权限 ${perm_name}`)
         }
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
   public readonly permission_remove = new CommandProvider()
     .addRequiredArgument('用户', 'user')
     .addRequiredArgument('权限名', 'permission_name')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
       const perm_name = args.get("permission_name");
       if (target == null || perm_name == null) {
-        CommandProvider.leakArgs(session, args);
+        await CommandProvider.leakArgs(session, args);
         return;
       }
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         const permissionIndex = user.profile.permissions.indexOf(perm_name);
         if (permissionIndex === -1) {
-          Messages.sendMessageToReply(session, `用户 ${target} 不拥有权限 ${perm_name}`);
+          await Messages.sendMessageToReply(session, `用户 ${target} 不拥有权限 ${perm_name}`);
         } else {
           user.profile.permissions.splice(permissionIndex, 1);
-          user.save();
-          Messages.sendMessageToReply(session, `已为用户 ${target} 移除权限 ${perm_name}`);
+          await user.save();
+          await Messages.sendMessageToReply(session, `已为用户 ${target} 移除权限 ${perm_name}`);
         }
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
   public readonly view_profile = new CommandProvider()
     .addRequiredArgument('用户', 'user')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         const data = user.getProfile().data;
         const result0 =
@@ -77,11 +77,11 @@ export class CommandUser {
           + `封禁状态: ${user.getProfile().banned ? "是" : "否"}\n`
           + `权限等级:${user.getProfile().permission_level}\n`
           + "数据: "
-        const result1 = JSON.stringify(data,null,2);
+        const result1 = JSON.stringify(data, null, 2);
         const results = result0 + result1;
-        Messages.sendMessageToReply(session, results);
+        await Messages.sendMessageToReply(session, results);
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
@@ -89,17 +89,17 @@ export class CommandUser {
     .addRequiredArgument('用户', 'user')
     .addRequiredArgument('字段', 'key')
     .addRequiredArgument('值', 'value')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
       const targetDataPath = args.get("key");
       const newValue = args.get("value");
 
       if (target == null || targetDataPath == null || newValue == null) {
-        CommandProvider.leakArgs(session, args);
+        await CommandProvider.leakArgs(session, args);
         return;
       }
 
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         const data = user.getProfile().data;
 
@@ -111,7 +111,7 @@ export class CommandUser {
           if (current[key] !== undefined) {
             current = current[key];
           } else {
-            Messages.sendMessageToReply(session, `路径 "${targetDataPath}" 不存在于用户数据中`);
+            await Messages.sendMessageToReply(session, `路径 "${targetDataPath}" 不存在于用户数据中`);
             return;
           }
         }
@@ -119,13 +119,13 @@ export class CommandUser {
         const finalKey = keys[keys.length - 1];
         if (current[finalKey] !== undefined) {
           current[finalKey] = newValue;
-          user.save();
-          Messages.sendMessageToReply(session, `用户 ${target} 的数据已更新: ${targetDataPath} = ${newValue}`);
+          await user.save();
+          await Messages.sendMessageToReply(session, `用户 ${target} 的数据已更新: ${targetDataPath} = ${newValue}`);
         } else {
-          Messages.sendMessageToReply(session, `路径 "${targetDataPath}" 的最后一个键 "${finalKey}" 不存在`);
+          await Messages.sendMessageToReply(session, `路径 "${targetDataPath}" 的最后一个键 "${finalKey}" 不存在`);
         }
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
@@ -136,37 +136,37 @@ export class CommandUser {
   ;
   public readonly view_permission = new CommandProvider()
     .addRequiredArgument('用户', 'user')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         const permissions = user.profile.permissions;
         if (permissions.length > 0) {
-          Messages.sendMessageToReply(session, `用户 ${target} 的权限: ${permissions.join(', ')}`);
+          await Messages.sendMessageToReply(session, `用户 ${target} 的权限: ${permissions.join(', ')}`);
         } else {
-          Messages.sendMessageToReply(session, `用户 ${target} 没有任何权限`);
+          await Messages.sendMessageToReply(session, `用户 ${target} 没有任何权限`);
         }
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
   public readonly view_permission_level = new CommandProvider()
     .addRequiredArgument('用户', 'user')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
       if (target == null) {
-        CommandProvider.leakArgs(session, args);
+        await CommandProvider.leakArgs(session, args);
         return;
       }
 
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         const permissionLevel = user.profile.permission_level;
-        Messages.sendMessageToReply(session, `用户 ${target} 的权限级别: ${permissionLevel}`);
+        await Messages.sendMessageToReply(session, `用户 ${target} 的权限级别: ${permissionLevel}`);
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
@@ -182,36 +182,36 @@ export class CommandUser {
 
   public readonly ban = new CommandProvider()
     .addRequiredArgument('用户', 'user')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         user.profile.banned = true;
-        user.save()
-        Messages.sendMessageToReply(session, `已封禁用户 ${target}`);
+        await user.save()
+        await Messages.sendMessageToReply(session, `已封禁用户 ${target}`);
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
   public readonly pardon = new CommandProvider()
     .addRequiredArgument('用户', 'user')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.getOrCreate(target);
+      const user = await  UserManager.getOrCreate(target);
       if (user) {
         user.profile.banned = false;
-        user.save()
-        Messages.sendMessageToReply(session, `已解封用户 ${target}`);
+        await user.save()
+        await Messages.sendMessageToReply(session, `已解封用户 ${target}`);
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 
   public readonly root = new CommandProvider()
-    .requires(session => session.hasPermissionLevel(4))
+    .requires(async (session) => await session.hasPermissionLevel(4))
     .onExecute(CommandProvider.leakArgs)
     .addSubCommand("edit", this.edit)
     .addSubCommand("view", this.view)

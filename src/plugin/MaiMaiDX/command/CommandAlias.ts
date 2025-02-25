@@ -25,8 +25,8 @@ export class CommandAlias {
       for (const fStr of f_sel_arr) {
         mdTexts.push(`* ${fStr}\n`)
       }
-      let buffer = await Messages.getMarkdown(mdTexts);
-      Messages.sendMessageToReply(session, buffer);
+      let buffer = await Messages.markdown(mdTexts);
+      await Messages.sendMessageToReply(session, buffer);
     });
 
   public static get(): CommandProvider {

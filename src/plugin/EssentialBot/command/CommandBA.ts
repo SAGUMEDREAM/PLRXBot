@@ -9,7 +9,7 @@ export class CommandBA {
     .onExecute(async (session, args) => {
       const startText = args.get('startText');
       const endText = args.get('endText');
-      Messages.sendMessageToReply(session, h.image(`https://oiapi.net/API/BlueArchive?startText=${encodeURIComponent(startText)}&endText=${encodeURIComponent(endText)}`));
+      await Messages.sendMessageToReply(session, h.image(`https://oiapi.net/API/BlueArchive?startText=${encodeURIComponent(startText)}&endText=${encodeURIComponent(endText)}`));
     });
 
   public static get(): CommandProvider {

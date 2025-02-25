@@ -37,7 +37,7 @@ export class FunnyWords extends PluginInitialization {
   }
 
   public load(): void {
-    const instance = CommandManager.getInstance();
+    const instance = this.commandManager;
     if(this.enabled) instance.registerCommand(["说怪话"], CommandWeirdSay.get());
     this.loadData();
 

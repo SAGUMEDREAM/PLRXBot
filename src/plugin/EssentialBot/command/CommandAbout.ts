@@ -12,7 +12,7 @@ export class CommandAbout {
         `* 开发群：863842932\n`,
         `* 开发/代码：稀神灵梦\n`
       ];
-      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
+      await Messages.sendMessageToReply(session, await Messages.markdown(mdList));
     });
 
   public static get(): CommandProvider {

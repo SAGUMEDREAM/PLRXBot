@@ -39,8 +39,9 @@ export class Items {
     }
     return null;
   }
-  public static getItemStacks(session: Session<User.Field, Channel.Field, Context>): ItemStacks {
-    return UserManager.get(session)["ITEM_STACKS"];
+  public static async getItemStacks(session: Session<User.Field, Channel.Field, Context>): Promise<ItemStacks> {
+    const user = await UserManager.get(session);
+    return user["ITEM_STACKS"];
   }
 
   public static getItem(item_id: string): Item {

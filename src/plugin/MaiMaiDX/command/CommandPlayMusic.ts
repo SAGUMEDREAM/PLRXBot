@@ -13,7 +13,7 @@ export class CommandPlayMusic {
       const instance = MaiMaiDX.INSTANCE;
       let music_data: MusicData = instance.optional.list.getByName(name) || instance.optional.list.getById(name);
       if (music_data == null) {
-        Messages.sendMessageToReply(session, "点歌失败");
+        await Messages.sendMessageToReply(session, "点歌失败");
         return;
       }
 
@@ -24,10 +24,10 @@ export class CommandPlayMusic {
 
         const buffer = Buffer.from(res.data);
         let hh: any = h.audio(buffer, 'audio/mpeg');
-        Messages.sendMessage(session, hh);
+        await Messages.sendMessage(session, hh);
       } catch (error) {
         instance.pluginLogger.error(error);
-        Messages.sendMessageToReply(session, "点歌失败");
+        await Messages.sendMessageToReply(session, "点歌失败");
       }
     });
 

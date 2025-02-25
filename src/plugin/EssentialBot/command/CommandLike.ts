@@ -1,17 +1,20 @@
 import {Messages} from "../../../core/network/Messages";
 import {UserManager} from "../../../core/user/UserManager";
 import {CommandProvider} from "../../../core/command/CommandProvider";
+import {Maths} from "../../../core/utils/Maths";
 
 export class CommandLike {
   public readonly root = new CommandProvider()
     .onExecute(async (session, args) => {
-      const user = UserManager.get(session);
+      const user = await UserManager.get(session);
       if(user) {
         try {
-          await session.bot.internal.sendLike(session.userId, 20);
-          Messages.sendMessageToReply(session, "操作完成");
+          for (let i = 0; i<20 ; ++i) {
+            await session.bot.internal.sendLike(session.userId, 1);
+          }
+          await Messages.sendMessageToReply(session, "操作完成");
         } catch (err) {
-          Messages.sendMessageToReply(session, "操作失败");
+          await Messages.sendMessageToReply(session, "操作失败");
         }
       }
     })

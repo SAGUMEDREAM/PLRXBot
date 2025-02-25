@@ -8,81 +8,205 @@ import axios from "axios";
 import {MIMEUtils} from "../utils/MIMEUtils";
 import {KoishiImages} from "./KoishiImages";
 import {LOGGER} from "../../index";
+import {Constant} from "../Constant";
+import {randomUUID} from "node:crypto";
+import path from "path";
+import {pathToFileURL} from "node:url";
+import tlds from "tlds";
 
+const mime = require('mime-types');
 const MARKDOWN_CACHE = new Map<string, { values: Element, timestamp: number }>();
 const CACHE_TTL = 60 * 60 * 1000;
 const CACHE_SIZE = 80;
+const TWENTY_MINUTES_IN_MS = 20 * 60 * 1000;
 
 export class Messages {
-  public static getNextMessage(
+  public static async getNextMessage(
     session: Session<User.Field, Channel.Field, Context>
-  ): any {
-    const message = UserManager.get(session).getProfileData()["next_message"]["message"];
-    UserManager.get(session).getProfileData()["next_message"]["message"] = null;
+  ): Promise<any> {
+    const user = await UserManager.get(session);
+    const message = user.getProfileData()["next_message"]["message"];
+    user.getProfileData()["next_message"]["message"] = null;
     return message;
   }
 
-  public static async getSenderPost(action: () => (any | void | Promise<any> | Promise<void>) = () => null): Promise<void> {
+  public static async getSendPoster(action: () => (any | void | Promise<any> | Promise<void>) = async () => null): Promise<any> {
     let handler = {
-      times: 0,
-      action: () => null
+      action: async () => null
     }
     handler.action = action;
-    await handler.action()
-    // for (; handler.times <= 2; ++handler.times) {
-    //   try {
-    //     await handler.action();
-    //     break;
-    //   } catch (err) {
-    //   }
-    // }
+    const run = await handler.action();
+    if (Constant.TEMP_FILE_CONFIG != null) {
+      Messages.deleteTempFiles();
+    }
+    return run;
   }
 
-  public static sendMessage(
+  public static async createTempFile(buffer: Buffer): Promise<string | null> {
+    const tempFilePath: string = Constant.TEMP_FILE_PATH;
+    const filename: string = randomUUID().toString();
+
+    const mimeType = mime.lookup(buffer);
+    if (!mimeType) {
+      return null;
+    }
+
+    const fileExtension: string = mime.extension(mimeType);
+    const filePath: string = path.resolve(tempFilePath, `${filename}.${fileExtension}`);
+
+    fs.writeFileSync(filePath, buffer);
+    return filePath;
+  }
+
+  public static deleteTempFiles(): void {
+    const currentTime: number = Date.now();
+    const fileConfig = Constant.TEMP_FILE_CONFIG.getConfig();
+
+    const deleteFile = (filePath: string) => {
+      try {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      } catch (err) {
+        LOGGER.error(`Failed to delete file: ${filePath}`, err);
+      }
+    }
+
+    fileConfig.files = fileConfig.files.filter(file => {
+      const fileAge = currentTime - file.timestamp;
+      if (fileAge > TWENTY_MINUTES_IN_MS) {
+        deleteFile(file.path);
+        return false;
+      }
+      return true;
+    });
+
+    Constant.TEMP_FILE_CONFIG.save();
+  }
+
+  public static async filterMessages(
     session: Session<User.Field, Channel.Field, Context>,
-    message: any): void {
-    this.getSenderPost(() => session.sendQueued(message));
+    content: any
+  ): Promise<string> {
+    const isQQ: boolean = session.platform === "qq" || session.platform === "qqguild";
+    if (isQQ) {
+      const elements: Element[] = h.parse(String(content));
+      const images: Element[] = [];
+      const others: Element[] = [];
+      const mode: string = "unicode"
+      let replacer = "";
+      if (mode == "unicode") replacer = "‎.";    // 点号前插入unicode字符（不可见所以无痕，但复制访问不方便）
+      if (mode == 'space') replacer = " .";        // 点号前插入空格（复制访问相对来说方便些）
+      if (mode == 'fullStop') replacer = "。";     // 点号替换为中文句号（可直接复制访问）
+      const tlds_en = tlds.filter(d => d.charAt(0) >= 'a' && d.charAt(0) <= 'z')
+      const domainRegExp = new RegExp(
+        `([A-Za-z0-9]+\\.)+(${tlds_en.join("|")})(?=[^A-Za-z0-9]|$)`,
+        "g",
+      )
+      const whiteList = [];
+      const sanitizeDomains = (elements: Element[]) => {
+        for (const { attrs, type, children } of elements) {
+          if (type !== "text") {
+            if (children.length) sanitizeDomains(children);
+            continue;
+          }
+          attrs.content = (attrs.content as string).replaceAll(
+            domainRegExp,
+            (domain: string) => {
+              if (whiteList.includes(domain)) return domain;
+              return domain.replaceAll(".", replacer);
+            },
+          );
+        }
+      }
+      sanitizeDomains(elements);
+      for (const element of elements) {
+        if (element.type === "at") {
+          continue;
+        }
+
+        if (element.type === "image" || element.type === "img") {
+          images.push(element);
+          // const src: string = element.attrs.src;
+          // if (src.startsWith("data:image")) {
+          //   const base64Data: string = src.split(',')[1];
+          //   const buffer: Buffer = Buffer.from(base64Data, 'base64');
+          //   const tempFilePath: string = await this.createTempFile(buffer);
+          //
+          //   if (tempFilePath) {
+          //     const imagePath: string = pathToFileURL(path.join(tempFilePath)).href;
+          //     images.push(h.image(imagePath));
+          //   }
+          // } else {
+          //   images.push(element);
+          // }
+        } else {
+          others.push(element);
+        }
+      }
+
+      content = [...images, ...others];
+      return String(content);
+    }
+
+    return content;
   }
 
-  public static sendMessageToGroup(
+
+  public static async sendMessage(
+    session: Session<User.Field, Channel.Field, Context>,
+    message: any): Promise<any> {
+    message = await this.filterMessages(session, message);
+    return await this.getSendPoster(async () => await session.sendQueued(message));
+  }
+
+  public static async sendMessageToGroup(
     session: Session<User.Field, Channel.Field, Context>,
     group_id: number,
-    message: any) {
-    this.getSenderPost(() => session.bot?.sendMessage(String(group_id), message));
+    message: any): Promise<any> {
+    message = await this.filterMessages(session, message);
+    return await this.getSendPoster(async () => await session.bot?.sendMessage(String(group_id), message));
   }
 
-  public static sendMessageToReply(
+  public static async sendMessageToReply(
     session: Session<User.Field, Channel.Field, Context>,
-    message: any) {
+    message: any): Promise<any> {
     const message_id = session.messageId;
-    this.getSenderPost(() => session.sendQueued(h('quote', {id: message_id}) + message));
+    const isInQQ = session.platform == "qq" || session.platform == "qqguild";
+    message = await this.filterMessages(session, message);
+    if (isInQQ) {
+      return await this.getSendPoster(async () => await session.sendQueued(message));
+    } else {
+      return await this.getSendPoster(async () => await session.sendQueued(h('quote', {id: message_id}) + message));
+    }
   }
 
-  public static deleteMessage(
+  public static async deleteMessage(
     session: Session<User.Field, Channel.Field, Context>,
     message_id: string,
     channel_id: string
-  ) {
-    let channelId = session.event.message.quote.channel.id;
-    let repId = session.event.message.quote.id;
-    this.getSenderPost(() => session.bot.deleteMessage(channelId, repId));
+  ): Promise<any> {
+    const channelId = session.event.message.quote.channel.id;
+    const repId = session.event.message.quote.id;
+    return await this.getSendPoster(async () => await session.bot.deleteMessage(channelId, repId));
   }
 
-  public static sendPrivateMessage(
+  public static async sendPrivateMessage(
     session: Session<User.Field, Channel.Field, Context>,
     user_id: number,
     message: any) {
-    this.getSenderPost(() => session.bot?.sendMessage(String(user_id), message));
+    message = await this.filterMessages(session, message);
+    return await this.getSendPoster(async () => await session.bot?.sendMessage(String(user_id), message));
   }
 
-  public static async getMarkdown(data: any[]): Promise<Element> {
-    const cacheKey = data.join("###");
+  public static async markdown(data: any[]): Promise<Element> {
+    const cacheKey: string = data.join("###");
 
     if (MARKDOWN_CACHE.has(cacheKey)) {
       return MARKDOWN_CACHE.get(cacheKey)!.values;
     }
 
-    const api = "http://127.0.0.1:8099/markdown";
+    const api: string = "http://127.0.0.1:8099/markdown";
     const fm: FormData = new FormData();
 
     for (const item of data) {
@@ -95,15 +219,15 @@ export class Messages {
     };
 
     try {
-      const request = await axios.post(api, fm, {
+      const response = await axios.post(api, fm, {
         headers: headers,
         responseType: "arraybuffer",
       });
 
-      const buffer = Buffer.from(request.data);
-      const type = MIMEUtils.getType(buffer);
-      const values = h.image(buffer, type);
-      MARKDOWN_CACHE.set(cacheKey, { values, timestamp: Date.now() });
+      const buffer: Buffer = Buffer.from(response.data);
+      const type: string = MIMEUtils.getType(buffer);
+      const values: Element = h.image(buffer, type);
+      MARKDOWN_CACHE.set(cacheKey, {values, timestamp: Date.now()});
 
       if (MARKDOWN_CACHE.size > CACHE_SIZE) {
         const firstKey = MARKDOWN_CACHE.keys().next().value;
@@ -118,34 +242,35 @@ export class Messages {
 
   public static async sendAudio(
     session: Session<User.Field, Channel.Field, Context>,
-    url: string
+    path: string
   ): Promise<void> {
-    fs.promises.readFile(url).then(buffer => {
-      this.getSenderPost(() => Messages.sendMessage(session, h.audio(buffer, 'audio/mpeg')));
-    }).catch(err => {
-    });
+    const buffer: Buffer = await fs.promises.readFile(path);
+    return await this.getSendPoster(async () => await Messages.sendMessage(session, h.audio(buffer, 'audio/mpeg')));
+  }
 
+  public static async sendAudioBuffer(
+    session: Session<User.Field, Channel.Field, Context>,
+    buffer: Buffer
+  ): Promise<void> {
+    let mimeType: string = MIMEUtils.getType(buffer);
+    if (mimeType == "application/octet-stream") mimeType = 'audio/mpeg';
+    return await this.getSendPoster(async () => await Messages.sendMessage(session, h.audio(buffer, mimeType)));
   }
 
   public static async sendFile(
     session: Session<User.Field, Channel.Field, Context>,
-    url: string
+    path: string
   ): Promise<void> {
-    fs.promises.readFile(url).then(buffer => {
-      this.getSenderPost(() => Messages.sendMessage(session, h.file(buffer, 'application/octet-stream')));
-    }).catch(err => {
-      console.error(err)
-    });
+    const buffer: Buffer = await fs.promises.readFile(path);
+    return await this.getSendPoster(async () => await Messages.sendMessage(session, h.file(buffer, 'application/octet-stream')));
   }
 
   public static async sendVideo(
     session: Session<User.Field, Channel.Field, Context>,
     url: string
   ): Promise<void> {
-    fs.promises.readFile(url).then(buffer => {
-      this.getSenderPost(() => Messages.sendMessage(session, h.video(buffer, 'video/mp4')));
-    }).catch(err => {
-    });
+    const buffer = await fs.promises.readFile(url);
+    return await this.getSendPoster(async () => await Messages.sendMessage(session, h.video(buffer, 'video/mp4')));
   }
 
   public static h(obj: any) {
@@ -213,28 +338,50 @@ export class Messages {
   }
 
   public static parse(session: Session<User.Field, Channel.Field, Context>): MessageData {
-    let event = session.event;
-    let user = event.user;
-    let message = event.message;
-
-    let obj = {
-      bot_id: Number(event.selfId),
-      timestamp: event.timestamp,
+    const event = session.event;
+    const user = event.user;
+    const obj = {
+      bot_id: Number(session.selfId),
+      timestamp: session.timestamp,
       user: {
         user_avatar: user.avatar,
-        user_id: Number(user.id),
-        username: user.name,
+        user_id: isNaN(Number(session.userId)) ? session.userId : Number(session.userId),
+        username: session.username,
         nickname: event.member?.nick || null,
       },
       message: {
-        message_id: Number(message.id),
+        message_id: Number(session.messageId),
         message_type: null,
-        message_group: event.guild?.id || null,
-        text: message.content,
+        message_group: session.guildId || null,
+        text: session.content,
       },
     };
 
     return new MessageData(obj);
+  }
+
+  public static async getBuffer(url: string): Promise<Buffer | null> {
+    try {
+      const response = await axios.get(url, {
+        responseType: 'arraybuffer',
+      });
+      return Buffer.from(response.data);
+    } catch (error) {
+      LOGGER.error(error);
+      return null;
+    }
+  }
+
+  public static async postBuffer(url: string, option?: object): Promise<Buffer | null> {
+    try {
+      const response = await axios.post(url, option, {
+        responseType: 'arraybuffer',
+      });
+      return Buffer.from(response.data);
+    } catch (error) {
+      LOGGER.error(error);
+      return null;
+    }
   }
 
   public static getUserAvatarImage(user_id: string | number) {

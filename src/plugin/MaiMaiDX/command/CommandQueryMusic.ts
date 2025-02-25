@@ -11,7 +11,7 @@ export class CommandQueryMusic {
       const name = args.getArgumentsString();
       const music_data: MusicData = MaiMaiDX.INSTANCE.optional.list.getByName(name);
       if (music_data == null) {
-        Messages.sendMessageToReply(session, "查询失败");
+        await Messages.sendMessageToReply(session, "查询失败");
         return;
       }
 
@@ -47,8 +47,8 @@ export class CommandQueryMusic {
         mdTexts.push(`* 难度: ${levels[index]}\n`);
         mdTexts.push(`* 谱师: ${chart.charter}\n`);
       });
-      let buffer = await Messages.getMarkdown(mdTexts);
-      Messages.sendMessageToReply(session, buffer);
+      let buffer = await Messages.markdown(mdTexts);
+      await Messages.sendMessageToReply(session, buffer);
     });
 
   public static get(): CommandProvider {

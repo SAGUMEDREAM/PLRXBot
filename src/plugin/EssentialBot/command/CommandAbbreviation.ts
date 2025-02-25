@@ -11,15 +11,15 @@ export class CommandAbbreviation {
         const endpoint = `https://lab.magiconch.com/api/nbnhhsh/guess`;
         const response = await axios.post(endpoint, {text: text});
         const data = response.data;
-        if (!data?.length) return Messages.sendMessageToReply(session, "何意味我也不知道啊");
+        if (!data?.length) return await Messages.sendMessageToReply(session, "何意味我也不知道啊");
         let result = data
           .map((entry: object) => `${entry["name"]}：${getResult(entry)}`)
           .join('\n')
           .trim() || null;
         if (result == `${text}：`) result = null;
-        Messages.sendMessageToReply(session, result != null ? result : "何意味我也不知道啊");
+        await Messages.sendMessageToReply(session, result != null ? result : "何意味我也不知道啊");
       } catch (err) {
-        Messages.sendMessageToReply(session, "何意味我也不造啊?")
+        await Messages.sendMessageToReply(session, "何意味我也不造啊?")
       }
     });
 

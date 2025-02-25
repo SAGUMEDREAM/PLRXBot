@@ -9,6 +9,7 @@ import path from "path";
 import {Utils} from "../../../core/utils/Utils";
 import { HttpProxyAgent } from 'http-proxy-agent';
 import {Constant} from "../../../core/Constant";
+import {EssentialBot} from "../index";
 
 export const SHEET_URL: string = 'https://thonly.cc/proxy_google_doc/v4/spreadsheets/';
 export const KEY: string = "AIzaSyAKE37_qaMY4aYDHubmX_yfebfYmnx2HUw";
@@ -21,7 +22,7 @@ const SERVICE_ACCOUNT_PATH = path.join(Constant.DATA_PATH, 'service_account.json
 
 export class CommandGoogleSheetEditor {
   public root = new CommandProvider()
-    .requires(session => session.hasPermissionLevel(2))
+    .requires(async (session) => await session.hasPermissionLevel(2))
     .addSubCommand("新增", this.addNewEventCommand())
     .addSubCommand("修改", this.modifyEventCommand())
     .addSubCommand("删除", this.deleteEventCommand());
@@ -36,7 +37,7 @@ export class CommandGoogleSheetEditor {
       .addRequiredArgument("状态", "state")
       .onExecute(async (session, args) => {
         if (args.size() < 6) {
-          Messages.sendMessageToReply(session, "参数缺失");
+          await Messages.sendMessageToReply(session, "参数缺失");
           return;
         }
 
@@ -47,13 +48,13 @@ export class CommandGoogleSheetEditor {
         if (date !== "暂无") {
           const yearMatch = date.match(/^(\d{4})\//);
           if (!yearMatch || !SheetYears.isValidYear(yearMatch[1])) {
-            Messages.sendMessageToReply(session, "年份输入有误或不存在该年份");
+            await Messages.sendMessageToReply(session, "年份输入有误或不存在该年份");
             return;
           }
         }
 
         if (!SheetRegion.isValidRegion(region)) {
-          Messages.sendMessageToReply(session, "不存在该地区");
+          await Messages.sendMessageToReply(session, "不存在该地区");
           return;
         }
 
@@ -67,15 +68,16 @@ export class CommandGoogleSheetEditor {
           const insertLocation = await this.getInsertLocation(data, date);
 
           if (insertLocation === -1) {
-            Messages.sendMessageToReply(session, "未找到合适的插入位置");
+            await Messages.sendMessageToReply(session, "未找到合适的插入位置");
             return;
           }
 
           await this.insertNewEvent(type,spreadsheetId, insertLocation, insertedObj);
-          Messages.sendMessageToReply(session, "成功插入数据");
+
+          await Messages.sendMessageToReply(session, "成功插入数据");
         } catch (error) {
-          console.error(error);
-          Messages.sendMessageToReply(session, "插入数据失败");
+          EssentialBot.INSTANCE.pluginLogger.error(error)
+          await Messages.sendMessageToReply(session, "插入数据失败");
         }
       });
   }
@@ -153,7 +155,7 @@ export class CommandGoogleSheetEditor {
       .addRequiredArgument("值", "value")
       .onExecute(async (session, args) => {
         if (args.size() < 3) {
-          Messages.sendMessageToReply(session, "参数缺失");
+          await Messages.sendMessageToReply(session, "参数缺失");
           return;
         }
 
@@ -161,9 +163,9 @@ export class CommandGoogleSheetEditor {
         const updated = await this.modifyEvent(name, type, value);
 
         if (!updated) {
-          Messages.sendMessageToReply(session, "修改失败");
+          await Messages.sendMessageToReply(session, "修改失败");
         } else {
-          Messages.sendMessageToReply(session, "修改成功");
+          await Messages.sendMessageToReply(session, "修改成功");
         }
       });
   }
@@ -256,7 +258,7 @@ export class CommandGoogleSheetEditor {
       .addRequiredArgument("活动名称", "name")
       .onExecute(async (session, args) => {
         if (args.size() < 1) {
-          Messages.sendMessageToReply(session, "参数缺失");
+          await Messages.sendMessageToReply(session, "参数缺失");
           return;
         }
 
@@ -264,9 +266,9 @@ export class CommandGoogleSheetEditor {
         const deleted = await this.deleteEvent(name);
 
         if (!deleted) {
-          Messages.sendMessageToReply(session, "删除失败");
+          await Messages.sendMessageToReply(session, "删除失败");
         } else {
-          Messages.sendMessageToReply(session, "删除成功");
+          await Messages.sendMessageToReply(session, "删除成功");
         }
       });
   }

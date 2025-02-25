@@ -9,6 +9,7 @@ import {Files} from "../../../core/utils/Files";
 
 export class CommandTestBPM {
   public root: CommandProvider = new CommandProvider()
+    .platform("onebot")
     .onExecute(async (session, args) => {
       await session.sendQueued(h('quote', { id: session.messageId }) + "请发送待测试的文件");
       const file = await session.prompt(30000);
@@ -54,9 +55,9 @@ export class CommandTestBPM {
 
         const bpm = await this.detectWav(path.resolve(url));
         if (bpm) {
-          Messages.sendMessageToReply(session, `检测到的BPM: ${bpm}`);
+          await Messages.sendMessageToReply(session, `检测到的BPM: ${bpm}`);
         } else {
-          Messages.sendMessageToReply(session, "无法检测到BPM");
+          await Messages.sendMessageToReply(session, "无法检测到BPM");
         }
 
         Files.delete(url);
@@ -64,7 +65,7 @@ export class CommandTestBPM {
         OtomadHelper.INSTANCE.pluginLogger.error(err);
         await session.sendQueued("文件处理失败");
       }
-    });
+    }).platform("onebot");
   private async detectWav(path: string) {
     const api = "http://localhost:8099/bpmtest";
     const formData = new FormData();

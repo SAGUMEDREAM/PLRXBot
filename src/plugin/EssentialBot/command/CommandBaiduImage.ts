@@ -24,7 +24,7 @@ export class CommandBaiduImage {
             type: string,
           }[] = result["data"];
 
-          const messageMerging = MessageMerging.create(session);
+          const builder = MessageMerging.createBuilder(session);
           let output = ``
           data.slice(0, 8).forEach(obj => {
             let bl =
@@ -46,14 +46,14 @@ export class CommandBaiduImage {
 
             if(!bl) output += `${h.image(obj.imageurl).toString()}\n来源:${obj.FromURL}\n`;
           });
-          messageMerging.put(output);
-          Messages.sendMessage(session, messageMerging.get());
+          builder.put(output);
+          await Messages.sendMessage(session, await builder.get());
         } else {
-          Messages.sendMessage(session, `获取失败`);
+          await Messages.sendMessage(session, `获取失败`);
         }
       } catch (err) {
         EssentialBot.INSTANCE.pluginLogger.error(err);
-        Messages.sendMessage(session, `获取失败`);
+        await Messages.sendMessage(session, `获取失败`);
       }
     });
 

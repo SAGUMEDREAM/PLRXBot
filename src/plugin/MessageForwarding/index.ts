@@ -2,7 +2,7 @@ import {PluginInitialization} from "../../core/plugins/PluginInitialization";
 import {Files} from "../../core/utils/Files";
 import {CommandManager} from "../../core/command/CommandManager";
 import {PluginEvent} from "../../core/plugins/PluginEvent";
-import {PluginListener} from "../../core/plugins/PluginListener";
+import {ListenerContext, ListenerArgs, PluginListener} from "../../core/plugins/PluginListener";
 import {Config} from "../../core/data/Config";
 import path from "path";
 import {Utils} from "../../core/utils/Utils";
@@ -43,13 +43,13 @@ export class MessageForwarding extends PluginInitialization {
       this.pluginLogger.warn(`The target group ID is empty and the message forwarding will not take effect!`);
       return;
     }
-    PluginListener.on(PluginEvent.HANDLE_MESSAGE_AFTER, this, async (session, args) => {
+    PluginListener.on(PluginEvent.HANDLE_MESSAGE_AFTER, this, async (session, args,context) => {
       if (CommandManager.getInstance().getProvider().has(session.content.split(' ')[0])) return;
-      this.handle(session, args);
+      await this.handle(session, args, context);
     });
   }
 
-  public handle(session: Session<User.Field, Channel.Field, Context>, args: any) {
+  public async handle(session: Session<User.Field, Channel.Field, Context>, args: ListenerArgs, context: ListenerContext) {
     const content_1 = session.content;
     const hArray = session.elements;
     let length = 0;
@@ -83,8 +83,8 @@ export class MessageForwarding extends PluginInitialization {
       this.config.getConfig().caches.push(filteredContent_1.toString());
       this.config.getConfig().time = Date.now()
       this.config.save();
-      Messages.sendMessageToGroup(session, this.config.getConfig().target_group_id, ctx);
-      PluginListener.cancel();
+      await Messages.sendMessageToGroup(session, this.config.getConfig().target_group_id, ctx);
+      context.cancel();
     }
   }
 

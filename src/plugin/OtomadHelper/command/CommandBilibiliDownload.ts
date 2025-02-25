@@ -48,7 +48,7 @@ export class CommandBilibiliDownload {
         mdList.push(`| 播放量             | 弹幕数量               | 点赞              | 投币              | 收藏                  | 分享               |`);
         mdList.push(`|-----------------|--------------------|-----------------|-----------------|---------------------|------------------|`);
         mdList.push(`| ${stat["view"]} | ${stat["danmaku"]} | ${stat["like"]} | ${stat["coin"]} | ${stat["favorite"]} | ${stat["share"]} |`);
-        let md: any = await Messages.getMarkdown(mdList);
+        let md: any = await Messages.markdown(mdList);
 
         let api2 = `https://api.bilibili.com/x/player/playurl?avid=${aid}&cid=${cid}&qn=1&type=&otype=json&platform=html5&high_quality=1`;
         let response2 = await Networks.getJson(api2);
@@ -63,7 +63,7 @@ export class CommandBilibiliDownload {
         await session.sendQueued(h('quote', {id: session.messageId}) + md);
         if(returnVideo) await session.sendQueued(h('quote', {id: session.messageId}) + result);
       } catch (err) {
-        Messages.sendMessageToReply(session, "解析错误");
+        await Messages.sendMessageToReply(session, "解析错误");
       }
     });
 

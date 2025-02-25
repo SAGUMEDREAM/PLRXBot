@@ -585,7 +585,7 @@ export class CommandHomo {
     .addRequiredArgument("数字", "number")
     .onExecute(async (session, args) => {
       const num = args.getNumber("number");
-      Messages.sendMessageToReply(session, `${num} = ${homo(num)}`);
+      await Messages.sendMessageToReply(session, `${num} = ${homo(num)}`);
     });
 
   public static get(): CommandProvider {

@@ -15,6 +15,16 @@ export class Files {
     }
   }
 
+  public static json(_path: string): object {
+    const str = this.read(_path);
+    if(str == '') return null;
+    try {
+      return JSON.parse(str)
+    } catch (err) {
+      return null;
+    }
+  }
+
   public static read(_path: string): string {
     const dir = path.dirname(_path);
     if (!fs.existsSync(dir)) {

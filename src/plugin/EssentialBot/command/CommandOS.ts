@@ -32,7 +32,7 @@ export class CommandOS {
         mdList.push(`* 磁盘${disk.drive} ${disk.used}/${disk.total} GB\n\n`);
       }
 
-      Messages.sendMessageToReply(session, await Messages.getMarkdown(mdList));
+      await Messages.sendMessageToReply(session, await Messages.markdown(mdList));
     });
 
   public static get(): CommandProvider {

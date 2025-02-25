@@ -10,13 +10,20 @@ import {
   ChatCompletionToolMessageParam,
   ChatCompletionUserMessageParam
 } from "openai/src/resources/chat/completions";
+import {GroupInternal, GuildInternal} from "@satorijs/adapter-qq/lib/internal";
+import {QQ} from "@koishijs/plugin-adapter-qq";
 
 declare module '@satorijs/core' {
   interface Session {
     onebot?: OneBot.Payload & OneBot.Internal
   }
 }
-
+declare module '@satorijs/core' {
+  interface Session {
+    qq?: QQ.Payload & GroupInternal;
+    qqguild?: QQ.Payload & GuildInternal;
+  }
+}
 
 declare module 'cordis' {
   interface Events<C> {
@@ -73,17 +80,17 @@ declare module "@koishijs/core" {
   interface Session<U extends User.Field = never, G extends Channel.Field = never, C extends Context = Context> {
     hasPermission: (permission: any) => boolean;
     hasPermissionLevel: (permissionLevel: any) => boolean;
-    hasGroupPermission: (permission: any) => boolean;
+    hasGroupPermission: (permission: any) => Promise<boolean>;
   }
   interface Session<U extends User.Field = never, G extends Channel.Field = never, C extends Context = Context> extends satori.Session<C> {
     hasPermission: (permission: any) => boolean;
     hasPermissionLevel: (permissionLevel: any) => boolean;
-    hasGroupPermission: (permission: any) => boolean;
+    hasGroupPermission: (permission: any) => Promise<boolean>;
   }
   class Session<C extends Context = Context> {
     hasPermission: (permission: any) => boolean;
     hasPermissionLevel: (permissionLevel: any) => boolean;
-    hasGroupPermission: (permission: any) => boolean;
+    hasGroupPermission: (permission: any) => Promise<boolean>;
   }
   interface Session {
     hasPermission: (permission: any) => boolean;

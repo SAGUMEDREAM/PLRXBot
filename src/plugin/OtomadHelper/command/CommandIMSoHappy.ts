@@ -4,25 +4,27 @@ import {Messages} from "../../../core/network/Messages";
 import {MIMEUtils} from "../../../core/utils/MIMEUtils";
 import axios from "axios";
 import {ImageUtils} from "../image/ImageUtils";
+import {PromptProxy} from "../../../core/utils/PromptProxy";
 
 export class CommandIMSoHappy {
   public root = new CommandProvider()
+    .addOptionalArgument("图片", "pic", null)
     .addOptionalArgument("true|false", "mirror", true)
     .onExecute(async (session, args) => {
-      let direction = args.getBoolean("mirror") || true;
+      let direction = args.getBoolean("mirror") || typeof args.get("pic") == "boolean" || true;
 
       await session.sendQueued(h('quote', { id: session.messageId }) + "请发送待处理的图片。");
 
-      const next = await session.prompt(30000);
+      const next = await PromptProxy.prompt(session, args.get("pic"), 30000);
       if (!next) {
-        return Messages.sendMessageToReply(session, "输入超时。");
+        return await Messages.sendMessageToReply(session, "输入超时。");
       }
 
       const nextElements = h.parse(next);
       const imageElements = nextElements.filter(e => e.type === 'img');
 
       if (imageElements.length === 0) {
-        return Messages.sendMessageToReply(session, "未检测到图片，请重新发送。");
+        return await Messages.sendMessageToReply(session, "未检测到图片，请重新发送。");
       }
 
       const imageList = imageElements.map(img => ({
@@ -36,7 +38,7 @@ export class CommandIMSoHappy {
       }));
 
       const processedBuffer = await ImageUtils.imsoHappy(buffers[0], direction);
-      Messages.sendMessageToReply(session, h.image(processedBuffer, MIMEUtils.getType(processedBuffer)))
+      await Messages.sendMessageToReply(session, h.image(processedBuffer, MIMEUtils.getType(processedBuffer)))
     })
 
   public static get(): CommandProvider {

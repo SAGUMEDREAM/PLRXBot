@@ -60,7 +60,7 @@ export class CommandSoundCreation {
         OtomadHelper.INSTANCE.pluginLogger.error(error);
         await session.sendQueued('合成失败，请稍后重试。');
       }
-    });
+    }).platform("onebot");
 
   protected async getAudio(
     midiSrc: string,

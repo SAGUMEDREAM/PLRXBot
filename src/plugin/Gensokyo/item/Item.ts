@@ -1,12 +1,12 @@
-import {UserProfile} from "../../../core/user/UserProfile";
+import {UserInfo} from "../../../core/user/UserInfo";
 import {Gensokyo} from "../index";
 import {Text} from "../../../core/language/Text";
 
 export class ItemStacks {
-  private readonly user: UserProfile;
+  private readonly user: UserInfo;
   public itemStack: ItemStack[];
 
-  constructor(user: UserProfile) {
+  constructor(user: UserInfo) {
     this.user = user;
   }
 
@@ -82,14 +82,14 @@ export class ItemStacks {
     this.save();
   }
 
-  public load() {
+  public async load() {
     const rawData = this.user.profile.data["item_stacks"];
     if (rawData == null || !Array.isArray(rawData)) {
       this.itemStack = [];
     } else {
       this.itemStack = rawData;
     }
-    this.user.save();
+    await this.user.save();
   }
 
   public save() {
@@ -100,7 +100,7 @@ export class ItemStacks {
     return this.user;
   }
 
-  public static getStacks(user: UserProfile): ItemStacks {
+  public static getStacks(user: UserInfo): ItemStacks {
     return user["ITEM_STACKS"];
   }
 }

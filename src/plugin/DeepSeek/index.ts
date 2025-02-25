@@ -31,7 +31,7 @@ export class DeepSeek extends PluginInitialization {
       apiKey: DeepSeek.API_KEY
     });
 
-    const instance = CommandManager.getInstance();
+    const instance = this.commandManager;
     instance.registerCommand(['/chat','/对话'], CommandChat.get());
     instance.registerCommand(['/clear_memory','/清理对话'], CommandClearMessages.get());
   }

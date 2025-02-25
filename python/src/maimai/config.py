@@ -10,7 +10,7 @@ PROJECT_ROOT = os.getcwd()
 class Config(BaseModel):
     maimaidxtoken: Optional[str] = None
     maimaidxpath: str
-    botName: str = 'Fumo Bot'
+    botName: str = '蓬莱人形 Bot'
 
 
 # 从环境变量初始化配置

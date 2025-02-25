@@ -1,7 +1,7 @@
 import {CommandProvider} from "../CommandProvider";
 import {UserManager} from "../../user/UserManager";
 import path from "path";
-import {UserProfile} from "../../user/UserProfile";
+import {UserInfo} from "../../user/UserInfo";
 import {Messages} from "../../network/Messages";
 import {Constant} from "../../Constant";
 import fs from 'fs/promises';
@@ -9,7 +9,7 @@ import fs from 'fs/promises';
 export class CommandDataFix {
   public readonly fix = new CommandProvider()
     .onExecute(async (session, args) => {
-      const userDataPath = UserManager.getUserDataPath();
+      const userDataPath = UserManager.getDataPath();
 
       try {
         let files = await fs.readdir(userDataPath);
@@ -30,10 +30,10 @@ export class CommandDataFix {
 
         await Promise.all(files.map(async (file) => {
           const user_id = path.basename(file, '.json');
-          const user = new UserProfile(path.join(userDataPath, file));
+          const user = await UserInfo.getConstructor(path.join(userDataPath, file));
 
           user.dataFixer();
-          user.save();
+          await user.save();
         }));
 
         let message = "数据修复成功";
@@ -41,9 +41,9 @@ export class CommandDataFix {
           message += "\n删除的错误文件:\n" + invalidFiles.join("\n");
         }
 
-        Messages.sendMessageToReply(session, message);
+        await Messages.sendMessageToReply(session, message);
       } catch (err) {
-        Messages.sendMessageToReply(session, "数据修复失败: " + err.message);
+        await Messages.sendMessageToReply(session, "数据修复失败: " + err.message);
       }
     });
 
@@ -71,14 +71,14 @@ export class CommandDataFix {
           ? "错误文件:\n" + invalidFiles.join("\n")
           : "没有发现错误文件";
 
-        Messages.sendMessageToReply(session, result);
+        await Messages.sendMessageToReply(session, result);
       } catch (err) {
-        Messages.sendMessageToReply(session, "检查失败: " + err.message);
+        await Messages.sendMessageToReply(session, "检查失败: " + err.message);
       }
     });
 
   public readonly root = new CommandProvider()
-    .requires(session => session.hasPermissionLevel(4))
+    .requires(async (session) => await session.hasPermissionLevel(4))
     .onExecute(CommandProvider.leakArgs)
     .addSubCommand("fix", this.fix)
     .addSubCommand("test", this.test);

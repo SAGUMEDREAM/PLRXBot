@@ -305,11 +305,11 @@ export const TextArr = [
 export class CommandRandomText {
   public root = new CommandProvider()
     .addRequiredArgument("发病对象", "target")
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.get("target")
       const rawText = Maths.getRandomElement(TextArr);
       const text = rawText.replaceAll('{target_name}', target);
-      Messages.sendMessage(session, text);
+      await Messages.sendMessage(session, text);
     });
 
   public static get(): CommandProvider {

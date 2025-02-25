@@ -4,15 +4,15 @@ import {MessageMerging} from "../../../core/network/MessageMerging";
 
 export class CommandOtomadHelper {
   public root = new CommandProvider()
-    .onExecute((session, args) => {
-      let result = MessageMerging.create(session);
+    .onExecute(async (session, args) => {
+      let builder = MessageMerging.createBuilder(session);
       let text = "";
       text += `使用方法:\n`;
       for (const element of this.list) {
         text += `/音MAD助手 ${element}\n`;
       }
-      result.put(text);
-      Messages.sendMessage(session, result.get());
+      builder.put(text);
+      await Messages.sendMessage(session, await builder.get());
     });
   public list: any[] = [];
 
@@ -33,7 +33,6 @@ export class CommandOtomadHelper {
   }
 
   public static getInstance(): CommandOtomadHelper {
-    let instance = new this();
-    return instance;
+    return new this();
   }
 }

@@ -7,6 +7,9 @@ import path from "path";
 import {Utils} from "../../../core/utils/Utils";
 import {Files} from "../../../core/utils/Files";
 import {MessageMerging} from "../../../core/network/MessageMerging";
+import {EssentialBot} from "../index";
+import {MultiPlatformCommandRunner} from "../../../core/command/MultiPlatformCommandRunner";
+import {CommandArgs} from "../../../core/command/CommandArgs";
 
 export class CommandGroupSearch {
   public readonly api = `https://thwiki.cc/api.php?action=parse&page=%E4%B8%9C%E6%96%B9%E7%9B%B8%E5%85%B3QQ%E7%BE%A4%E7%BB%84%E5%88%97%E8%A1%A8&prop=wikitext&format=json`;
@@ -24,10 +27,9 @@ export class CommandGroupSearch {
     .addRequiredArgument("关键词", "keyword")
     .addOptionalArgument("是否重载", "reload", false)
     .onExecute(async (session, args) => {
-      const keyword = args.get("keyword");
       const reload = args.getBoolean("reload");
 
-      Messages.sendMessageToReply(session, `正在搜索中...`);
+      await Messages.sendMessageToReply(session, `正在搜索中...`);
 
       const cachedData = Files.read(this.cache_path);
       const cacheTimestamp = reload ? 0 : (cachedData ? JSON.parse(cachedData).timestamp : 0);
@@ -35,7 +37,7 @@ export class CommandGroupSearch {
 
       if (Date.now() - cacheTimestamp < CommandGroupSearch.CACHE_DURATION) {
         const resultData = JSON.parse(cachedData).data as GroupDataStorage;
-        this.sendGroupResults(session, keyword, resultData);
+        await this.sendGroupResults(session, args, resultData);
       } else {
         await fetch(this.api)
           .then(response => {
@@ -77,18 +79,19 @@ export class CommandGroupSearch {
               data: resultData
             };
             Files.write(this.cache_path, JSON.stringify(cacheData, null, 2));
-            this.sendGroupResults(session, keyword, resultData);
+            this.sendGroupResults(session, args, resultData);
           })
-          .catch(error => {
-            console.error(error);
-            Messages.sendMessageToReply(session, `无法获取数据，请稍后再试`);
+          .catch(async (error) => {
+            EssentialBot.INSTANCE.pluginLogger.error(error);
+            await Messages.sendMessageToReply(session, `无法获取数据，请稍后再试`);
           });
       }
     });
 
-  private sendGroupResults(session, keyword: string, resultData: GroupDataStorage) {
+  private async sendGroupResults(session, args: CommandArgs, resultData: GroupDataStorage) {
+    const keyword = args.get("keyword");
     if (resultData.data.length === 0) {
-      Messages.sendMessageToReply(session, `没有找到符合条件的群组😥`);
+      await Messages.sendMessageToReply(session, `没有找到符合条件的群组😥`);
       return;
     }
 
@@ -100,12 +103,12 @@ export class CommandGroupSearch {
     );
 
     if (filteredGroups.length === 0) {
-      Messages.sendMessageToReply(session, `没有找到符合条件的群组😥`);
+      await Messages.sendMessageToReply(session, `没有找到符合条件的群组😥`);
       return;
     }
 
-    let merging = MessageMerging.create(session);
-    merging.put(`>>>${keyword} 的搜索结果如下:`, true);
+    const builder = MessageMerging.createBuilder(session);
+    builder.put(`>>>${keyword} 的搜索结果如下:`, true);
 
     let resultText = '';
     filteredGroups.forEach((group, index) => {
@@ -115,15 +118,15 @@ export class CommandGroupSearch {
       resultText += `\n`;
 
       if ((index + 1) % 4 === 0 || index === filteredGroups.length - 1) {
-        merging.put(resultText);
+        builder.put(resultText);
         resultText = '';
       }
     });
 
-    merging.put("", true);
-    merging.put("数据来源: https://touhou.group/", true);
+    builder.put("", true);
+    builder.put("数据来源: https://touhou.group/", true);
 
-    Messages.sendMessage(session, merging.get());
+    return await Messages.sendMessage(session, await builder.get());
   }
 
 

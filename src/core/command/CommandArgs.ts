@@ -1,18 +1,24 @@
-import {h} from "koishi";
-import {MultiParameter} from "./MultiParameter";
-import {CommandProvider} from "./CommandProvider";
+import { h } from "koishi";
+import { MultiParameter } from "./MultiParameter";
+import { CommandProvider } from "./CommandProvider";
 
 export class CommandArgs {
   protected raw: string;
   public args: (string | h)[];
   public header: string;
+  public stats = {
+    notUsed: [] as { index: number, accessed: boolean }[],
+  };
   protected multiParameter: MultiParameter;
 
   public constructor(provider: CommandProvider, raw: string, args: (string | h)[]) {
     this.raw = raw;
     this.header = raw.split(' ')[0] || this.raw;
     this.args = args.flatMap((arg: any) => (typeof arg === 'string' ? arg.split(/\s+/) : arg));
-    this.args.forEach((arg, index) => (this[index] = arg));
+    this.args.forEach((arg, index) => {
+      this[index] = arg;
+      this.stats.notUsed.push({ index, accessed: false });
+    });
     this.multiParameter = new MultiParameter(provider, this.args);
     this.multiParameter.getMap().forEach((value, key) => this[key] = value);
   }
@@ -26,23 +32,38 @@ export class CommandArgs {
   }
 
   public get(key: string): any {
-    const value = this.getMultiParameter().get(key);
+    const value = this.getParameter(key);
+    const index = this.args.findIndex(arg => arg === value);
+    if (index !== -1) {
+      const entry = this.stats.notUsed[index];
+      if (entry && !entry.accessed) {
+        entry.accessed = true;
+      }
+    }
+
     if (value == "true") return true;
     if (value == "false") return false;
-    // const numberValue = Number(value);
-    // if (!isNaN(numberValue)) return numberValue;
     return value;
   }
 
   public at(index: number): any {
-    return this.args[index];
+    const value = this.args[index];
+    const entry = this.stats.notUsed[index];
+
+    if (entry && !entry.accessed) {
+      entry.accessed = true;  // 标记为已访问
+    }
+
+    return value;
   }
 
   public getUserId(key: string): string | any {
     const arg: string | h = this.get(key);
 
-    if (arg["type"] === 'at') {
-      return arg["attrs"].id;
+    if(arg != null) {
+      if (arg["type"] == 'at') {
+        return arg["attrs"].id;
+      }
     }
 
     if (typeof arg === 'string') {

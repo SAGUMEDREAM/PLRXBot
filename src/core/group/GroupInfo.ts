@@ -3,15 +3,15 @@ import {Constant} from "../Constant";
 import path from "path";
 import {Files} from "../utils/Files";
 import {DataFixerBuilder} from "../data/DataFixerBuilder";
-import {botOptional, contextOptional, onebotOptional} from "../../index";
+import {botOptional, contextOptional, LOGGER, onebotOptional} from "../../index";
 import {PluginEvent} from "../plugins/PluginEvent";
-import {PluginListener} from "../plugins/PluginListener";
+import {ListenerArgs, PluginListener} from "../plugins/PluginListener";
 
-export class GroupData {
+export class GroupInfo {
   public group_id: number;
   public path: string;
   public groupData: BaseGroupData;
-  public static dataFixer = DataFixerBuilder.createBuilder("group_profile")
+  public static dataFixer: DataFixerBuilder = DataFixerBuilder.createBuilder("group_profile")
     .build()
   public constructor(group_id: string | number) {
     if (typeof group_id === "number") {
@@ -19,13 +19,19 @@ export class GroupData {
     } else {
       this.group_id = Number(group_id);
     }
-    this.init();
   }
-  private init() {
+  public static async getConstructor(arg: any): Promise<GroupInfo> {
+    const group = new GroupInfo(arg);
+    await group.init();
+    return group;
+  }
+
+  private async init() {
     this.path = path.resolve(Constant.GROUP_DATA_PATH, `${this.group_id}.json`);
-    this.load();
+    await this.load();
     this.dataFixer();
-    this.save();
+    await this.save();
+    return this;
   }
   public async kick(userId: any, block: boolean) {
     return botOptional.value?.kickGuildMember(this.group_id.toString(), userId, block);
@@ -42,7 +48,7 @@ export class GroupData {
         (user.roles.includes('admin') || user.roles.includes('owner')) && user.user.id === userId
       );
     } catch (error) {
-      console.error(error);
+      LOGGER.error(error);
       return false;
     }
   }
@@ -67,10 +73,10 @@ export class GroupData {
   }
 
   public dataFixer(): void {
-    if(!GroupData.dataFixer.isConfirm()) {
+    if(!GroupInfo.dataFixer.isConfirm()) {
       throw new Error("No data-fixer has been built");
     }
-    for (const [key, fixer] of GroupData.dataFixer.all()) {
+    for (const [key, fixer] of GroupInfo.dataFixer.all()) {
       fixer.verify(this.groupData.data);
     }
   }
@@ -79,7 +85,7 @@ export class GroupData {
     return this.groupData.permissions.includes(type);
   }
 
-  public load() {
+  public async load() {
     if(Files.exists(this.path)) {
       const fr = Files.read(this.path);
       const data = JSON.parse(fr);
@@ -96,12 +102,12 @@ export class GroupData {
         permissions: [],
         data: {}
       };
-      this.save();
+      await this.save();
     }
-    PluginListener.emit(PluginEvent.LOADING_GROUP_DATA, null, this);
+    await PluginListener.emit(PluginEvent.LOADING_GROUP_DATA, null, ListenerArgs.create().append("user", this));
   }
-  public save() {
-    PluginListener.emit(PluginEvent.SAVING_GROUP_DATA, null, this);
+  public async save() {
+    await PluginListener.emit(PluginEvent.SAVING_GROUP_DATA, null, ListenerArgs.create().append("user", this));
     Files.write(this.path,JSON.stringify(this.groupData, null, 2));
   }
 }

@@ -8,7 +8,7 @@ export class CommandPing {
     .onExecute(async (session, args) => {
       let target = args.get("address");
       let result = `${await Networks.ping(`${target}`)}ms`;
-      Messages.sendMessageToReply(session, result);
+      await Messages.sendMessageToReply(session, result);
     });
 
   public static get(): CommandProvider {

@@ -3,7 +3,7 @@ export class MessageData {
   public timestamp: number;
   public user: {
     user_avatar: string;
-    user_id: number;
+    user_id: number | string;
     username: string;
     nickname: string;
   };
@@ -19,7 +19,7 @@ export class MessageData {
     timestamp: number;
     user: {
       user_avatar: string;
-      user_id: number;
+      user_id: number | string;
       username: string;
       nickname: string;
     };

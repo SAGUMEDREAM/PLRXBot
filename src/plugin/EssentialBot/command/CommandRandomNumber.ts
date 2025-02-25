@@ -10,7 +10,7 @@ export class CommandRandomNumber {
     .addOptionalArgument("最小值", "min", 0)
     .onExecute(async (session, args) => {
       const number = generateRandomNumber(args.getNumber("min"), args.getNumber("max"));
-      Messages.sendMessageToReply(session, number);
+      await Messages.sendMessageToReply(session, number);
     });
 
   public static get(): CommandProvider {

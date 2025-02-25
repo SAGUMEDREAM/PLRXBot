@@ -9,7 +9,7 @@ export class CommandSearchMusic {
     .onExecute(async (session, args) => {
       let name = args.getArgumentsString();
       if (!name) {
-        Messages.sendMessageToReply(session, "缺少参数");
+        await Messages.sendMessageToReply(session, "缺少参数");
         return;
       }
 
@@ -67,11 +67,11 @@ export class CommandSearchMusic {
           }
         }
 
-        return await Messages.getMarkdown(markdownList);
+        return await Messages.markdown(markdownList);
       }
 
       const markdownBuffer = await generateMarkdown(resultId);
-      Messages.sendMessageToReply(session, markdownBuffer);
+      await Messages.sendMessageToReply(session, markdownBuffer);
 
     });
 

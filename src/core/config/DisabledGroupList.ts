@@ -12,12 +12,13 @@
 // }
 
 import {Config} from "../data/Config";
+import {Reloadable} from "../impl/Reloadable";
 
 export interface DisabledGroupListImpl {
   list: string[];
 }
 
-export class DisabledGroupList {
+export class DisabledGroupList implements Reloadable {
   private static INSTANCE: DisabledGroupList;
   private config: Config<DisabledGroupListImpl>;
 
@@ -32,7 +33,7 @@ export class DisabledGroupList {
     return this.INSTANCE;
   }
 
-  public reload(): void {
+  public async reload(): Promise<void> {
     this.config = <Config<DisabledGroupListImpl>>Config.createConfig("disabled_group_list", {list: []});
   }
 

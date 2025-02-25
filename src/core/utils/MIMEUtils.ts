@@ -3,10 +3,7 @@ export class MIMEUtils {
     const arr = new Uint8Array(buffer).subarray(0, 4);
     let header = '';
     for (let i = 0; i < arr.length; i++) {
-      header += arr[i]
-        .toString(16)
-        // .padStart(2, '0')
-      ;
+      header += arr[i].toString(16);
     }
 
     // 判断文件类型
@@ -24,6 +21,7 @@ export class MIMEUtils {
       case '52494646': return 'audio/wav'; // WAV
       case '49443303': return 'audio/mp3'; // MP3 (ID3 header)
       case '664c6143': return 'audio/flac'; // FLAC (Free Lossless Audio Codec)
+      case '4f676753': return 'audio/ogg'; // OGG (Vorbis)
 
       // Video Types
       case '00000020': return 'video/mp4'; // MP4 (Quicktime/ISO base media)

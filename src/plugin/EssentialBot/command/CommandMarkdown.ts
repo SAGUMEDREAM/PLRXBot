@@ -7,7 +7,7 @@ import {h} from "koishi";
 export class CommandMarkdown {
   public root = new CommandProvider()
     .addRequiredArgument("文本", "texts")
-    .requires(session => session.hasPermissionLevel(3))
+    .requires(async (session) => await session.hasPermissionLevel(3))
     .onExecute(async (session, args) => {
       const texts = args.getArgumentsString();
       const api = "http://localhost:8099/markdown";
@@ -22,7 +22,7 @@ export class CommandMarkdown {
       let res = request("POST", api, options);
       let body: any = res.getBody();
       let buffer: Buffer = body;
-      Messages.sendMessageToReply(session, h.image(buffer, 'image/png'))
+      await Messages.sendMessageToReply(session, h.image(buffer, 'image/png'))
     });
 
   public static get(): CommandProvider {

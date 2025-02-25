@@ -53,7 +53,7 @@ export const list = {
 export class CommandCrazyThursday {
   public root = new CommandProvider()
     .onExecute(async (session, args) => {
-      Messages.sendMessage(session, Maths.getRandomElement(list.post));
+      await Messages.sendMessage(session, Maths.getRandomElement(list.post));
     });
 
   public static get(): CommandProvider {

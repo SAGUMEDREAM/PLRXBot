@@ -1,12 +1,13 @@
 import {CommandProvider} from "../../../core/command/CommandProvider";
 import {Messages} from "../../../core/network/Messages";
 import {UserManager} from "../../../core/user/UserManager";
-import {UserProfile} from "../../../core/user/UserProfile";
+import {UserInfo} from "../../../core/user/UserInfo";
 import {Files} from "../../../core/utils/Files";
 import path from "path";
 import {Utils} from "../../../core/utils/Utils";
 import {Maths} from "../../../core/utils/Maths";
 import {h} from "koishi";
+import {PlatformUtils} from "../../../core/utils/PlatformUtils";
 
 export class CommandJRRP {
   public fortuneList: { [key: string]: string[] } = {};
@@ -46,13 +47,15 @@ export class CommandJRRP {
   }
 
   public root = new CommandProvider()
-    .onExecute((session, args) => {
-      let user = UserManager.get(session);
-      let timeMessage = this.getTimeMessage();
-      let result = `${timeMessage}${session.event.user.name}\n`;
-      result += `你今天的运气值是: ${parseInt(String(this.getDailyLuck(user) / 1.4))}\n抽到的御神签是：\n`;
+    .onExecute(async (session, args) => {
+      const user = await UserManager.get(session);
+      const timeMessage = this.getTimeMessage();
+      let result = `${timeMessage}`;
+      if (!PlatformUtils.isQQ(session)) result += session.username;
+      result += `\n`;
+      result += `你今天的运气值是: ${parseInt(String((await this.getDailyLuck(user)) / 1.4))}\n抽到的御神签是：\n`;
       result += `${user.profile.data["jrrp"]["fortune"]}\n`;
-      Messages.sendMessageToReply(session, result);
+      await Messages.sendMessageToReply(session, result);
     });
 
   private getTimeMessage(): string {
@@ -63,22 +66,22 @@ export class CommandJRRP {
     return "晚上好！";
   }
 
-  private getDailyLuck(userProfile: UserProfile): number {
+  private async getDailyLuck(user: UserInfo): Promise<number> {
     const date = new Date();
     const dateString = date.toISOString().split("T")[0];
 
-    if (!userProfile.profile.data["jrrp"] || userProfile.profile.data["jrrp"]["date"] !== dateString) {
+    if (!user.profile.data["jrrp"] || user.profile.data["jrrp"]["date"] !== dateString) {
       const newValue = this.getRandom();
-      userProfile.profile.data["jrrp"] = {
+      user.profile.data["jrrp"] = {
         "date": dateString,
         "fortune": this.getLuckMessage(newValue),
         "value": newValue
       };
-      userProfile.save();
+      await user.save();
       return newValue;
     }
 
-    return userProfile.profile.data["jrrp"]["value"];
+    return user.profile.data["jrrp"]["value"];
   }
 
 

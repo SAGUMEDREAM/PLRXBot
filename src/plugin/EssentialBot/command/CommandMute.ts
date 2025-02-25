@@ -11,26 +11,26 @@ export class CommandMute {
       let target = args.getUserId("user");
       let duration = args.get("time");
       if (target == null || duration == null) {
-        Messages.sendMessageToReply(session, "参数不完整");
+        await Messages.sendMessageToReply(session, "参数不完整");
         return;
       }
 
       duration = this.parseDuration(duration);
 
-      const group = GroupManager.get(session);
+      const group = await GroupManager.get(session);
       if (group) {
         let hasPerm = session.hasPermissionLevel(3);
-        let isAdmin = await group.isGroupAdmin(session.event.user.id);
-        let botIsAdmin = await group.isGroupAdmin(session.bot.user.id)
+        let isAdmin = await group.isGroupAdmin(session.userId);
+        let botIsAdmin = await group.isGroupAdmin(session.selfId)
         if ((hasPerm || isAdmin) && botIsAdmin) {
-          await botOptional.value?.muteGuildMember(session.event.guild.id, target, duration);
+          await botOptional.value?.muteGuildMember(session.guildId, target, duration);
           const formattedDuration = this.formatDuration(duration);
-          Messages.sendMessageToReply(session, `用户${Messages.at(target)}被禁言${formattedDuration}`);
+          await Messages.sendMessageToReply(session, `用户${Messages.at(target)}被禁言${formattedDuration}`);
         } else {
           if ((hasPerm || isAdmin)) {
-            Messages.sendMessageToReply(session, "禁言失败");
+            await Messages.sendMessageToReply(session, "禁言失败");
           } else {
-            Messages.sendMessageToReply(session, "你没有使用该命令的权限");
+            await Messages.sendMessageToReply(session, "你没有使用该命令的权限");
           }
         }
       }

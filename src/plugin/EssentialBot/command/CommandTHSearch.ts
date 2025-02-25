@@ -8,8 +8,9 @@ import {SheetYears} from "../sheets/SheetYears";
 import {MessageMerging} from "../../../core/network/MessageMerging";
 import {EssentialBot} from "../index";
 import {CommandArgs} from "../../../core/command/CommandArgs";
+import fs from "fs";
 
-export interface THSearch_Object {
+export interface THSearchObject {
   status: string,
   name: string,
   area: string,
@@ -33,44 +34,45 @@ export class CommandTHSearch {
     .onExecute(async (session, args) => {
       const title = args.get("keyword");
       const history_mode = args.getBoolean("history_mode");
-      const reload = args.getBoolean("reload");
-      Messages.sendMessageToReply(session, `正在搜索中...`);
+      const reload: boolean = args.getBoolean("reload");
+      await Messages.sendMessageToReply(session, `正在搜索中...`);
 
       try {
         let cacheData = this.getCache();
         const nowTimestamp = Date.now();
-        if(cacheData && reload == true) {
+        if (cacheData && reload == true) {
           cacheData.timestamp = 0;
           cacheData.results = [];
           this.setCache(cacheData);
         }
 
         if (cacheData && nowTimestamp - cacheData.timestamp < CommandTHSearch.CACHE_DURATION) {
-          this.sendSearchResults(session, cacheData.results, title, args);
+          await this.sendSearchResults(session, cacheData.results, title, args);
         } else {
           const results = await this.getAndCacheData();
-          this.sendSearchResults(session, results, title, args);
+          await this.sendSearchResults(session, results, title, args);
         }
       } catch (error) {
-        Messages.sendMessageToReply(session, `搜索过程中出现错误`);
+        await Messages.sendMessageToReply(session, `搜索过程中出现错误`);
         EssentialBot.INSTANCE.pluginLogger.error(error)
       }
     });
 
-  private getCache(): { timestamp: number; results: THSearch_Object[] } | null {
+  private getCache(): { timestamp: number; results: THSearchObject[] } | null {
     try {
       const data = Files.read(this.cache_path);
       return JSON.parse(data);
     } catch {
-      return null;
+      fs.writeFileSync(this.cache_path, JSON.stringify({timestamp: 0, results: []}))
+      return {timestamp: 0, results: []};
     }
   }
 
-  private setCache(data: { timestamp: number; results: THSearch_Object[] }): void {
+  private setCache(data: { timestamp: number; results: THSearchObject[] }): void {
     Files.write(this.cache_path, JSON.stringify(data, null, 2));
   }
 
-  private async getAndCacheData(): Promise<THSearch_Object[]> {
+  private async getAndCacheData(): Promise<THSearchObject[]> {
     const nowTimestamp = Date.now();
     const apiResults = await Promise.all(
       SheetYears.thonly_sheets_api.map((url) =>
@@ -84,7 +86,7 @@ export class CommandTHSearch {
       )
     );
     const allResults = apiResults.flat();
-    this.setCache({ timestamp: nowTimestamp, results: allResults });
+    this.setCache({timestamp: nowTimestamp, results: allResults});
     return allResults;
   }
 
@@ -96,7 +98,7 @@ export class CommandTHSearch {
       const values = range.values || [];
       values.forEach((item: any[]) => {
         try {
-          const event: THSearch_Object = {
+          const event: THSearchObject = {
             status: item[0] || "",
             name: item[1] || "",
             area: item[2] || "",
@@ -104,7 +106,7 @@ export class CommandTHSearch {
             group_id: item[4] || "",
             timestamp: (item[3] === "暂无" || item[3] == null) ? nowTimestamp + 8000 : new Date(item[3]).getTime()
           };
-          if(item != null && item.length >= 5) results.push(event);
+          if (item != null && item.length >= 5) results.push(event);
         } catch (error) {
           EssentialBot.INSTANCE.pluginLogger.error(error)
         }
@@ -114,11 +116,11 @@ export class CommandTHSearch {
     return results;
   }
 
-  private sendSearchResults(session: any, results: THSearch_Object[], title: string, args: CommandArgs): void {
+  private async sendSearchResults(session: any, results: THSearchObject[], title: string, args: CommandArgs): Promise<void> {
     const nowTimestamp = Date.now();
     const isHis = args.getBoolean("history_mode");
 
-    const fResults = results.filter((event: THSearch_Object) => {
+    const fResults = results.filter((event: THSearchObject) => {
       const isMatch =
         String(event.name || "").includes(title) ||
         String(event.group_id || "").includes(title) ||
@@ -131,21 +133,21 @@ export class CommandTHSearch {
     });
 
     if (fResults.length === 0) {
-      Messages.sendMessageToReply(session, `❗没有找到与 ${title} 相关的活动。`);
+      await Messages.sendMessageToReply(session, `❗没有找到与 ${title} 相关的活动。`);
       return;
     }
 
-    let merging = MessageMerging.create(session);
-    merging.put(`>>>${title} 的搜索结果如下:\n✨共找到 ${fResults.length} 个结果。`, true);
-    fResults.forEach((result: THSearch_Object, i: number) => {
+    const builder: MessageMerging = MessageMerging.createBuilder(session);
+    builder.put(`>>>${title} 的搜索结果如下:\n✨共找到 ${fResults.length} 个结果。`, true);
+    fResults.forEach((result: THSearchObject, index: number) => {
       let resultText = ``;
       resultText += `名称: ${result.name}\n`;
       resultText += `地区: ${result.area}\n`;
       resultText += `日期: ${result.time}\n`;
       resultText += `群号: ${result.group_id}\n`;
-      merging.put(resultText, true);
+      builder.put(resultText, true);
     });
-    Messages.sendMessage(session, merging.get());
+    return await Messages.sendMessage(session, await builder.get());
   }
 
   public static get(): CommandProvider {

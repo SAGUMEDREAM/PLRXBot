@@ -9,6 +9,14 @@ export class OptionalValue<T> {
     this.value = value;
   }
 
+  public isNull(): boolean {
+    return this.value == null;
+  }
+
+  public notNull(): boolean {
+    return this.value != null;
+  }
+
   public get() {
     return this.value;
   }

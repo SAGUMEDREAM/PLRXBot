@@ -13,7 +13,7 @@ export class CommandRandomUUID {
   public root = new CommandProvider()
     .onExecute(async (session, args) => {
       const uuid = generateUUID();
-      Messages.sendMessageToReply(session, "UUID: " + uuid);
+      await Messages.sendMessageToReply(session, "UUID: " + uuid);
     });
 
   public static get(): CommandProvider {

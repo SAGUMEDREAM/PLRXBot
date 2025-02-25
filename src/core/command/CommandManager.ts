@@ -4,7 +4,7 @@ import {CommandParser} from "./CommandParser";
 import {CommandArgs} from "./CommandArgs";
 import {Channel, User} from "@koishijs/core";
 import {CommandHelper} from "./CommandHelper";
-import {LOGGER} from "../../index";
+import {contextOptional, LOGGER} from "../../index";
 import {CommandReload} from "./internal/CommandReload";
 import {CommandPlugins} from "./internal/CommandPlugins";
 import {CommandTree} from "./internal/CommandTree";
@@ -12,7 +12,7 @@ import {CommandDataFix} from "./internal/CommandDataFix";
 import {CommandUser} from "./internal/CommandUser";
 import {CommandGroup} from "./internal/CommandGroup";
 import {CommandTestParameter} from "./internal/CommandTestParameter";
-import {TypeOfParameter} from "./MultiParameter";
+import {Parameter, TypeOfParameter} from "./MultiParameter";
 import {Constant} from "../Constant";
 import {CommandOp} from "./internal/CommandOp";
 import {CommandDeop} from "./internal/CommandDeop";
@@ -20,6 +20,7 @@ import {CommandPardon} from "./internal/CommandPardon";
 import {CommandBan} from "./internal/CommandBan";
 import {CommandExecute} from "./internal/CommandExecute";
 import {CommandStop} from "./internal/CommandStop";
+import {PluginInitialization} from "../plugins/PluginInitialization";
 
 export class CommandManager {
   private constructor() {
@@ -166,26 +167,44 @@ export class CommandManager {
     return this.INSTANCE;
   }
 
-  public registerCommand(commands: string | string[], provider: CommandProvider): void {
+  public registerCommand(commands: string | string[], provider: CommandProvider): CommandProvider | CommandProvider[] {
     if (Array.isArray(commands)) {
+      const list = [];
       commands.forEach((command) => {
-        this._registerCommand(command, provider);
+        list.push(this._registerCommand(command, provider));
       });
+      return list[0];
     } else {
-      this._registerCommand(commands, provider);
+      return this._registerCommand(commands, provider);
     }
   }
 
-  private _registerCommand(command: string, provider: CommandProvider): void {
+  public registerCommandWithPlugin(plugin_id: string | PluginInitialization, commands: string | string[], provider: CommandProvider): CommandProvider | CommandProvider[] {
+    const registeredProvider = this.registerCommand(commands, provider);
+    if (plugin_id instanceof PluginInitialization) {
+      plugin_id = plugin_id.plugin_id;
+    }
+    if(registeredProvider instanceof Array) {
+      for (const registeredProviderElement of registeredProvider) {
+        registeredProviderElement.build(plugin_id);
+      }
+    } else {
+      registeredProvider.build(plugin_id);
+    }
+    return registeredProvider;
+  }
+
+  private _registerCommand(command: string, provider: CommandProvider): CommandProvider | CommandProvider[] {
     if (command.startsWith('$')) {
       this.providers.set(command, provider);
       provider.setPrimaryKey(provider);
       provider.setRegistryKey(command);
       CommandHelper.build(command, provider);
-      return;
+      return provider;
     }
 
-    const commandsToRegister = new Set<string>();
+    const commandsToRegister: Set<string> = new Set<string>();
+    const list = [];
 
     if (command.startsWith('/')) {
       commandsToRegister.add(command.slice(1));
@@ -203,21 +222,24 @@ export class CommandManager {
 
     commandsToRegister.forEach((cmd) => {
       if (this.providers.has(cmd)) {
-        // LOGGER.warn(`Command ${cmd} has already been registered, this will overwrite the registration!`);
-        return;
+        LOGGER.error(`Do not repeat the registration command ${cmd}!`);
+        list.push(null);
+        return null;
       }
       this.providers.set(cmd, provider);
       provider.setPrimaryKey(provider);
       provider.setRegistryKey(cmd);
       CommandHelper.build(cmd, provider);
+      list.push(provider);
     });
+    return list;
   }
 
   public static registerSimpleCommand(
     command: string,
-    callback: (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => void, permissionCallback?: ((session: Session<User.Field, Channel.Field, Context>) => boolean)): void {
-    const instance = CommandManager.getInstance();
-    const provider = new CommandProvider().onExecute((session, args) => callback(session, args))
+    callback: (session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => void, permissionCallback?: ((session: Session<User.Field, Channel.Field, Context>) => Promise<boolean>)): void {
+    const instance: CommandManager = CommandManager.getInstance();
+    const provider: CommandProvider = new CommandProvider().onExecute((session, args) => callback(session, args))
     if (permissionCallback && typeof permissionCallback == 'function') {
       provider.requires(permissionCallback);
     }
@@ -225,7 +247,7 @@ export class CommandManager {
     CommandHelper.build(command, provider);
   }
 
-  public getProvider() {
+  public getProvider(): Map<string, CommandProvider> {
     return this.providers;
   }
 
@@ -250,7 +272,7 @@ export class CommandManager {
 
   protected buildSubCommands(subCommands: Map<string, CommandProvider>, parent: string) {
     subCommands.forEach((subProvider: CommandProvider, subCommand: string) => {
-      const fullCommand = `${parent} ${subCommand}`;
+      const fullCommand: string = `${parent} ${subCommand}`;
 
       if (subProvider.getSubCommands().size > 0) {
         this.provider_tree[fullCommand] = {
@@ -265,69 +287,68 @@ export class CommandManager {
     });
   }
 
-  public getCommandTree() {
+  public getCommandTree(): { [p: string]: any } {
     return this.provider_tree;
   }
 
-  public parseCommand(session: Session<User.Field, Channel.Field, Context>): void {
-    const input = session.content;
-    CommandManager.getInstance().executeCommand(session);
+  public async parseCommand(session: Session<User.Field, Channel.Field, Context>): Promise<void> {
+    await CommandManager.getInstance().executeCommand(session);
   }
 
-  private executeCommand(session: Session<User.Field, Channel.Field, Context>) {
+  private async executeCommand(session: Session<User.Field, Channel.Field, Context>): Promise<void> {
     let input: string = session.content;
     if (Constant.CONFIG.getConfig().config.enabled_command_at_parse_feature) {
-      const elements = h.parse(input);
-      const first = elements[0];
+      const elements: h[] = h.parse(input);
+      const first: h = elements[0];
 
       if (first != null && first.type == 'at' && first.attrs.id == session.bot.userId) {
         elements.shift();
 
-        input = elements.map(el => (typeof el === "string" ? el : el.toString())).join("").trim();
+        input = elements.map((el: h) => (typeof el === "string" ? el : el.toString())).join("").trim();
 
         if (!input) return;
       }
     }
-    const parser = new CommandParser(input);
+    const parser: CommandParser = new CommandParser(input);
     const {command, args, raw} = parser.parse();
 
-    const provider = this.providers.get(command);
+    const provider: CommandProvider = this.providers.get(command);
     if (provider) {
-      const commandArgs = new CommandArgs(provider, raw, args);
-      provider.executeWith(session, commandArgs);
+      const commandArgs: CommandArgs = new CommandArgs(provider, raw, args);
+      await provider.executeWith(session, commandArgs);
     }
   }
 
-  public executeCommands(session: Session<User.Field, Channel.Field, Context>, commands: string): void {
-    const strings = commands.split('&&').map(str => str.trim()).filter(str => str.length > 0);
+  public async executeCommands(session: Session<User.Field, Channel.Field, Context>, commands: string): Promise<void> {
+    const strings: string[] = commands.split('&&').map(str => str.trim()).filter(str => str.length > 0);
     for (const string of strings) {
       session.content = string.trim();
-      CommandManager.getInstance().parseCommand(session);
+      await CommandManager.getInstance().parseCommand(session);
     }
   }
 
   public testCommand(command: string, session: Session<User.Field, Channel.Field, Context>): boolean {
-    const cmdParser = command.trim().split(/\s+/);
-    const rootCommand = cmdParser[0];
+    const cmdParser: string[] = command.trim().split(/\s+/);
+    const rootCommand: string = cmdParser[0];
 
-    const provider = this.providers.get(rootCommand);
+    const provider: CommandProvider = this.providers.get(rootCommand);
     if (!provider) {
       return false;
     }
 
-    const args = cmdParser.slice(1);
-    const commandArgs = new CommandArgs(provider, command, args);
+    const args: string[] = cmdParser.slice(1);
+    const commandArgs: CommandArgs = new CommandArgs(provider, command, args);
 
     if (provider.getPermissionCallback() && !provider.getPermissionCallback()(session)) {
       return false;
     }
 
     let currentProvider: CommandProvider | undefined = provider;
-    let remainingArgs = commandArgs;
+    let remainingArgs: CommandArgs = commandArgs;
 
     while (remainingArgs.size() > 0 && currentProvider) {
       const nextCommand = remainingArgs.at(0);
-      const subProvider = currentProvider.getSubCommands().get(nextCommand);
+      const subProvider: CommandProvider = currentProvider.getSubCommands().get(nextCommand);
 
       if (!subProvider) {
         break;
@@ -341,17 +362,16 @@ export class CommandManager {
       return false;
     }
 
-    const requiredParams = currentProvider.getMultiParameterBuilder().getList()
-      .filter((param) => param.type === TypeOfParameter.REQUIRED);
+    const requiredParams: Parameter[] = currentProvider.getMultiParameterBuilder().getList()
+      .filter((param: Parameter): boolean => param.type === TypeOfParameter.REQUIRED);
 
-    const missingParams = requiredParams.filter((param) => {
+    const missingParams: Parameter[] = requiredParams.filter((param: Parameter) => {
       const value = remainingArgs.getMultiParameter().getMap().get(param.id);
       return value === undefined || value === null || value === "";
     });
 
     return missingParams.length === 0;
   }
-
 
   public static init(): void {
   };

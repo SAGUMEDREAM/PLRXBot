@@ -1,5 +1,5 @@
 import {Item, ItemStacks} from "../item/Item";
-import {UserProfile} from "../../../core/user/UserProfile";
+import {UserInfo} from "../../../core/user/UserInfo";
 
 export interface RecipeItem {
   item: Item;
@@ -13,7 +13,7 @@ export class Recipe {
     this.requires = requires;
     this.result = result;
   }
-  public matches(user: UserProfile): boolean {
+  public matches(user: UserInfo): boolean {
     const itemStacks: ItemStacks = user["ITEM_STACKS"];
     if (!itemStacks) {
       return false;

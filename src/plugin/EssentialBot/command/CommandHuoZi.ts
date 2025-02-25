@@ -24,9 +24,9 @@ export class CommandHuoZi {
         });
 
         const buffer = Buffer.from(res.data);
-        Messages.sendMessage(session, h.audio(buffer, "audio/wav"));
+        await Messages.sendMessage(session, h.audio(buffer, "audio/wav"));
       } catch (error) {
-        Messages.sendMessage(session, "请求失败，请稍后再试。");
+        await Messages.sendMessage(session, "请求失败，请稍后再试。");
       }
     });
 

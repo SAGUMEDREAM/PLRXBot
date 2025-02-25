@@ -4,18 +4,18 @@ import {Messages} from "../../network/Messages";
 
 export class CommandBan {
   public readonly root = new CommandProvider()
-    .requires(session => session.hasPermissionLevel(3))
+    .requires(async (session) => await session.hasPermissionLevel(3))
     .addRequiredArgument('用户', 'user')
-    .onExecute((session, args) => {
+    .onExecute(async (session, args) => {
       const target = args.getUserId("user");
 
-      const user = UserManager.getOrCreate(target);
+      const user = await UserManager.getOrCreate(target);
       if (user) {
         user.profile.banned = true;
-        user.save()
-        Messages.sendMessageToReply(session, `已封禁用户 ${target}`);
+        await user.save()
+        await Messages.sendMessageToReply(session, `已封禁用户 ${target}`);
       } else {
-        Messages.sendMessageToReply(session, "用户不存在");
+        await Messages.sendMessageToReply(session, "用户不存在");
       }
     });
 

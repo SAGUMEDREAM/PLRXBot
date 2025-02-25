@@ -9,10 +9,10 @@ export class OwlPenguinParrot extends PluginInitialization {
     super("owl_penguin_parrot");
   }
   public load(): void {
-    PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, (session, args) => {
-      const content = session.content
+    PluginListener.on(PluginEvent.HANDLE_MESSAGE, this, async (session, args) => {
+      const content = session.content;
       if(content.toLowerCase().startsWith('owlpenguinparrot')) {
-        Messages.sendMessage(session, '干什么');
+        await Messages.sendMessage(session, '干什么');
       }
     })
   }

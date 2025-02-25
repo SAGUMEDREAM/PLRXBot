@@ -13,9 +13,9 @@ export class DailyEvent extends PluginInitialization {
   }
 
   public load(): void {
-    contextOptional.value.cron('0 12 * * *', async () => {
-      await this.runDailyTask();
-    });
+    // contextOptional.value.cron('0 12 * * *', async () => {
+    //   await this.runDailyTask();
+    // });
   }
 
   public async runDailyTask(): Promise<void> {
@@ -57,24 +57,24 @@ export class DailyEvent extends PluginInitialization {
 
     if (events30.length === 0 && events7.length === 0) return null;
 
-    let merging = MessageMerging.create(null);
+    let builder = MessageMerging.createBuilder(null);
 
-    merging.put(`每日活动倒计时🔈\n距离以下活动开始还有7天!`);
+    builder.put(`每日活动倒计时🔈\n距离以下活动开始还有7天!`);
     for (let event of events7) {
       let name = event[1];
       let group = event[4];
       let text = `名称: ${name}\n群号: ${group}\n`;
-      merging.put(text);
+      builder.put(text);
     }
 
-    merging.put(`距离以下活动开始还有30天!`);
+    builder.put(`距离以下活动开始还有30天!`);
     for (let event of events30) {
       let name = event[1];
       let group = event[4];
       let text = `名称: ${name}\n群号: ${group}\n`;
-      merging.put(text);
+      builder.put(text);
     }
 
-    return merging.get();
+    return await builder.get();
   }
 }
