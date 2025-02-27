@@ -1,12 +1,16 @@
 {
-  "name": "@kisin-reimu/koishi-plugin-bot",
+  "name": "koishi-plugin-plrxbot",
   "description": "蓬莱人形Bot",
   "version": "0.0.1",
   "main": "./src/index.ts",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
-    "dist"
+    "dist",
+    "src",
+    "plugin",
+    "python",
+    "assets"
   ],
   "license": "MIT",
   "scripts": {},

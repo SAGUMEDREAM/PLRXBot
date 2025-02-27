@@ -6,6 +6,8 @@
 
 警告：不支持普通模式运行，必须使用TypeScript运行!
 
+安装：`npm install @kisin-reimu/koishi-plugin-plrxbot`
+
 运行方式：
 
 - 本体：`npm run dev`

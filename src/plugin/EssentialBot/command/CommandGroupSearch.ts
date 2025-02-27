@@ -31,7 +31,7 @@ export class CommandGroupSearch {
 
       await Messages.sendMessageToReply(session, `正在搜索中...`);
 
-      const cachedData = Files.read(this.cache_path);
+      const cachedData = Files.read(this.cache_path) || `{"data": []}`;
       const cacheTimestamp = reload ? 0 : (cachedData ? JSON.parse(cachedData).timestamp : 0);
 
 
