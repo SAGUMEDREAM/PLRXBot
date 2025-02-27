@@ -9,6 +9,7 @@ import {CommandGroupSearchQQPlatform} from "./command/CommandGroupSearchQQPlatfo
 
 export class QPlatform extends PluginInitialization {
   public static INSTANCE: QPlatform;
+
   constructor() {
     super("q_platform");
     QPlatform.INSTANCE = this;
@@ -50,15 +51,15 @@ export class QPlatform extends PluginInitialization {
         .addSubCommand("kfc", commandManager.getCommand("随机kfc"))
         .platform("qq")
     );
-    commandManager.registerCommand(["搜索"],
-      new CommandProvider()
-        .addSubCommand("活动", CommandTHSearchQQPlatform.get())
-        .addSubCommand("群组", CommandGroupSearchQQPlatform.get())
-        .addSubCommand("thb", commandManager.getCommand("thb搜索"))
-        .addSubCommand("莉莉云", commandManager.getCommand("莉莉云"))
-        .addSubCommand("缩写", commandManager.getCommand("何意味"))
-        .addSubCommand("百度搜图", commandManager.getCommand("百度搜图"))
-        .platform("qq")
-    );
+    //   commandManager.registerCommand(["搜索"],
+    //     new CommandProvider()
+    //       .addSubCommand("活动", CommandTHSearchQQPlatform.get())
+    //       .addSubCommand("群组", CommandGroupSearchQQPlatform.get())
+    //       .addSubCommand("thb", commandManager.getCommand("thb搜索"))
+    //       .addSubCommand("莉莉云", commandManager.getCommand("莉莉云"))
+    //       .addSubCommand("缩写", commandManager.getCommand("何意味"))
+    //       .addSubCommand("百度搜图", commandManager.getCommand("百度搜图"))
+    //       .platform("qq")
+    //   );
   }
 }

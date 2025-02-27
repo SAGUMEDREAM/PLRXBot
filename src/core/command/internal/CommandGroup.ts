@@ -4,13 +4,13 @@ import {GroupManager} from "../../group/GroupManager";
 
 export class CommandGroup {
   public readonly ban = new CommandProvider()
-    .addRequiredArgument('用户', 'user')
+    .addRequiredArgument('群号', 'group_id')
     .onExecute(async (session, args) => {
-      const target = args.getUserId("user");
-      const groupData = GroupManager.get(target);
+      const target = args.getUserId("group_id");
+      const groupData = await GroupManager.get(target);
       if (groupData) {
         groupData.groupData.banned = true;
-        groupData.save();
+        await groupData.save();
         await Messages.sendMessageToReply(session, `已封禁群聊 ${target}`);
       } else {
         await Messages.sendMessageToReply(session, "群聊不存在");
@@ -18,13 +18,13 @@ export class CommandGroup {
     });
 
   public readonly pardon = new CommandProvider()
-    .addRequiredArgument('用户', 'user')
+    .addRequiredArgument('群号', 'group_id')
     .onExecute(async (session, args) => {
-      const target = args.get("user");
-      const groupData = GroupManager.get(target);
+      const target = args.get("group_id");
+      const groupData = await GroupManager.get(target);
       if (groupData) {
         groupData.groupData.banned = false;
-        groupData.save();
+        await groupData.save();
         await Messages.sendMessageToReply(session, `已解封群聊 ${target}`);
       } else {
         await Messages.sendMessageToReply(session, "群聊不存在");

@@ -6,6 +6,8 @@
     "module": "esnext",
     "declaration": true,
     "emitDeclarationOnly": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "composite": true,
     "incremental": true,
     "skipLibCheck": true,
@@ -18,9 +20,6 @@
       "./src/types"
     ],
     "types": [
-      "node",
-      "yml-register/types",
-      "@koishijs/core"
     ]
   },
   "include": [

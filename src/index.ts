@@ -1,4 +1,4 @@
-import {Bot, Context, Logger, Schema, Session} from 'koishi'
+import {Bot, Context, Fragment, Logger, Random, Schema, Session} from 'koishi'
 import {Channel, User} from "@koishijs/core";
 import {Start} from "./core/Start";
 import {UserManager} from "./core/user/UserManager";
@@ -13,7 +13,6 @@ import {BotList} from "./core/config/BotList";
 import {KoishiServer} from "./core/server/KoishiServer";
 import {OptionalValue} from "./core/utils/OptionalValue";
 import {UserInfo} from "./core/user/UserInfo";
-import {Constant} from "./core/Constant";
 
 export const LOGGER: Logger = new Logger("@kisin-reimu/bot");
 export const inject = {
@@ -28,6 +27,13 @@ export interface Config {
   rootPath: string;
 }
 
+interface RequestBody {
+  sid: string
+  to: string
+  message: string
+}
+
+
 export const Config: Schema<Config> = Schema.object({
   rootPath: Schema.string().description("运行时根目录").default(`D:\\example\\bot`),
 });
@@ -36,6 +42,16 @@ export const contextOptional: OptionalValue<Context> = new OptionalValue<Context
 export let botOptional: OptionalValue<Bot> = new OptionalValue<Bot>(null);
 export let onebotOptional: OptionalValue<any> = new OptionalValue<any>(null);
 export let configOptional: OptionalValue<Config> = new OptionalValue<Config>(null)
+
+export const applyHooks = new class {
+  onSession: KoishiContextListener;
+  onFriendRequest: KoishiContextListener;
+  onGuildAdded: KoishiContextListener;
+  onGuildRequest: KoishiContextListener;
+  onGuildMemberRequest: KoishiContextListener;
+  onGuildMemberAdded: KoishiContextListener;
+  onMessage: KoishiContextListener;
+}
 
 export function apply(ctx: Context, config: Config) {
   if (contextOptional.value == null) contextOptional.value = ctx;
@@ -127,7 +143,6 @@ export function apply(ctx: Context, config: Config) {
     if (afterContext.isCancel()) {
       return;
     }
-
   };
 
   ctx.on('internal/session', (session: Session<User.Field, Channel.Field, Context>) => onSession(session));
@@ -138,8 +153,12 @@ export function apply(ctx: Context, config: Config) {
   ctx.on('guild-member-added', async (session: Session<User.Field, Channel.Field, Context>) => onGuildMemberAdded(session));
   ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => onMessage(session));
   // ctx.on('message', async (session: Session<User.Field, Channel.Field, Context>) => console.log("收到"));
-}
 
-//process.on('SIGINT', exitListener);
-//process.on('SIGTERM', exitListener);
-//process.on('exit', exitListener);
+  applyHooks.onSession = onSession;
+  applyHooks.onFriendRequest = onFriendRequest;
+  applyHooks.onGuildAdded = onGuildAdded;
+  applyHooks.onGuildRequest = onGuildRequest;
+  applyHooks.onGuildMemberRequest = onGuildMemberRequest;
+  applyHooks.onGuildMemberAdded = onGuildMemberAdded;
+  applyHooks.onMessage = onMessage;
+}

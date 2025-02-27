@@ -67,7 +67,10 @@ export class MessageFiles {
 
     try {
       const requests = await session["onebot"]._request('get_file', { file_id: fileId });
-      const { status, retcode, data, message } = requests;
+      const status = requests["status"];
+      const retcode = requests["retcode"];
+      const data = requests["data"];
+      const message = requests["message"];
 
       if (status !== "ok" || retcode !== 0) {
         return { state: FileState.ERROR, message: `获取文件失败: ${message || "未知错误"}`, data: null };
