@@ -21,6 +21,7 @@ export class CommandProvider {
   private executeCallback: ((session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => void) | ((session: Session<User.Field, Channel.Field, Context>, args: CommandArgs) => Promise<void>) | null = null;
   private permissionCallback: (session: Session<User.Field, Channel.Field, Context>) => Promise<boolean> | null = null;
   private platformType: string = "common";
+  private isNoUsageHelp: boolean = false;
   // private args: string[] = [];
   private multiParameterBuilder: MultiParameterBuilder;
 
@@ -42,6 +43,15 @@ export class CommandProvider {
   public platform(platformType: string): CommandProvider {
     this.platformType = platformType;
     return this;
+  }
+
+  public noUsageHelp(): CommandProvider {
+    this.isNoUsageHelp = true;
+    return this;
+  }
+
+  public getNoUsageHelp(): boolean {
+    return this.isNoUsageHelp;
   }
 
   /**
@@ -126,6 +136,7 @@ export class CommandProvider {
 
       if (missingParams.length > 0) {
         const missingNames: string = missingParams.map((p: Parameter) => p.name).join("，");
+        if (this.getNoUsageHelp()) return;
         const e = await CommandProvider.generateUsages(args.header);
         await Messages.sendMessageToReply(session, `缺少必填参数：${missingNames}\n用法：\n${e}`);
         return;
@@ -159,6 +170,7 @@ export class CommandProvider {
 
       if (missingParams.length > 0) {
         const missingNames = missingParams.map(p => p.name).join("，");
+        if (this.getNoUsageHelp()) return;
         const e = await CommandProvider.generateUsages(args.header)
         await Messages.sendMessageToReply(session, `缺少必填参数：${missingNames}\n用法：\n${e}`);
         return;

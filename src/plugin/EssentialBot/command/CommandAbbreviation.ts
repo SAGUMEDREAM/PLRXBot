@@ -5,6 +5,7 @@ import axios from "axios";
 export class CommandAbbreviation {
   public root = new CommandProvider()
     .addRequiredArgument('缩写', 'text')
+    .noUsageHelp()
     .onExecute(async (session, args) => {
       const text = args.get("text");
       try {

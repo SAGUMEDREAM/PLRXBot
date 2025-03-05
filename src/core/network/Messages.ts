@@ -13,6 +13,8 @@ import {randomUUID} from "node:crypto";
 import path from "path";
 import {pathToFileURL} from "node:url";
 import tlds from "tlds";
+import {PlatformUtils} from "../utils/PlatformUtils";
+import {Filters} from "../utils/Filters";
 
 const mime = require('mime-types');
 const MARKDOWN_CACHE = new Map<string, { values: Element, timestamp: number }>();
@@ -89,6 +91,10 @@ export class Messages {
     content: any
   ): Promise<string> {
     const isQQ: boolean = session.platform === "qq" || session.platform === "qqguild";
+    if(!Filters.isLegal(content)) {
+      content = String(Filters.replace(content));
+    }
+    if (!isQQ) return content;
     if (isQQ) {
       const elements: Element[] = h.parse(String(content));
       const images: Element[] = [];
@@ -105,7 +111,7 @@ export class Messages {
       )
       const whiteList = [];
       const sanitizeDomains = (elements: Element[]) => {
-        for (const { attrs, type, children } of elements) {
+        for (const {attrs, type, children} of elements) {
           if (type !== "text") {
             if (children.length) sanitizeDomains(children);
             continue;
