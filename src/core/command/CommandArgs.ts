@@ -1,6 +1,6 @@
-import { h } from "koishi";
-import { MultiParameter } from "./MultiParameter";
-import { CommandProvider } from "./CommandProvider";
+import {h} from "koishi";
+import {DataTypes, MultiParameter} from "./MultiParameter";
+import {CommandProvider} from "./CommandProvider";
 
 export class CommandArgs {
   protected raw: string;
@@ -17,7 +17,7 @@ export class CommandArgs {
     this.args = args.flatMap((arg: any) => (typeof arg === 'string' ? arg.split(/\s+/) : arg));
     this.args.forEach((arg, index) => {
       this[index] = arg;
-      this.stats.notUsed.push({ index, accessed: false });
+      this.stats.notUsed.push({index, accessed: false});
     });
     this.multiParameter = new MultiParameter(provider, this.args);
     this.multiParameter.getMap().forEach((value, key) => this[key] = value);
@@ -46,12 +46,44 @@ export class CommandArgs {
     return value;
   }
 
+  public getValue(key: string): any {
+    let value = this.getParameter(key);
+    let type: DataTypes = this.getMultiParameter().getType(key);
+
+    const ValueToType = (type: DataTypes): any => {
+      switch (type) {
+        case DataTypes.ANY:
+          return value;
+        case DataTypes.STRING:
+          return String(value);
+        case DataTypes.NUMBER:
+          return Number(value);
+        case DataTypes.INTEGER:
+          return parseInt(String(Number(value)), 10);
+        case DataTypes.FLOAT:
+          return parseFloat(String(Number(value)));
+        case DataTypes.BOOLEAN:
+          if (typeof value === "boolean") return value;
+          if (value === "true") return true;
+          if (value === "false") return false;
+          return null;
+        case DataTypes.NEVER:
+          return null;
+        default:
+          return value;
+      }
+    };
+
+    return ValueToType(type);
+  }
+
+
   public at(index: number): any {
     const value = this.args[index];
     const entry = this.stats.notUsed[index];
 
     if (entry && !entry.accessed) {
-      entry.accessed = true;  // 标记为已访问
+      entry.accessed = true;
     }
 
     return value;
@@ -60,7 +92,7 @@ export class CommandArgs {
   public getUserId(key: string): string | any {
     const arg: string | h = this.get(key);
 
-    if(arg != null) {
+    if (arg != null) {
       if (arg["type"] == 'at') {
         return arg["attrs"].id;
       }

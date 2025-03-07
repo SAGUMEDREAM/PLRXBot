@@ -1,10 +1,10 @@
 import {Messages} from "../../../core/network/Messages";
 import {UserManager} from "../../../core/user/UserManager";
 import {CommandProvider} from "../../../core/command/CommandProvider";
-import {Maths} from "../../../core/utils/Maths";
 
 export class CommandLike {
   public readonly root = new CommandProvider()
+    .disabledCommand()
     .onExecute(async (session, args) => {
       const user = await UserManager.get(session);
       if(user) {

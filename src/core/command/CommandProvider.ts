@@ -2,7 +2,7 @@ import {Context, Element, Session} from 'koishi';
 import {CommandArgs} from "./CommandArgs";
 import {Channel, User} from "@koishijs/core";
 import {Messages} from "../network/Messages";
-import {MultiParameterBuilder, Parameter, TypeOfParameter} from "./MultiParameter";
+import {DataTypes, MultiParameterBuilder, Parameter, TypeOfParameter} from "./MultiParameter";
 import {DeprecatedError} from "../impl/DeprecatedError";
 import {CommandHelper} from "./CommandHelper";
 import * as buffer from "buffer";
@@ -22,6 +22,7 @@ export class CommandProvider {
   private permissionCallback: (session: Session<User.Field, Channel.Field, Context>) => Promise<boolean> | null = null;
   private platformType: string = "common";
   private isNoUsageHelp: boolean = false;
+  private isDisabled: boolean = false;
   // private args: string[] = [];
   private multiParameterBuilder: MultiParameterBuilder;
 
@@ -45,38 +46,31 @@ export class CommandProvider {
     return this;
   }
 
-  public noUsageHelp(): CommandProvider {
-    this.isNoUsageHelp = true;
+  public noUsageHelp(bool = true): CommandProvider {
+    this.isNoUsageHelp = bool;
     return this;
+  }
+
+  public disabledCommand(bool = true): CommandProvider {
+    this.isDisabled = bool;
+    return this;
+  }
+
+  public getDisabledCommand(): boolean {
+    return this.isDisabled;
   }
 
   public getNoUsageHelp(): boolean {
     return this.isNoUsageHelp;
   }
 
-  /**
-   @deprecated
-   **/
-  public addArg(key: string): CommandProvider {
-    throw new DeprecatedError();
-  }
-
-  // public addArg(key: string): CommandProvider {
-  //   const deprecated = true;
-  //   if (deprecated) {
-  //     throw new DeprecatedError();
-  //   }
-  //   this.args.push(key);
-  //   return this;
-  // }
-
-  public addRequiredArgument(name: string, key: string) {
-    this.getMultiParameterBuilder().addRequired(name, key);
+  public addRequiredArgument(name: string, key: string, data_type: DataTypes = DataTypes.ANY) {
+    this.getMultiParameterBuilder().addRequired(name, key, data_type);
     return this;
   }
 
-  public addOptionalArgument(name: string, key: string, defaultValue: any = null) {
-    this.getMultiParameterBuilder().addOptional(name, key, defaultValue);
+  public addOptionalArgument(name: string, key: string, defaultValue: any = null, data_type: DataTypes = DataTypes.ANY) {
+    this.getMultiParameterBuilder().addOptional(name, key, defaultValue, data_type);
     return this;
   }
 
@@ -113,6 +107,10 @@ export class CommandProvider {
       if (!isPlatform) {
         return;
       }
+    }
+
+    if(this.isDisabled) {
+      return;
     }
 
     const pluginId: string = this.getPluginId();
